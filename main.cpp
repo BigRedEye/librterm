@@ -1,9 +1,17 @@
+#include "term.h"
 #include <iostream>
 
-using namespace std;
-
-int main()
+int main(int argc, char **argv)
 {
-    cout << "Hello World!" << endl;
+    (void)argc;
+    (void)argv;
+
+    term::Term terminal(40, 30);
+    terminal.redraw();
+    while (terminal.running()) {
+        terminal.addChar(terminal.getChar());
+        terminal.redraw();
+        SDL_Delay(1);
+    }
     return 0;
 }
