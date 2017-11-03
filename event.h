@@ -4,8 +4,7 @@
 #include <SDL2/SDL_events.h>
 
 namespace term {
-class Event
-{
+class Event {
 public:
     Event(SDL_Event *ev);
 

@@ -1,17 +1,17 @@
 #include "term.h"
 #include <iostream>
 
+#define UNUSED(cond) (void)(cond)
+
 int main(int argc, char **argv)
 {
-    (void)argc;
-    (void)argv;
+    UNUSED(argc);
+    UNUSED(argv);
 
-    term::Term terminal(40, 30);
-    terminal.redraw();
+    term::Term terminal(40, 20);
     while (terminal.running()) {
         terminal.addChar(terminal.getChar());
         terminal.redraw();
-        SDL_Delay(1);
     }
     return 0;
 }

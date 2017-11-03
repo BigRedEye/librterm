@@ -7,13 +7,15 @@ SOURCES += main.cpp \
     term.cpp \
     event.cpp \
     font.cpp \
-    key.cpp
+    key.cpp \
+    color.cpp
 
 HEADERS += \
     term.h \
     event.h \
     font.h \
-    key.h
+    key.h \
+    color.h
 
-LIBS += -lSDL2 -lSDL2_image
+LIBS += -lSDL2 -lSDL2_image -lSDL2_ttf
 CONFIG += address_sanitizer

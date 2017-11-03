@@ -1,6 +1,8 @@
 #include "term.h"
 #include "font.h"
 #include <iostream>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 
 namespace term {
 Term::Term()
@@ -8,44 +10,59 @@ Term::Term()
 }
 
 Term::Term(size_t cols, size_t rows)
-    : _cols(cols),
-      _rows(rows),
-      data(_rows * _cols, ' '),
-      mask(_rows * _cols, false),
-      cursorPos(),
-      quitRequested(false) {
+    : cols_(cols),
+      rows_(rows),
+      data_(rows * cols, '.'),
+      mask_(rows * cols, true),
+      cursorPos_(),
+      quitRequested_(false),
+      fgCol_(255, 255, 255),
+      bgCol_(255, 0, 0),
+      font_() {
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-    SDL_CreateWindowAndRenderer(_cols * font.w(), _rows * font.h(), 0, &p_win, &p_ren);
-    SDL_RenderFillRect(p_ren, NULL);
+    IMG_Init(IMG_INIT_PNG);
+    TTF_Init();
+
+
+    p_win_ = SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
+                                         SDL_WINDOWPOS_UNDEFINED,
+                                         cols_ * 10, rows_ * 10, 0);
+    font_ = Font(); /* we need to call TTF_Init() before */
+    SDL_SetWindowSize(p_win_, font_.w() * cols_, font_.h() * rows_);
+    p_ren_ = SDL_CreateRenderer(p_win_, 0, 0);
+    font_.setRenderer(p_ren_);
     SDL_SetEventFilter(eventFilter, this);
-    SDL_RenderPresent(p_ren);
-    font = Font(p_ren);
+    SDL_RenderFillRect(p_ren_, NULL);
+    redraw();
 }
 
 Term::~Term() {
-    SDL_DestroyRenderer(p_ren);
-    SDL_DestroyWindow(p_win);
+    SDL_DestroyRenderer(p_ren_);
+    SDL_DestroyWindow(p_win_);
+
+    TTF_Quit();
+    IMG_Quit();
     SDL_Quit();
 }
 
 size_t Term::cols() const {
-    return _cols;
+    return cols_;
 }
 
 size_t Term::rows() const {
-    return _rows;
+    return rows_;
 }
 
 bool Term::running() const {
-    return !quitRequested;
+    return !quitRequested_;
 }
 
 char& Term::get(size_t x, size_t y) {
-    return data[y * _cols + x];
+    return data_[y * cols_ + x];
 }
 
 char Term::get(size_t x, size_t y) const {
-    return data[y * _cols + x];
+    return data_[y * cols_ + x];
 }
 
 void Term::resize(size_t _rows, size_t _cols) {
@@ -54,7 +71,7 @@ void Term::resize(size_t _rows, size_t _cols) {
 }
 
 void Term::setChar(size_t x, size_t y, char c) {
-    mask[y * _cols + x] = true;
+    mask_[y * cols_ + x] = true;
     get(x, y) = c;
 }
 
@@ -62,28 +79,29 @@ void Term::addChar(char c) {
     switch (c) {
     case '\n':
     case '\r':
-        cursorPos = (cursorPos + _cols - cursorPos % _cols) % data.size();
+        cursorPos_ = (cursorPos_ + cols_ - cursorPos_ % cols_) % data_.size();
         break;
     case '\b':
-        cursorPos = cursorPos ? cursorPos - 1: 0;
-        data[cursorPos] = ' ';
-        mask[cursorPos] = true;
+        cursorPos_ = cursorPos_ ? cursorPos_ - 1: 0;
+        data_[cursorPos_] = ' ';
+        mask_[cursorPos_] = true;
         break;
     case '\t':
         for (int i = 0; i < 4; ++i)
             addChar(' ');
         break;
     default:
-        mask[cursorPos] = true;
-        data[cursorPos++] = c;
-        cursorPos %= data.size();
+        mask_[cursorPos_] = true;
+        data_[cursorPos_++] = c;
+        cursorPos_ %= data_.size();
     }
 }
 
-SDL_Keycode Term::getKey() const {
+Key Term::getKey() const {
     SDL_Event ev = getNextEvent({SDL_KEYDOWN});
     if (running())
         return ev.key.keysym.sym;
+    return 0;
 }
 
 char Term::getChar() const {
@@ -119,28 +137,33 @@ void Term::setFullscreen() {
 
 void Term::setFont(const Font &f) {
     /** TODO: copy constructor */
+    (void)f;
     //font = f;
-    SDL_SetWindowSize(p_win, _cols * font.w(), _rows * font.h());
+    SDL_SetWindowSize(p_win_, cols_ * font_.w(), rows_ * font_.h());
     redraw();
 }
 
 void Term::redraw() {
     bool changed = false;
-    for (size_t x = 0; x < _cols; ++x)
-        for (size_t y = 0; y < _rows; ++y) {
-            if (mask[y * _cols + x])
+    for (size_t x = 0; x < cols_; ++x)
+        for (size_t y = 0; y < rows_; ++y) {
+            if (mask_[y * cols_ + x])
                 redraw(x, y), changed = true;
-            mask[y * _cols + x] = false;
+            mask_[y * cols_ + x] = false;
         }
-    if (changed)
-        SDL_RenderPresent(p_ren);
+    if (changed) {
+        SDL_RenderPresent(p_ren_);
+        SDL_Delay(1);
+    }
 }
 
 void Term::redraw(size_t x, size_t y) {
-    SDL_Rect dst {x * font.w(), y * font.h(), font.w(), font.h()};
-    SDL_Rect src = font.getRect(get(x, y));
-    SDL_RenderFillRect(p_ren, &dst);
-    SDL_RenderCopy(p_ren, font.getTexture(), &src, &dst);
+    std::cout << "Redraw " << x << ' ' << y << get(x, y) << std::endl;
+    SDL_Rect dst {static_cast<int>(x * font_.w()),
+                  static_cast<int>(y * font_.h()),
+                  static_cast<int>(font_.w()),
+                  static_cast<int>(font_.h())};
+    font_.render(dst, get(x, y), fgCol_, bgCol_);
 }
 
 SDL_Event Term::getNextEvent(const std::set<int> &filter) const {
@@ -158,10 +181,11 @@ int eventFilter(void *data, SDL_Event *ev) {
     Term *term = reinterpret_cast<Term*>(data);
     switch (ev->type) {
     case SDL_QUIT:
-        term->quitRequested = true;
+        term->quitRequested_ = true;
         break;
     default:
         break;
     }
+    return 1;
 }
 }
