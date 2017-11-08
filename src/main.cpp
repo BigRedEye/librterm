@@ -1,6 +1,7 @@
 #include "term.h"
 #include <iostream>
 #include <random>
+#include <complex>
 #include "key.h"
 
 #define UNUSED(cond) (void)(cond)
@@ -10,14 +11,22 @@ int main(int argc, char **argv)
     UNUSED(argc);
     UNUSED(argv);
 
-    term::Term terminal(40, 20);
-    int x = 10, y = 5;
-    int i = 0;
+    term::Term terminal(200, 100);
+    int iter = 32;
     for (int i = 0; i < terminal.cols(); ++i)
         for (int j = 0; j < terminal.rows(); ++j) {
             terminal.setChar(i, j, ' ');
-            terminal.setBgColor(term::Color((i + j) % 255, 0, (i + j) % 255), i, j);
-            terminal.setFgColor(term::Color(255 - (i + j) % 255, 0, 255 - (i + j) % 255), i, j);
+            std::complex<long double> c(i * 2. / terminal.cols() - 1.5,
+                                        j * 2. / terminal.rows() - 1),
+                                      z(0, 0);
+            int k = 0;
+            for (k; k < iter; ++k) {
+                z = z * z + c;
+                if (abs(z) > 2)
+                    break;
+            }
+            terminal.setBgColor(term::Color(k * 255 / iter, 0.7 * k * 255 / iter, 0.1 * k * 255 / iter), i, j);
+            terminal.setFgColor(term::Color(255 - k * 255 / iter, 255 - k * 255 / iter, 255 - k * 255 / iter), i, j);
         }
     terminal.redraw();
 

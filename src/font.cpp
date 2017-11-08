@@ -6,7 +6,7 @@
 namespace term {
 Font::Font(SDL_Renderer *ren, const std::string &pathToAsciiPng)
     : _ren(ren), _font(NULL) {
-    font = TTF_OpenFont("/usr/share/fonts/TTF/DejaVuSansMono.ttf", 18); /* TTF_OpenFont("/home/sergey/Downloads/latest/terminus-ttf-4.46.0/TerminusTTF-4.46.0.ttf",
+    font = TTF_OpenFont("/usr/share/fonts/TTF/DejaVuSansMono.ttf", 3); /* TTF_OpenFont("/home/sergey/Downloads/latest/terminus-ttf-4.46.0/TerminusTTF-4.46.0.ttf",
                         18); */
     std::cerr << TTF_GetError() << std::endl;
 }

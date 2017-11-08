@@ -29,6 +29,8 @@ Term::Term(size_t cols, size_t rows)
     font_ = Font(); /* we need to call TTF_Init() before */
     SDL_SetWindowSize(p_win_, font_.w() * cols_, font_.h() * rows_);
     p_ren_ = SDL_CreateRenderer(p_win_, 0, 0);
+    SDL_RenderClear(p_ren_);
+    SDL_RenderPresent(p_ren_);
     font_.setRenderer(p_ren_);
     SDL_AddEventWatch(eventFilter, this);
     SDL_RenderFillRect(p_ren_, NULL);
