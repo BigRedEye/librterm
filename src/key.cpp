@@ -29,6 +29,31 @@ int Key::key() const {
     return code_;
 }
 
+Key& Key::setKey(int code) {
+    code_ = code;
+    switch (code) {
+    case '\n':
+    case '\r':
+    case '\b':
+    case '\t':
+        unicode_ = code;
+        break;
+    default:
+        break;
+    }
+    return *this;
+}
+
+Key& Key::setMod(int mod) {
+    mod_ = mod;
+    return *this;
+}
+
+Key& Key::setChar(char_t c) {
+    unicode_ = c;
+    return *this;
+}
+
 Key& Key::addMod(SDL_Keymod mod) {
     switch (mod) {
     case KMOD_LSHIFT:

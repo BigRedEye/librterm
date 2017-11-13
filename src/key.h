@@ -93,6 +93,10 @@ public:
     char_t toChar() const;
     int key() const;
     int mod() const;
+    
+    Key& setKey(int k);
+    Key& setMod(int m);
+    Key& setChar(char_t c);
 
     friend class Term;
 private:

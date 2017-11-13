@@ -1,14 +1,15 @@
 #include "font.h"
-#include <SDL2/SDL_image.h>
+//#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 
 namespace term {
 Font::Font(SDL_Renderer *ren, const std::string &pathToAsciiPng)
     : _ren(ren), _font(NULL) {
-    font = TTF_OpenFont("/usr/share/fonts/TTF/DejaVuSansMono.ttf", 3); /* TTF_OpenFont("/home/sergey/Downloads/latest/terminus-ttf-4.46.0/TerminusTTF-4.46.0.ttf",
+    if (!TTF_WasInit())
+        TTF_Init();
+    font = TTF_OpenFont("DejaVuSansMono.ttf", 18); /* TTF_OpenFont("/home/sergey/Downloads/latest/terminus-ttf-4.46.0/TerminusTTF-4.46.0.ttf",
                         18); */
-    std::cerr << TTF_GetError() << std::endl;
 }
 
 Font::~Font() {

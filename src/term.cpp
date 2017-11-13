@@ -1,7 +1,7 @@
 #include "term.h"
 #include "font.h"
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
+//#include <SDL2/SDL_image.h>
 #include <iostream>
 
 namespace term {
@@ -20,7 +20,7 @@ Term::Term(size_t cols, size_t rows)
       bgCol_(0, 0, 0),
       font_() {
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-    IMG_Init(IMG_INIT_PNG);
+    //IMG_Init(IMG_INIT_PNG);
     TTF_Init();
 
     p_win_ = SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
@@ -42,7 +42,7 @@ Term::~Term() {
     SDL_DestroyWindow(p_win_);
 
     TTF_Quit();
-    IMG_Quit();
+    //IMG_Quit();
     SDL_Quit();
 }
 
@@ -123,63 +123,43 @@ void Term::addChar(char_t c) {
 
 Key Term::getKey() const {
     SDL_StartTextInput();
-    while (true) {
-        SDL_Event ev = getNextEvent({SDL_TEXTINPUT, SDL_KEYDOWN});
-        if (!running()) {
-            SDL_StopTextInput();
-            return Key();
-        }
-        switch (ev.type) {
-        case SDL_TEXTINPUT:
-            SDL_StopTextInput();
-            return Key(UTF8BytesToChar(ev.text.text));
-        case SDL_KEYDOWN:
-            if (0 /*ev.key.keysym.sym == SDLK_RETURN ||
-                ev.key.keysym.sym == SDLK_BACKSPACE ||
-                ev.key.keysym.sym == SDLK_TAB*/) {
-                SDL_StopTextInput();
-                return Key(ev.key.keysym.sym);
+    while (running()) {
+        SDL_Event evs[2];
+        SDL_PumpEvents();
+        int sz = 0;
+        if (SDL_PeepEvents(&evs[sz], 1, SDL_GETEVENT, SDL_KEYDOWN, SDL_KEYDOWN) > 0)
+            ++sz;
+        if (SDL_PeepEvents(&evs[sz], 1, SDL_GETEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT) > 0)
+            ++sz;
+        Key result;
+        for (int i = 0; i < sz; ++i)
+            switch (evs[i].type) {
+            case SDL_KEYDOWN:
+                result.setKey(evs[i].key.keysym.sym)
+                      .setMod(evs[i].key.keysym.mod);
+                break;
+            case SDL_TEXTINPUT:
+                result.setChar(UTF8BytesToChar(evs[i].text.text));
+                break;
+            default:
+                break;
             }
-            break;
-        default:
-            break;
+        if (result.key() || result.toChar()) {
+            return result;
         }
+        SDL_Delay(10);
     }
+    return Key();
     /* SDL_Event ev = getNextEvent({SDL_KEYDOWN, SDL_TEXTINPUT});
-    if (running())
+    if (running());
         return ev.key.keysym.sym; */
-    return 0;
 }
 
 char_t Term::getChar() const {
     Key key;
-    while (running() && !((key = getKey()).toChar()))
-        std::cerr << "getKey()" << std::endl;
-    std::cerr << "getChar()" << std::endl;
-    return key.toChar();
-/*
-    SDL_StartTextInput();
-    while (true) {
-        SDL_Event ev = getNextEvent({SDL_TEXTINPUT, SDL_KEYDOWN});
-        if (!running())
-            return 0;
-        switch (ev.type) {
-        case SDL_TEXTINPUT:
-            SDL_StopTextInput();
-            return UTF8BytesToChar(ev.text.text);
-        case SDL_KEYDOWN:
-            if (ev.key.keysym.sym == SDLK_RETURN ||
-                ev.key.keysym.sym == SDLK_BACKSPACE ||
-                ev.key.keysym.sym == SDLK_TAB) {
-                SDL_StopTextInput();
-                return ev.key.keysym.sym;
-            }
-            break;
-        default:
-            break;
-        }
+    while (running() && !((key = getKey()).toChar())) {
     }
-*/
+    return key.toChar();
 }
 
 char_t Term::charAt(size_t x, size_t y) const {
