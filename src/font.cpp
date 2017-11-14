@@ -48,7 +48,10 @@ SDL_Texture * Font::getTexture() const {
 }
 
 SDL_Rect Font::getRect(char c) const {
-    return SDL_Rect{(c % 16) * w(), (c / 16) * h(), w(), h()};
+    return SDL_Rect{static_cast<int>((c % 16) * w()),
+                    static_cast<int>((c / 16) * h()),
+                    static_cast<int>(w()),
+                    static_cast<int>(h())};
 }
 
 void Font::setRenderer(SDL_Renderer *ren) {

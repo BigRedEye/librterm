@@ -10,3 +10,4 @@ CTestTestfile.cmake
 *.exe
 *.dll
 *.user
+*.ninja

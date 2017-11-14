@@ -32,6 +32,7 @@ Term::Term(size_t cols, size_t rows)
     font_.setRenderer(p_ren_);
     SDL_AddEventWatch(eventFilter, this);
     SDL_RenderFillRect(p_ren_, NULL);
+    SDL_SetWindowBordered(p_win_, SDL_FALSE);
     redraw();
 }
 
@@ -83,7 +84,7 @@ void Term::resize(size_t cols, size_t rows) {
 
     /* copy data2d to data_ */
     data_.resize(rows * cols);
-    mask_.resize(rows * cols, 1);
+    mask_.assign(rows * cols, true);
     auto data_it = data_.begin();
     for (auto y_it = data2d.begin(); y_it != data2d.end(); ++y_it)
         for (auto x_it = y_it->begin(); x_it != y_it->end(); ++x_it)
@@ -93,6 +94,7 @@ void Term::resize(size_t cols, size_t rows) {
     SDL_SetWindowSize(p_win_, cols * font_.w(), rows * font_.h());
     cols_ = cols;
     rows_ = rows;
+    SDL_RenderClear(p_ren_);
     redraw();
 }
 
@@ -166,6 +168,16 @@ char_t Term::charAt(size_t x, size_t y) const {
 }
 
 void Term::setFullscreen() {
+    SDL_SetWindowFullscreen(p_win_, SDL_WINDOW_FULLSCREEN);
+
+    /* set correct resolution */
+    SDL_DisplayMode mode;
+    SDL_GetDesktopDisplayMode(0, &mode);
+    SDL_SetWindowDisplayMode(p_win_, &mode);
+
+    int cols = mode.w / font_.w();
+    int rows = mode.h / font_.h();
+    resize(cols, rows);
 }
 
 void Term::setFont(const std::string &path, size_t sz) {
@@ -175,7 +187,9 @@ void Term::setFont(const std::string &path, size_t sz) {
 }
 
 void Term::setBgColor(const Color &bg) {
-    bgCol_ = bg;
+    for (int i = 0; i < rows_; ++i)
+        for (int j = 0; j < cols_; ++j)
+            get(j, i).bg_ = bg, mask_[i * cols_ + j] = true;
 }
 
 void Term::setBgColor(const Color &bg, size_t x, size_t y) {
@@ -184,7 +198,9 @@ void Term::setBgColor(const Color &bg, size_t x, size_t y) {
 }
 
 void Term::setFgColor(const Color &fg) {
-    fgCol_ = fg;
+    for (int i = 0; i < rows_; ++i)
+        for (int j = 0; j < cols_; ++j)
+            get(j, i).fg_ = fg, mask_[i * cols_ + j] = true;
 }
 
 void Term::setFgColor(const Color &fg, size_t x, size_t y) {
