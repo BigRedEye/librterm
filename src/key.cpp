@@ -38,6 +38,9 @@ Key& Key::setKey(int code) {
     case '\t':
         unicode_ = code;
         break;
+    case term::NP_ENTER:
+        unicode_ = '\r';
+        break;
     default:
         break;
     }

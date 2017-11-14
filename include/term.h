@@ -7,7 +7,6 @@
 #include <SDL2/SDL.h>
 
 #include "font.h"
-#include "event.h"
 #include "key.h"
 #include "color.h"
 #include "char.h"
@@ -67,6 +66,7 @@ private:
 
     SDL_Window *p_win_;
     SDL_Renderer *p_ren_;
+    SDL_Texture *p_tex_;
 
     size_t cursorPos_;
     bool quitRequested_;
