@@ -16,5 +16,5 @@ Requirements
 Roadmap
 -------
 + [ ] render terminal data to texture
-+ [ ] add some
++ [ ] add some demos
 + [ ] static lib build
