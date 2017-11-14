@@ -24,7 +24,7 @@ Term::Term(size_t cols, size_t rows)
     p_win_ = SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
                                          SDL_WINDOWPOS_UNDEFINED,
                                          cols_ * 10, rows_ * 10, 0);
-    p_ren_ = SDL_CreateRenderer(p_win_, 0, SDL_RENDERER_PRESENTVSYNC );
+    p_ren_ = SDL_CreateRenderer(p_win_, -1, 0);
     font_ = Font(p_ren_, "DejaVuSansMono.ttf", 18);
     SDL_SetWindowSize(p_win_, font_.w() * cols_, font_.h() * rows_);
     SDL_RenderClear(p_ren_);
@@ -32,7 +32,9 @@ Term::Term(size_t cols, size_t rows)
     font_.setRenderer(p_ren_);
     SDL_AddEventWatch(eventFilter, this);
     SDL_RenderFillRect(p_ren_, NULL);
-    //SDL_SetWindowBordered(p_win_, SDL_FALSE);
+    p_tex_ = SDL_CreateTextureFromSurface(p_ren_, SDL_GetWindowSurface(p_win_));
+    //SDL_Set
+    //SDL_CreateTexture(p_ren_, SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, &w, &h);
     redraw();
 }
 
@@ -70,29 +72,32 @@ Term::Char Term::get(size_t x, size_t y) const {
     return data_[y * cols_ + x];
 }
 
-void Term::resize(size_t cols, size_t rows) {
+void Term::resize(size_t ncols, size_t nrows) {
     /* we need to clear mask vector before resizing */
     redraw();
 
     /* convert 1d-vector data_ to 2d-vector data2d */
-    std::vector<std::vector<Char>> data2d(cols, std::vector<Char>(rows, ' '));
+    std::vector<std::vector<Char>> data2d(ncols, std::vector<Char>(nrows, ' '));
     size_t i = 0;  // current row in data2d
     auto it = data_.begin();
-    for (int i = 0; i < std::min(rows_, rows); ++i)
-        for (int j = 0; j < std::min(rows_, rows); ++j)
-            data2d[i][j] = get(j, i);
+    for (int i = 0; i < std::min(cols_, ncols); ++i)
+        for (int j = 0; j < std::min(rows_, nrows); ++j)
+            data2d[i][j] = get(i, j);
     /* copy data2d to data_ */
-    data_.resize(rows * cols);
-    mask_.assign(rows * cols, true);
-    auto data_it = data_.begin();
-    for (auto y_it = data2d.begin(); y_it != data2d.end(); ++y_it)
-        for (auto x_it = y_it->begin(); x_it != y_it->end(); ++x_it)
-            *data_it++ = *x_it;
+    data_.resize(nrows * ncols);
+    mask_.assign(nrows * ncols, true);
+    for (int i = 0; i < ncols; ++i)
+        for (int j = 0; j < nrows; ++j)
+            data_[j * ncols + i] = data2d[i][j];
 
     /* resize window */
-    SDL_SetWindowSize(p_win_, cols * font_.w(), rows * font_.h());
-    cols_ = cols;
-    rows_ = rows;
+    SDL_SetWindowSize(p_win_, ncols * font_.w(), nrows * font_.h());
+    
+    int cursorX = cursorPos_ % cols_;
+    int cursorY = cursorPos_ / cols_;
+    cursorPos_ = cursorY * ncols + cursorX;
+    cols_ = ncols;
+    rows_ = nrows;
     SDL_RenderClear(p_ren_);
     redraw();
 }
@@ -167,12 +172,18 @@ char_t Term::charAt(size_t x, size_t y) const {
 }
 
 void Term::setFullscreen(bool fullscr) {
+    
+    std::cerr << cols() << ' ' << rows() << std::endl;
     static bool isFullscr = false;
     static SDL_DisplayMode *windowedMode = NULL;
+    static int prevCols = 0, prevRows = 0;
 
-    if (windowedMode == NULL && !isFullscr) {
-        windowedMode = new SDL_DisplayMode;
-        SDL_GetWindowDisplayMode(p_win_, windowedMode);
+    if (!isFullscr) {
+        if (windowedMode == NULL) {
+            windowedMode = new SDL_DisplayMode;
+            SDL_GetWindowDisplayMode(p_win_, windowedMode);
+        }
+        prevCols = cols(), prevRows = rows();
     }
 
     if (isFullscr == fullscr)
@@ -181,15 +192,17 @@ void Term::setFullscreen(bool fullscr) {
     SDL_SetWindowFullscreen(p_win_, (fullscr ? SDL_WINDOW_FULLSCREEN : 0));
 
     /* set correct resolution */
+    int ncols = prevCols, nrows = prevRows;
     SDL_DisplayMode mode;
-    if (fullscr)
+    if (fullscr) {
         SDL_GetDesktopDisplayMode(0, &mode);
+        ncols = mode.w / font_.w();
+        nrows = mode.h / font_.h();
+    }
     else
         mode = *windowedMode;
     SDL_SetWindowDisplayMode(p_win_, &mode);
 
-    int ncols = mode.w / font_.w();
-    int nrows = mode.h / font_.h();
     isFullscr = !isFullscr;
     resize(ncols, nrows);
 }
@@ -223,7 +236,7 @@ void Term::setFgColor(const Color &fg, size_t x, size_t y) {
 }
 
 void Term::redraw() {
-    bool changed = false;
+    bool changed = true;
     for (size_t x = 0; x < cols_; ++x)
         for (size_t y = 0; y < rows_; ++y) {
             if (mask_[y * cols_ + x])
@@ -231,6 +244,7 @@ void Term::redraw() {
             mask_[y * cols_ + x] = false;
         }
     if (changed) {
+        //SDL_RenderCopy(p_ren_, p_tex_, NULL, NULL);
         SDL_RenderPresent(p_ren_);
     }
 }

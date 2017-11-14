@@ -60,6 +60,7 @@ enum KeyCode {
     NP_ASTERISK = SDLK_KP_MULTIPLY,
     NP_MINUS = SDLK_KP_MINUS,
     NP_PLUS = SDLK_KP_PLUS,
+    NP_ENTER = SDLK_KP_ENTER,
 
     NP_1 = SDLK_KP_1,
     NP_2 = SDLK_KP_2,
