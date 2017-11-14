@@ -1,8 +1,8 @@
-#include "term.h"
+#include "../include/term.h"
+#include "../include/key.h"
 #include <iostream>
 #include <random>
 #include <complex>
-#include "key.h"
 
 #define UNUSED(cond) (void)(cond)
 

@@ -1,12 +1,16 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.9)
 
 project(libterm)
+
 file(GLOB SOURCES
     include/*.h
     src/*.cpp
 )
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
+set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER include/term.h)
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} -lmingw32)
