@@ -12,5 +12,5 @@ CTestTestfile.cmake
 *.dll
 *.user
 *.ninja
-.*_ninja
+.*ninja_*
 *.cbp
