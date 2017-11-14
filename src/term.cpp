@@ -24,7 +24,7 @@ Term::Term(size_t cols, size_t rows)
     p_win_ = SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
                                          SDL_WINDOWPOS_UNDEFINED,
                                          cols_ * 10, rows_ * 10, 0);
-    p_ren_ = SDL_CreateRenderer(p_win_, 0, 0);
+    p_ren_ = SDL_CreateRenderer(p_win_, 0, SDL_RENDERER_PRESENTVSYNC );
     font_ = Font(p_ren_, "DejaVuSansMono.ttf", 18);
     SDL_SetWindowSize(p_win_, font_.w() * cols_, font_.h() * rows_);
     SDL_RenderClear(p_ren_);
@@ -32,7 +32,7 @@ Term::Term(size_t cols, size_t rows)
     font_.setRenderer(p_ren_);
     SDL_AddEventWatch(eventFilter, this);
     SDL_RenderFillRect(p_ren_, NULL);
-    SDL_SetWindowBordered(p_win_, SDL_FALSE);
+    //SDL_SetWindowBordered(p_win_, SDL_FALSE);
     redraw();
 }
 
@@ -218,7 +218,6 @@ void Term::redraw() {
         }
     if (changed) {
         SDL_RenderPresent(p_ren_);
-        SDL_Delay(1);
     }
 }
 

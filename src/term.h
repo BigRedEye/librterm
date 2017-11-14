@@ -7,7 +7,6 @@
 #include <SDL2/SDL.h>
 
 #include "font.h"
-#include "event.h"
 #include "key.h"
 #include "color.h"
 #include "char.h"
