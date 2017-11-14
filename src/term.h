@@ -34,7 +34,7 @@ public:
     void setFgColor(const Color &fg);
     void setFgColor(const Color &fg, size_t x, size_t y);
 
-    void setFullscreen();
+    void setFullscreen(bool);
 
     /* wait for next key */
     Key getKey() const;
