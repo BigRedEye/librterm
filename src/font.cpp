@@ -4,39 +4,43 @@
 #include <iostream>
 
 namespace term {
-Font::Font(SDL_Renderer *ren, const std::string &pathToAsciiPng)
-    : _ren(ren), _font(NULL) {
+Font::Font()
+    : p_ren_(NULL), p_font_(NULL) {
+}
+
+Font::Font(SDL_Renderer *ren, const std::string &path, size_t sz)
+    : p_ren_(ren) {
     if (!TTF_WasInit())
         TTF_Init();
-    font = TTF_OpenFont("DejaVuSansMono.ttf", 18); /* TTF_OpenFont("/home/sergey/Downloads/latest/terminus-ttf-4.46.0/TerminusTTF-4.46.0.ttf",
-                        18); */
+    p_font_ = TTF_OpenFont(path.c_str(), sz);
 }
 
 Font::~Font() {
-    if (_font)
-        SDL_DestroyTexture(_font);
+    destroyFont();
+}
+
+void Font::destroyFont() {
+    if (p_font_)
+        TTF_CloseFont(p_font_);
+    p_font_ = NULL;
 }
 
 Font& Font::operator=(Font &&rhs) {
-    if (_font)
-        SDL_DestroyTexture(_font);
-    _font = rhs._font;
-    _ren = rhs._ren;
-    rhs._font = NULL;
-    rhs._ren = NULL;
-    font = rhs.font;
-    rhs.font = NULL;
+    p_ren_ = rhs.p_ren_;
+    rhs.p_ren_ = NULL;
+    p_font_ = rhs.p_font_;
+    rhs.p_font_ = NULL;
     return *this;
 }
 
 size_t Font::w() const {
     int w, h;
-    TTF_SizeText(font, "@", &w, &h);
+    TTF_SizeText(p_font_, "@", &w, &h);
     return w;
 }
 
 size_t Font::h() const {
-    return TTF_FontHeight(font);
+    return TTF_FontHeight(p_font_);
 }
 
 SDL_Texture * Font::getTexture() const {
@@ -48,20 +52,19 @@ SDL_Rect Font::getRect(char c) const {
 }
 
 void Font::setRenderer(SDL_Renderer *ren) {
-    _ren = ren;
+    p_ren_ = ren;
 }
 
 void Font::render(SDL_Rect dst, const char *str, Color fg, Color bg) {
-    SDL_Surface *psurf = TTF_RenderUTF8_Blended(font,
+    SDL_Surface *psurf = TTF_RenderUTF8_Blended(p_font_,
                                                 str,
                                                 fg.toSDL_Color());
-    // SDL_Rect src = getRect(get(x, y));
-    SDL_SetRenderDrawColor(_ren, bg.r(), bg.g(), bg.b(), bg.a());
-    SDL_RenderFillRect(_ren, &dst);
-    SDL_Texture *tex = SDL_CreateTextureFromSurface(_ren, psurf);
+    SDL_SetRenderDrawColor(p_ren_, bg.r(), bg.g(), bg.b(), bg.a());
+    SDL_RenderFillRect(p_ren_, &dst);
+    SDL_Texture *tex = SDL_CreateTextureFromSurface(p_ren_, psurf);
     int h, w;
     SDL_QueryTexture(tex, NULL, NULL, &w, &h);
     dst.h = h, dst.w = w;
-    SDL_RenderCopy(_ren, tex, NULL, &dst);
+    SDL_RenderCopy(p_ren_, tex, NULL, &dst);
 }
 }

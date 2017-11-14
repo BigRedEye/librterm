@@ -14,9 +14,11 @@ namespace term {
 class Font
 {
 public:
-    explicit Font(SDL_Renderer *ren = NULL, const std::string &pathToAsciiPng = "term.png");
+    Font();
+    Font(SDL_Renderer *ren, const std::string &path, size_t sz);
     ~Font();
     Font& operator=(Font &&rhs);
+    void destroyFont();
 
     SDL_Texture * getTexture() const;
     SDL_Rect getRect(char c) const;
@@ -27,9 +29,8 @@ public:
     size_t w() const;
     size_t h() const;
 private:
-    SDL_Texture *_font;
-    TTF_Font *font;
-    SDL_Renderer *_ren;
+    TTF_Font *p_font_;
+    SDL_Renderer *p_ren_;
 };
 }
 #endif // FONT_H

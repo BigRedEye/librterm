@@ -44,40 +44,38 @@ Key& Key::setKey(int code) {
     return *this;
 }
 
-Key& Key::setMod(int mod) {
-    mod_ = mod;
-    return *this;
-}
-
 Key& Key::setChar(char_t c) {
     unicode_ = c;
     return *this;
 }
 
-Key& Key::addMod(SDL_Keymod mod) {
-    switch (mod) {
-    case KMOD_LSHIFT:
-    case KMOD_RSHIFT:
-        mod_ |= KeyMod::SHIFT;
-        break;
-    case KMOD_LCTRL:
-    case KMOD_RCTRL:
-        mod_ |= KeyMod::CTRL;
-        break;
-    case KMOD_LALT:
-    case KMOD_RALT:
-        mod_ |= KeyMod::ALT;
-        break;
-    case KMOD_LGUI:
-    case KMOD_RGUI:
-        mod_ |= KeyMod::WIN;
-        break;
-    case KMOD_NUM:
-        mod_ |= KeyMod::NUM;
-        break;
-    default:
-        break;
-    }
+Key& Key::addMod(Uint16 mod) {
+    Uint16 mask = 1;
+    for (int i = 0; i < 16; ++i, mask <<= 1)
+        if (mod & mask)
+            switch (mask) {
+            case KMOD_LSHIFT:
+            case KMOD_RSHIFT:
+                mod_ |= KeyMod::SHIFT;
+                break;
+            case KMOD_LCTRL:
+            case KMOD_RCTRL:
+                mod_ |= KeyMod::CTRL;
+                break;
+            case KMOD_LALT:
+            case KMOD_RALT:
+                mod_ |= KeyMod::ALT;
+                break;
+            case KMOD_LGUI:
+            case KMOD_RGUI:
+                mod_ |= KeyMod::WIN;
+                break;
+            case KMOD_NUM:
+                mod_ |= KeyMod::NUM;
+                break;
+            default:
+                break;
+            }
     return *this;
 }
 }

@@ -95,12 +95,11 @@ public:
     int mod() const;
     
     Key& setKey(int k);
-    Key& setMod(int m);
     Key& setChar(char_t c);
 
     friend class Term;
 private:
-    Key& addMod(SDL_Keymod mod);
+    Key& addMod(Uint16 mod);
 
     SDL_Keycode code_;
     int mod_;

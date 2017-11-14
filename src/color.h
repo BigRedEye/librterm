@@ -17,32 +17,32 @@ public:
     }
 
     uint8_t& r() {
-        return m_r;
+        return r_;
     }
     uint8_t& g() {
-        return m_g;
+        return g_;
     }
     uint8_t& b() {
-        return m_b;
+        return b_;
     }
     uint8_t& a() {
-        return m_a;
+        return a_;
     }
 
     uint8_t r() const {
-        return m_r;
+        return r_;
     }
     uint8_t g() const {
-        return m_g;
+        return g_;
     }
     uint8_t b() const {
-        return m_b;
+        return b_;
     }
     uint8_t a() const {
-        return m_a;
+        return a_;
     }
 private:
-    uint8_t m_r, m_g, m_b, m_a;
+    uint8_t r_, g_, b_, a_;
 };
 }
 

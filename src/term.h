@@ -28,7 +28,7 @@ public:
 
     void resize(size_t cols_, size_t rows_);
     void setChar(size_t x, size_t y, char_t c);
-    void setFont(const Font &f);
+    void setFont(const std::string &s, size_t sz);
     void setBgColor(const Color &bg);
     void setBgColor(const Color &bg, size_t x, size_t y);
     void setFgColor(const Color &fg);

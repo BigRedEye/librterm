@@ -1,7 +1,6 @@
 #include "term.h"
 #include "font.h"
 #include <SDL2/SDL_ttf.h>
-//#include <SDL2/SDL_image.h>
 #include <iostream>
 
 namespace term {
@@ -20,15 +19,14 @@ Term::Term(size_t cols, size_t rows)
       bgCol_(0, 0, 0),
       font_() {
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-    //IMG_Init(IMG_INIT_PNG);
     TTF_Init();
 
     p_win_ = SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
                                          SDL_WINDOWPOS_UNDEFINED,
                                          cols_ * 10, rows_ * 10, 0);
-    font_ = Font(); /* we need to call TTF_Init() before */
-    SDL_SetWindowSize(p_win_, font_.w() * cols_, font_.h() * rows_);
     p_ren_ = SDL_CreateRenderer(p_win_, 0, 0);
+    font_ = Font(p_ren_, "DejaVuSansMono.ttf", 18);
+    SDL_SetWindowSize(p_win_, font_.w() * cols_, font_.h() * rows_);
     SDL_RenderClear(p_ren_);
     SDL_RenderPresent(p_ren_);
     font_.setRenderer(p_ren_);
@@ -38,11 +36,12 @@ Term::Term(size_t cols, size_t rows)
 }
 
 Term::~Term() {
+    font_.destroyFont();
+
     SDL_DestroyRenderer(p_ren_);
     SDL_DestroyWindow(p_win_);
 
     TTF_Quit();
-    //IMG_Quit();
     SDL_Quit();
 }
 
@@ -70,20 +69,21 @@ Term::Char Term::get(size_t x, size_t y) const {
     return data_[y * cols_ + x];
 }
 
-void Term::resize(size_t rows, size_t cols) {
+void Term::resize(size_t cols, size_t rows) {
     /* we need to clear mask vector before resizing */
     redraw();
 
     /* convert 1d-vector data_ to 2d-vector data2d */
     std::vector<std::vector<Char>> data2d(rows, std::vector<Char>(cols, ' '));
     size_t i = 0;  // current row in data2d
-    for (auto it = data_.begin(); it != data_.end(); ++i)
-        for (size_t j = 0; j < data2d[i].size(); ++j)
+    auto it = data_.begin();
+    for (int i = 0; i < rows_; ++i)
+        for (int j = 0; j < cols_; ++j)
             data2d[i][j] = *++it;
 
     /* copy data2d to data_ */
     data_.resize(rows * cols);
-    mask_.resize(rows * cols, 0);
+    mask_.resize(rows * cols, 1);
     auto data_it = data_.begin();
     for (auto y_it = data2d.begin(); y_it != data2d.end(); ++y_it)
         for (auto x_it = y_it->begin(); x_it != y_it->end(); ++x_it)
@@ -91,6 +91,8 @@ void Term::resize(size_t rows, size_t cols) {
 
     /* resize window */
     SDL_SetWindowSize(p_win_, cols * font_.w(), rows * font_.h());
+    cols_ = cols;
+    rows_ = rows;
     redraw();
 }
 
@@ -126,6 +128,7 @@ Key Term::getKey() const {
     while (running()) {
         SDL_Event evs[2];
         SDL_PumpEvents();
+        SDL_WaitEvent(NULL);
         int sz = 0;
         if (SDL_PeepEvents(&evs[sz], 1, SDL_GETEVENT, SDL_KEYDOWN, SDL_KEYDOWN) > 0)
             ++sz;
@@ -136,7 +139,7 @@ Key Term::getKey() const {
             switch (evs[i].type) {
             case SDL_KEYDOWN:
                 result.setKey(evs[i].key.keysym.sym)
-                      .setMod(evs[i].key.keysym.mod);
+                      .addMod(evs[i].key.keysym.mod);
                 break;
             case SDL_TEXTINPUT:
                 result.setChar(UTF8BytesToChar(evs[i].text.text));
@@ -144,15 +147,11 @@ Key Term::getKey() const {
             default:
                 break;
             }
-        if (result.key() || result.toChar()) {
-            return result;
+            if (result.key() || result.toChar()) {
+                return result;
         }
-        SDL_Delay(10);
     }
     return Key();
-    /* SDL_Event ev = getNextEvent({SDL_KEYDOWN, SDL_TEXTINPUT});
-    if (running());
-        return ev.key.keysym.sym; */
 }
 
 char_t Term::getChar() const {
@@ -169,10 +168,8 @@ char_t Term::charAt(size_t x, size_t y) const {
 void Term::setFullscreen() {
 }
 
-void Term::setFont(const Font &f) {
-    /** TODO: copy constructor */
-    (void)f;
-    //font = f;
+void Term::setFont(const std::string &path, size_t sz) {
+    font_ = Font(p_ren_, path, sz);
     SDL_SetWindowSize(p_win_, cols_ * font_.w(), rows_ * font_.h());
     redraw();
 }
