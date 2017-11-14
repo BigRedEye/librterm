@@ -14,5 +14,6 @@ CTestTestfile.cmake
 *.ninja
 .*ninja_*
 *.cbp
+*.so
 
 libterm
