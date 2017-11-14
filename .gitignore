@@ -14,3 +14,5 @@ CTestTestfile.cmake
 *.ninja
 .*ninja_*
 *.cbp
+
+libterm
