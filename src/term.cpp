@@ -75,13 +75,12 @@ void Term::resize(size_t cols, size_t rows) {
     redraw();
 
     /* convert 1d-vector data_ to 2d-vector data2d */
-    std::vector<std::vector<Char>> data2d(rows, std::vector<Char>(cols, ' '));
+    std::vector<std::vector<Char>> data2d(cols, std::vector<Char>(rows, ' '));
     size_t i = 0;  // current row in data2d
     auto it = data_.begin();
-    for (int i = 0; i < rows_; ++i)
-        for (int j = 0; j < cols_; ++j)
-            data2d[i][j] = *++it;
-
+    for (int i = 0; i < std::min(rows_, rows); ++i)
+        for (int j = 0; j < std::min(rows_, rows); ++j)
+            data2d[i][j] = get(j, i);
     /* copy data2d to data_ */
     data_.resize(rows * cols);
     mask_.assign(rows * cols, true);
@@ -167,17 +166,32 @@ char_t Term::charAt(size_t x, size_t y) const {
     return get(x, y).ch_;
 }
 
-void Term::setFullscreen() {
-    SDL_SetWindowFullscreen(p_win_, SDL_WINDOW_FULLSCREEN);
+void Term::setFullscreen(bool fullscr) {
+    static bool isFullscr = false;
+    static SDL_DisplayMode *windowedMode = NULL;
+
+    if (windowedMode == NULL && !isFullscr) {
+        windowedMode = new SDL_DisplayMode;
+        SDL_GetWindowDisplayMode(p_win_, windowedMode);
+    }
+
+    if (isFullscr == fullscr)
+        return;
+
+    SDL_SetWindowFullscreen(p_win_, (fullscr ? SDL_WINDOW_FULLSCREEN : 0));
 
     /* set correct resolution */
     SDL_DisplayMode mode;
-    SDL_GetDesktopDisplayMode(0, &mode);
+    if (fullscr)
+        SDL_GetDesktopDisplayMode(0, &mode);
+    else
+        mode = *windowedMode;
     SDL_SetWindowDisplayMode(p_win_, &mode);
 
-    int cols = mode.w / font_.w();
-    int rows = mode.h / font_.h();
-    resize(cols, rows);
+    int ncols = mode.w / font_.w();
+    int nrows = mode.h / font_.h();
+    isFullscr = !isFullscr;
+    resize(ncols, nrows);
 }
 
 void Term::setFont(const std::string &path, size_t sz) {
