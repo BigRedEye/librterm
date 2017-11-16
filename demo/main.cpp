@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 
     term::Term terminal(80, 24);
     terminal.setFont("DejaVuSansMono.ttf", 18);
-    terminal.setFgColor(term::Color(0, 170, 0));
+    terminal.setFgColor(term::Color(100, 255, 100));
     terminal.setFullscreen(false);
     bool fullscr = false;
     while (terminal.running()) {
