@@ -3,14 +3,12 @@ cmake_minimum_required(VERSION 3.9)
 project(libterm)
 
 file(GLOB SOURCES
-    include/*.h
-    src/*.cpp
+    ./main.cpp
 )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
-add_library(${PROJECT_NAME} SHARED ${SOURCES})
-set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER include/term.h)
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} -lmingw32)
@@ -19,6 +17,7 @@ endif (WIN32)
 
 target_link_libraries(${PROJECT_NAME} -lSDL2)
 target_link_libraries(${PROJECT_NAME} -lSDL2_ttf)
+target_link_libraries(${PROJECT_NAME} -llibterm)
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} -mwindows)
