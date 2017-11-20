@@ -1,6 +1,6 @@
-libterm
+libterm [![Build Status](https://travis-ci.com/BigRedEye/libterm.svg?token=HabA2F1p73cnpyrz3Jdj&branch=master)](https://travis-ci.com/BigRedEye/libterm)
 =======
-[![Build Status](https://travis-ci.com/BigRedEye/libterm.svg?token=HabA2F1p73cnpyrz3Jdj&branch=master)](https://travis-ci.com/BigRedEye/libterm)
+
 
 Minimalistic terminal emulator written on C++ and SDL2.
 
