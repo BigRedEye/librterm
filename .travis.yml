@@ -11,7 +11,7 @@ addons:
     packages:
       - gcc-6
       - g++-6
-      - cmake
+      - cmake3
       - libsdl2-dev
       - libsdl2-ttf-dev
 
