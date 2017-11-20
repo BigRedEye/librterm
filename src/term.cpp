@@ -3,6 +3,8 @@
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 
+#include <chrono>
+
 namespace term {
 Term::Term()
     : Term(0, 0) {
@@ -17,30 +19,32 @@ Term::Term(size_t cols, size_t rows)
       quitRequested_(false),
       fgCol_(0, 255, 0),
       bgCol_(0, 0, 0),
-      font_() {
+      font_("DejaVuSansMono.ttf", 18) {
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     TTF_Init();
 
     p_win_ = SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
                                          SDL_WINDOWPOS_UNDEFINED,
-                                         cols_ * 10, rows_ * 10, 0);
+                                         font_.w() * cols_, font_.h() * rows_, 0);
     p_ren_ = SDL_CreateRenderer(p_win_, -1, 0);
-    font_ = Font(p_ren_, "DejaVuSansMono.ttf", 18);
-    SDL_SetWindowSize(p_win_, font_.w() * cols_, font_.h() * rows_);
+    //font_ = Font("DejaVuSansMono.ttf", 18);
+    
     SDL_RenderClear(p_ren_);
     SDL_RenderPresent(p_ren_);
-    font_.setRenderer(p_ren_);
+    //font_.setRenderer(p_ren_);
     SDL_AddEventWatch(eventFilter, this);
-    SDL_RenderFillRect(p_ren_, NULL);
-    p_tex_ = SDL_CreateTextureFromSurface(p_ren_, SDL_GetWindowSurface(p_win_));
-    //SDL_Set
-    //SDL_CreateTexture(p_ren_, SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, &w, &h);
+    
+    SDL_RenderClear(p_ren_);
+    SDL_RenderPresent(p_ren_);
+    p_tex_ = SDL_CreateTexture(p_ren_, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
+                               SDL_GetWindowSurface(p_win_)->w, SDL_GetWindowSurface(p_win_)->h);
     redraw();
 }
 
 Term::~Term() {
     font_.destroyFont();
-
+    
+    SDL_DestroyTexture(p_tex_);
     SDL_DestroyRenderer(p_ren_);
     SDL_DestroyWindow(p_win_);
 
@@ -72,6 +76,19 @@ Term::Char Term::get(size_t x, size_t y) const {
     return data_[y * cols_ + x];
 }
 
+void Term::updateTexture() {
+    SDL_Texture * tmp = p_tex_;
+
+    p_tex_ = SDL_CreateTexture(p_ren_, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
+                               SDL_GetWindowSurface(p_win_)->w, SDL_GetWindowSurface(p_win_)->h);
+    SDL_SetRenderTarget(p_ren_, p_tex_);
+    SDL_Rect dstRect{0, 0, 0, 0};
+    SDL_QueryTexture(p_tex_, NULL, NULL, &dstRect.w, &dstRect.h);
+    SDL_RenderCopy(p_ren_, tmp, NULL, &dstRect);
+    SDL_DestroyTexture(tmp);
+    SDL_SetRenderTarget(p_ren_, NULL);
+}
+
 void Term::resize(size_t ncols, size_t nrows) {
     /* we need to clear mask vector before resizing */
     redraw();
@@ -92,6 +109,7 @@ void Term::resize(size_t ncols, size_t nrows) {
 
     /* resize window */
     SDL_SetWindowSize(p_win_, ncols * font_.w(), nrows * font_.h());
+    updateTexture();
     
     int cursorX = cursorPos_ % cols_;
     int cursorY = cursorPos_ / cols_;
@@ -208,8 +226,8 @@ void Term::setFullscreen(bool fullscr) {
 }
 
 void Term::setFont(const std::string &path, size_t sz) {
-    font_ = Font(p_ren_, path, sz);
-    SDL_SetWindowSize(p_win_, cols_ * font_.w(), rows_ * font_.h());
+    font_ = Font(path, sz);
+    resize(cols_, rows_);
     redraw();
 }
 
@@ -236,6 +254,7 @@ void Term::setFgColor(const Color &fg, size_t x, size_t y) {
 }
 
 void Term::redraw() {
+    std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
     bool changed = true;
     for (size_t x = 0; x < cols_; ++x)
         for (size_t y = 0; y < rows_; ++y) {
@@ -244,9 +263,12 @@ void Term::redraw() {
             mask_[y * cols_ + x] = false;
         }
     if (changed) {
-        //SDL_RenderCopy(p_ren_, p_tex_, NULL, NULL);
+        SDL_RenderCopy(p_ren_, p_tex_, NULL, NULL);
         SDL_RenderPresent(p_ren_);
-    }
+    } 
+    std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> deltaTime = end - start;
+    std::cerr << deltaTime.count() << " msec" << std::endl;
 }
 
 void Term::redraw(size_t x, size_t y) {
@@ -255,7 +277,9 @@ void Term::redraw(size_t x, size_t y) {
                   static_cast<int>(font_.w()),
                   static_cast<int>(font_.h())};
     Char ch = get(x, y);
-    font_.render(dst, UTF8CharToBytes(ch.ch_).c_str(), ch.fg_, ch.bg_);
+    SDL_SetRenderTarget(p_ren_, p_tex_);
+    font_.render(p_ren_, dst, UTF8CharToBytes(ch.ch_).c_str(), ch.fg_, ch.bg_);
+    SDL_SetRenderTarget(p_ren_, NULL);
 }
 
 SDL_Event Term::getNextEvent(const std::set<int> &filter) const {

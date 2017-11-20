@@ -54,6 +54,7 @@ private:
 
     Char& get(size_t x, size_t y);
     Char get(size_t x, size_t y) const;
+    void updateTexture();
 
     static constexpr int EVENT_POLL_DELAY = 10;
 

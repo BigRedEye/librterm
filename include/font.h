@@ -15,22 +15,17 @@ class Font
 {
 public:
     Font();
-    Font(SDL_Renderer *ren, const std::string &path, size_t sz);
+    Font(const std::string &path, size_t sz);
     ~Font();
     Font& operator=(Font &&rhs);
     void destroyFont();
 
-    SDL_Texture * getTexture() const;
-    SDL_Rect getRect(char c) const;
-    void setRenderer(SDL_Renderer *ren);
-
-    void render(SDL_Rect dst, const char *str, Color fg, Color bg);
+    void render(SDL_Renderer *p_ren, SDL_Rect dst, const char *str, Color fg, Color bg);
 
     size_t w() const;
     size_t h() const;
 private:
     TTF_Font *p_font_;
-    SDL_Renderer *p_ren_;
 };
 }
 #endif // FONT_H
