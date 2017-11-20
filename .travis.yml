@@ -21,9 +21,9 @@ script:
 
     - export CC=/usr/bin/gcc-6
     - export CXX=/usr/bin/g++-6
-    
+
     - cmake . && make
     - sudo install liblibterm.so /usr/local/bin/
     - cd ./demo/
     - cmake . && make
-    - timeout 2s ./demo
+    - ./demo --test
