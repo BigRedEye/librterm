@@ -191,8 +191,6 @@ char_t Term::charAt(size_t x, size_t y) const {
 }
 
 void Term::setFullscreen(bool fullscr) {
-    
-    std::cerr << cols() << " : " << rows() << std::endl;
     static bool isFullscr = false;
     static SDL_DisplayMode *windowedMode = NULL;
     static int prevCols = 0, prevRows = 0;
@@ -217,7 +215,6 @@ void Term::setFullscreen(bool fullscr) {
         SDL_GetDesktopDisplayMode(0, &mode);
         ncols = mode.w / font_.w();
         nrows = mode.h / font_.h();
-        std::cerr << mode.w << " x " << mode.h << ", (" << font_.w() << " x " << font_.h() << ')' << std::endl;
     }
     else
         mode = *windowedMode;
