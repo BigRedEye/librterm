@@ -1,5 +1,5 @@
-#ifndef KEY_H
-#define KEY_H
+#ifndef LIBTERM_KEY_H
+#define LIBTERM_KEY_H
 
 #include <SDL2/SDL_keycode.h>
 #include "char.h"
@@ -108,4 +108,4 @@ private:
 };
 }
 
-#endif // KEY_H
+#endif // LIBTERM_KEY_H

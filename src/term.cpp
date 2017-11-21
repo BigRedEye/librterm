@@ -1,9 +1,10 @@
 #include "term.h"
 #include "font.h"
-#include <SDL2/SDL_ttf.h>
-#include <iostream>
 
+#ifdef LIBTERM_DEBUG
+#include <iostream>
 #include <chrono>
+#endif // LIBTERM_DEBUG
 
 namespace term {
 Term::Term()
@@ -191,7 +192,7 @@ char_t Term::charAt(size_t x, size_t y) const {
 
 void Term::setFullscreen(bool fullscr) {
     
-    std::cerr << cols() << ' ' << rows() << std::endl;
+    std::cerr << cols() << " : " << rows() << std::endl;
     static bool isFullscr = false;
     static SDL_DisplayMode *windowedMode = NULL;
     static int prevCols = 0, prevRows = 0;
@@ -216,6 +217,7 @@ void Term::setFullscreen(bool fullscr) {
         SDL_GetDesktopDisplayMode(0, &mode);
         ncols = mode.w / font_.w();
         nrows = mode.h / font_.h();
+        std::cerr << mode.w << " x " << mode.h << ", (" << font_.w() << " x " << font_.h() << ')' << std::endl;
     }
     else
         mode = *windowedMode;
@@ -256,7 +258,10 @@ void Term::setFgColor(const Color &fg, size_t x, size_t y) {
 }
 
 void Term::redraw() {
+#ifdef LIBTERM_DEBUG
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+#endif // LIBTERM_DEBUG
+
     bool changed = true;
     for (size_t x = 0; x < cols_; ++x)
         for (size_t y = 0; y < rows_; ++y) {
@@ -268,9 +273,11 @@ void Term::redraw() {
         SDL_RenderCopy(p_ren_, p_tex_, NULL, NULL);
         SDL_RenderPresent(p_ren_);
     } 
+#ifdef LIBTERM_DEBUG
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> deltaTime = end - start;
     std::cerr << deltaTime.count() << " msec" << std::endl;
+#endif // LIBTERM_DEBUG
 }
 
 void Term::redraw(size_t x, size_t y) {

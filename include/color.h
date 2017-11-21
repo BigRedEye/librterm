@@ -1,5 +1,5 @@
-#ifndef COLOR_H
-#define COLOR_H
+#ifndef LIBTERM_COLOR_H
+#define LIBTERM_COLOR_H
 
 #include <cstdint>
 #include <SDL2/SDL_pixels.h>
@@ -47,4 +47,4 @@ private:
 }
 
 
-#endif // COLOR_H
+#endif // LIBTERM_COLOR_H

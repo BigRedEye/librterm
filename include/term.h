@@ -1,5 +1,5 @@
-#ifndef TERM_H
-#define TERM_H
+#ifndef LIBTERM_TERM_H
+#define LIBTERM_TERM_H
 
 #include <cstddef>
 #include <vector>
@@ -89,4 +89,4 @@ private:
 
 int eventFilter(void *data, SDL_Event *ev);
 }
-#endif // TERM_H
+#endif // LIBTERM_TERM_H

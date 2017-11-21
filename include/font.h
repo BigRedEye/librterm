@@ -1,5 +1,5 @@
-#ifndef FONT_H
-#define FONT_H
+#ifndef LIBTERM_FONT_H
+#define LIBTERM_FONT_H
 
 #include <cstddef>
 #include <string>
@@ -28,4 +28,4 @@ private:
     TTF_Font *p_font_;
 };
 }
-#endif // FONT_H
+#endif // LIBTERM_FONT_H
