@@ -12,11 +12,21 @@ addons:
       - gcc-6
       - g++-6
       - cmake3
-      - libsdl2-dev
       - libsdl2-ttf-dev
 
 before_install:
     - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+
+    # install SDL2-2.0.7
+    - wget https://libsdl.org/release/SDL2-2.0.7.tar.gz
+    - tar xf SDL2-2.0.7.tar.gz
+    - cd SDL2-2.0.7
+    - mkdir build
+    - cd build
+    - ../configure
+    - make
+    - sudo make install
+    - cd ../..
 
 before_script:
     - "export DISPLAY=:99.0"
@@ -29,16 +39,6 @@ before_script:
     - export CC=/usr/bin/gcc-6
     - export CXX=/usr/bin/g++-6
 
-    # install SDL2-2.0.7
-    - wget https://libsdl.org/release/SDL2-2.0.7.tar.gz
-    - tar xf SDL2-2.0.7.tar.gz
-    - cd SDL2-2.0.7
-    - mkdir build
-    - cd build
-    - ../configure
-    - make
-    - sudo make install
-    - cd ../..
 
 script:
     - cmake . && make
