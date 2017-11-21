@@ -94,7 +94,7 @@ void Term::resize(size_t ncols, size_t nrows) {
     redraw();
 
     /* convert 1d-vector data_ to 2d-vector data2d */
-    std::vector<std::vector<Char>> data2d(ncols, std::vector<Char>(nrows, ' '));
+    std::vector<std::vector<Char>> data2d(ncols, std::vector<Char>(nrows, Char(' ', bgCol_, fgCol_)));
     size_t i = 0;  // current row in data2d
     auto it = data_.begin();
     for (int i = 0; i < std::min(cols_, ncols); ++i)
@@ -232,6 +232,7 @@ void Term::setFont(const std::string &path, size_t sz) {
 }
 
 void Term::setBgColor(const Color &bg) {
+    bgCol_ = bg;
     for (int i = 0; i < rows_; ++i)
         for (int j = 0; j < cols_; ++j)
             get(j, i).bg_ = bg, mask_[i * cols_ + j] = true;
@@ -243,6 +244,7 @@ void Term::setBgColor(const Color &bg, size_t x, size_t y) {
 }
 
 void Term::setFgColor(const Color &fg) {
+    fgCol_ = fg;
     for (int i = 0; i < rows_; ++i)
         for (int j = 0; j < cols_; ++j)
             get(j, i).fg_ = fg, mask_[i * cols_ + j] = true;
