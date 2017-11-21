@@ -17,6 +17,7 @@ Requirements
 
 Roadmap
 -------
-+ [ ] render terminal data to texture
-+ [ ] add some demos
-+ [ ] static lib build
++ [x] render terminal data to texture
++ [x] add some demos
++ [x] shared lib build
++ [x] travis-ci integration
