@@ -23,7 +23,7 @@ before_install:
     - cd SDL2-2.0.7
     - mkdir build
     - cd build
-    - ../configure
+    - ../configure --prefix /usr/
     - make
     - sudo make install
     - cd ../..
