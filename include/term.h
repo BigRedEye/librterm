@@ -20,12 +20,13 @@ public:
     Term(size_t cols, size_t rows);
     ~Term();
 
-    bool running() const;
+    bool isRunning() const;
     size_t cols() const;
     size_t rows() const;
     void delay(uint32_t msec) const;
 
     void resize(size_t cols_, size_t rows_);
+    void setWindowSize(size_t width, size_t height);
     void setChar(size_t x, size_t y, char_t c);
     void setFont(const std::string &s, size_t sz);
     void setBgColor(const Color &bg);
@@ -34,6 +35,9 @@ public:
     void setFgColor(const Color &fg, size_t x, size_t y);
 
     void setFullscreen(bool);
+    void setResizable(bool);
+    void setMinWindowSize(size_t width, size_t height);
+    void setMaxWindowSize(size_t width, size_t height);
 
     /* wait for next key */
     Key getKey() const;
@@ -49,12 +53,14 @@ public:
     SDL_Event getNextEvent(const std::set<int> &filter) const;
 
     friend int eventFilter(void *data_, SDL_Event *ev);
+
 private:
     class Char;
 
     Char& get(size_t x, size_t y);
     Char get(size_t x, size_t y) const;
     void updateTexture();
+    void renderToScreen();
 
     static constexpr int EVENT_POLL_DELAY = 10;
 

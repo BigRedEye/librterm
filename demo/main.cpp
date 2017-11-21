@@ -13,15 +13,19 @@ int main(int argc, char **argv)
     UNUSED(argv);
 
     term::Term terminal(80, 24);
-    terminal.setFont("DejaVuSansMono.ttf", 18);
+    int fontSize = 18;
+    terminal.setFont("DejaVuSansMono.ttf", fontSize);
     terminal.setFgColor(term::Color(100, 255, 100));
     terminal.setFullscreen(false);
+    terminal.setResizable(true);
+    terminal.setMaxWindowSize(1000, 1000);
+    terminal.setMinWindowSize(200, 100);
     if (argc > 1 && !strcmp(argv[1], "--test")) {
         for (int i = 0; i < 1000; ++i)
             terminal.setChar(rand() % terminal.cols(), rand() % terminal.rows(), 'a' + rand() % 26);
     } else {
         bool fullscr = false;
-        while(terminal.running()) {
+        while(terminal.isRunning()) {
             term::Key k = terminal.getKey();
             if (k.key() == term::F4 && k.mod() & term::ALT)
                 return 0;
@@ -29,6 +33,8 @@ int main(int argc, char **argv)
                 terminal.setFullscreen(!fullscr);
                 fullscr = !fullscr;
             }
+            if ((k.key() == term::NP_PLUS && k.mod() & term::CTRL) || (k.key() == '=' && k.mod() & (term::CTRL | term::SHIFT)))
+                terminal.setFont("DejaVuSansMono.ttf", ++fontSize);
             else if (k.toChar())
                 terminal.addChar(k.toChar());
             terminal.redraw();

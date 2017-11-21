@@ -12,6 +12,8 @@ Font::Font(const std::string &path, size_t sz) {
     if (!TTF_WasInit())
         TTF_Init();
     p_font_ = TTF_OpenFont(path.c_str(), sz);
+    if (!p_font_)
+        SDL_Log(TTF_GetError());
 }
 
 Font::~Font() {
@@ -32,7 +34,7 @@ Font& Font::operator=(Font &&rhs) {
 
 size_t Font::w() const {
     if (!p_font_)
-        return 0;
+        return 1;
 
     int w, h;
     TTF_SizeText(p_font_, "@", &w, &h);
@@ -41,15 +43,17 @@ size_t Font::w() const {
 
 size_t Font::h() const {
     if (!p_font_)
-        return 0;
+        return 1;
 
     return TTF_FontHeight(p_font_);
 }
 
 void Font::render(SDL_Renderer *p_ren, SDL_Rect dst, const char *str, Color fg, Color bg) {
+    if (!p_font_)
+        return;
     SDL_Surface *p_surf = TTF_RenderUTF8_Blended(p_font_,
-                                                str,
-                                                fg.toSDL_Color());
+                                            str,
+                                            fg.toSDL_Color());
     SDL_SetRenderDrawColor(p_ren, bg.r(), bg.g(), bg.b(), bg.a());
     SDL_RenderFillRect(p_ren, &dst);
     SDL_Texture *tex = SDL_CreateTextureFromSurface(p_ren, p_surf);

@@ -20,7 +20,7 @@ Term::Term(size_t cols, size_t rows)
       quitRequested_(false),
       fgCol_(0, 255, 0),
       bgCol_(0, 0, 0),
-      font_("DejaVuSansMono.ttf", 18) {
+      font_() {
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     TTF_Init();
 
@@ -28,11 +28,10 @@ Term::Term(size_t cols, size_t rows)
                                          SDL_WINDOWPOS_UNDEFINED,
                                          font_.w() * cols_, font_.h() * rows_, 0);
     p_ren_ = SDL_CreateRenderer(p_win_, -1, 0);
-    //font_ = Font("DejaVuSansMono.ttf", 18);
+    font_ = Font("DejaVuSansMono.ttf", 18);
     
     SDL_RenderClear(p_ren_);
     SDL_RenderPresent(p_ren_);
-    //font_.setRenderer(p_ren_);
     SDL_AddEventWatch(eventFilter, this);
     
     SDL_RenderClear(p_ren_);
@@ -61,7 +60,7 @@ size_t Term::rows() const {
     return rows_;
 }
 
-bool Term::running() const {
+bool Term::isRunning() const {
     return !quitRequested_;
 }
 
@@ -81,7 +80,8 @@ void Term::updateTexture() {
     SDL_Texture * tmp = p_tex_;
 
     p_tex_ = SDL_CreateTexture(p_ren_, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-                               SDL_GetWindowSurface(p_win_)->w, SDL_GetWindowSurface(p_win_)->h);
+                               SDL_GetWindowSurface(p_win_)->w - SDL_GetWindowSurface(p_win_)->w % font_.w(),
+                               SDL_GetWindowSurface(p_win_)->h - SDL_GetWindowSurface(p_win_)->h % font_.h());
     SDL_SetRenderTarget(p_ren_, p_tex_);
     SDL_Rect dstRect{0, 0, 0, 0};
     SDL_QueryTexture(p_tex_, NULL, NULL, &dstRect.w, &dstRect.h);
@@ -90,7 +90,9 @@ void Term::updateTexture() {
     SDL_SetRenderTarget(p_ren_, NULL);
 }
 
-void Term::resize(size_t ncols, size_t nrows) {
+void Term::setWindowSize(size_t width, size_t height) {    
+    size_t ncols = width / font_.w(),
+        nrows = height / font_.h();
     /* we need to clear mask vector before resizing */
     redraw();
 
@@ -109,7 +111,7 @@ void Term::resize(size_t ncols, size_t nrows) {
             data_[j * ncols + i] = data2d[i][j];
 
     /* resize window */
-    SDL_SetWindowSize(p_win_, ncols * font_.w(), nrows * font_.h());
+    SDL_SetWindowSize(p_win_, width, height);
     updateTexture();
     
     int cursorX = cursorPos_ % cols_;
@@ -119,6 +121,10 @@ void Term::resize(size_t ncols, size_t nrows) {
     rows_ = nrows;
     SDL_RenderClear(p_ren_);
     redraw();
+}
+
+void Term::resize(size_t ncols, size_t nrows) {
+    setWindowSize(ncols * font_.w(), nrows * font_.h());
 }
 
 void Term::setChar(size_t x, size_t y, char_t c) {
@@ -150,7 +156,7 @@ void Term::addChar(char_t c) {
 
 Key Term::getKey() const {
     SDL_StartTextInput();
-    while (running()) {
+    while (isRunning()) {
         SDL_Event evs[2];
         SDL_PumpEvents();
         SDL_WaitEvent(NULL);
@@ -181,7 +187,7 @@ Key Term::getKey() const {
 
 char_t Term::getChar() const {
     Key key;
-    while (running() && !((key = getKey()).toChar())) {
+    while (isRunning() && !((key = getKey()).toChar())) {
     }
     return key.toChar();
 }
@@ -222,6 +228,18 @@ void Term::setFullscreen(bool fullscr) {
 
     isFullscr = !isFullscr;
     resize(ncols, nrows);
+}
+
+void Term::setResizable(bool resizable) {
+    SDL_SetWindowResizable(p_win_, (resizable ? SDL_TRUE : SDL_FALSE));
+}
+
+void Term::setMinWindowSize(size_t width, size_t height) {
+    SDL_SetWindowMinimumSize(p_win_, width, height);
+}
+
+void Term::setMaxWindowSize(size_t width, size_t height) {
+    SDL_SetWindowMaximumSize(p_win_, width, height);
 }
 
 void Term::setFont(const std::string &path, size_t sz) {
@@ -267,14 +285,26 @@ void Term::redraw() {
             mask_[y * cols_ + x] = false;
         }
     if (changed) {
-        SDL_RenderCopy(p_ren_, p_tex_, NULL, NULL);
-        SDL_RenderPresent(p_ren_);
-    } 
+        renderToScreen();
+    }
 #ifdef LIBTERM_DEBUG
+    static int64_t frame = 0;
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> deltaTime = end - start;
-    std::cerr << deltaTime.count() << " msec" << std::endl;
+    std::cerr << "frame " << ++frame << ", deltaTime: " << deltaTime.count() << " msec" << std::endl;
 #endif // LIBTERM_DEBUG
+}
+
+void Term::renderToScreen() {
+    SDL_Rect textureRect{0, 0, 0, 0};
+    SDL_Rect windowRect{0, 0, 0, 0};
+    SDL_QueryTexture(p_tex_, NULL, NULL, &textureRect.w, &textureRect.h);
+    SDL_GetWindowSize(p_win_, &windowRect.w, &windowRect.h);
+    SDL_Rect dstRect{0, 0, std::min(textureRect.w, windowRect.w), 
+                           std::min(textureRect.h, windowRect.h)};
+    SDL_RenderClear(p_ren_);
+    SDL_RenderCopy(p_ren_, p_tex_, &dstRect, &dstRect);
+    SDL_RenderPresent(p_ren_);
 }
 
 void Term::redraw(size_t x, size_t y) {
@@ -304,6 +334,18 @@ int eventFilter(void *data, SDL_Event *ev) {
     switch (ev->type) {
     case SDL_QUIT:
         term->quitRequested_ = true;
+        break;
+    case SDL_WINDOWEVENT:
+        switch (ev->window.event) {
+        case SDL_WINDOWEVENT_RESIZED:
+            term->setWindowSize(ev->window.data1, ev->window.data2);
+            break;
+        case SDL_WINDOWEVENT_EXPOSED:
+            term->renderToScreen();
+            break;
+        default:
+            break;
+        }
         break;
     default:
         break;
