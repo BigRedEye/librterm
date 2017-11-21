@@ -22,6 +22,12 @@ before_script:
     - "export DISPLAY=:99.0"
     - "sh -e /etc/init.d/xvfb start"
     - sleep 3 # give xvfb some time to start
+    
+    - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
+    - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
+
+    - export CC=/usr/bin/gcc-6
+    - export CXX=/usr/bin/g++-6
 
     # install SDL2-2.0.7
     - wget https://libsdl.org/release/SDL2-2.0.7.tar.gz
@@ -32,15 +38,9 @@ before_script:
     - ../configure
     - make
     - sudo make install
-    - cd ..
+    - cd ../..
 
 script:
-    - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
-    - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
-
-    - export CC=/usr/bin/gcc-6
-    - export CXX=/usr/bin/g++-6
-
     - cmake . && make
     - sudo install liblibterm.so /usr/local/bin/
     - cd ./demo/
