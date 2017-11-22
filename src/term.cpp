@@ -231,7 +231,14 @@ void Term::setFullscreen(bool fullscr) {
 }
 
 void Term::setResizable(bool resizable) {
-    SDL_SetWindowResizable(p_win_, (resizable ? SDL_TRUE : SDL_FALSE));
+#if SDL_MAJOR_VERSION >= 2 || SDL_PATCHLEVEL >= 5
+    SDL_SetWindowResizable(p_win_, (resizable ? SDL_TRUE : SDL_FALSE));  
+#else
+    SDL_Log("SDL version %d.%d.%d doesn't support setWindowResizable, update it to 2.0.5", 
+             SDL_MAJOR_VERSION,
+             SDL_MINOR_VERSION,
+             SDL_PATCHLEVEL)
+#endif
 }
 
 void Term::setMinWindowSize(size_t width, size_t height) {
