@@ -16,9 +16,3 @@ Requirements
 + [SDL2_image](https://www.libsdl.org/projects/SDL_image/)
 + [cmake](https://cmake.org/)
 
-Roadmap
--------
-+ [x] render terminal data to texture
-+ [x] add some demos
-+ [x] shared lib build
-+ [x] travis-ci integration
