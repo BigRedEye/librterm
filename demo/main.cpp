@@ -17,6 +17,7 @@ int main(int argc, char **argv)
     terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", fontSize);
     terminal.setFgColor(term::Color(100, 255, 100));
     terminal.setFullscreen(false);
+    terminal.setResizable(true);
 
     terminal.setMaxWindowSize(1000, 1000);
     terminal.setMinWindowSize(200, 100);

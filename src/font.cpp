@@ -20,16 +20,16 @@ Font::~Font() {
     destroyFont();
 }
 
-void Font::destroyFont() {
-    if (p_font_)
-        TTF_CloseFont(p_font_);
-    p_font_ = NULL;
-}
-
 Font& Font::operator=(Font &&rhs) {
     p_font_ = rhs.p_font_;
     rhs.p_font_ = NULL;
     return *this;
+}
+
+void Font::destroyFont() {
+    if (p_font_)
+        TTF_CloseFont(p_font_);
+    p_font_ = NULL;
 }
 
 size_t Font::w() const {

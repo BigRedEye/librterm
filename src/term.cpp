@@ -24,29 +24,24 @@ Term::Term(size_t cols, size_t rows)
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     TTF_Init();
 
-    p_win_ = SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
+    p_win_ = SDL_Ptr<SDL_Window>(SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
                                          SDL_WINDOWPOS_UNDEFINED,
-                                         font_.w() * cols_, font_.h() * rows_, 0);
-    p_ren_ = SDL_CreateRenderer(p_win_, -1, 0);
-    font_ = Font("DejaVuSansMono.ttf", 18);
+                                         font_.w() * cols_, font_.h() * rows_, 0));
+    p_ren_ = SDL_Ptr<SDL_Renderer>(SDL_CreateRenderer(p_win_.get(), -1, 0));
     
-    SDL_RenderClear(p_ren_);
-    SDL_RenderPresent(p_ren_);
+    SDL_RenderClear(p_ren_.get());
+    SDL_RenderPresent(p_ren_.get());
     SDL_AddEventWatch(eventFilter, this);
     
-    SDL_RenderClear(p_ren_);
-    SDL_RenderPresent(p_ren_);
-    p_tex_ = SDL_CreateTexture(p_ren_, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-                               SDL_GetWindowSurface(p_win_)->w, SDL_GetWindowSurface(p_win_)->h);
+    SDL_RenderClear(p_ren_.get());
+    SDL_RenderPresent(p_ren_.get());
+    p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
+                                  SDL_GetWindowSurface(p_win_.get())->w, SDL_GetWindowSurface(p_win_.get())->h));
     redraw();
 }
 
 Term::~Term() {
     font_.destroyFont();
-    
-    SDL_DestroyTexture(p_tex_);
-    SDL_DestroyRenderer(p_ren_);
-    SDL_DestroyWindow(p_win_);
 
     TTF_Quit();
     SDL_Quit();
@@ -77,17 +72,17 @@ Term::Char Term::get(size_t x, size_t y) const {
 }
 
 void Term::updateTexture() {
-    SDL_Texture * tmp = p_tex_;
+    SDL_Texture * tmp = p_tex_.get();
 
-    p_tex_ = SDL_CreateTexture(p_ren_, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-                               SDL_GetWindowSurface(p_win_)->w - SDL_GetWindowSurface(p_win_)->w % font_.w(),
-                               SDL_GetWindowSurface(p_win_)->h - SDL_GetWindowSurface(p_win_)->h % font_.h());
-    SDL_SetRenderTarget(p_ren_, p_tex_);
+    p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
+                               SDL_GetWindowSurface(p_win_.get())->w - SDL_GetWindowSurface(p_win_.get())->w % font_.w(),
+                               SDL_GetWindowSurface(p_win_.get())->h - SDL_GetWindowSurface(p_win_.get())->h % font_.h()));
+    SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
     SDL_Rect dstRect{0, 0, 0, 0};
-    SDL_QueryTexture(p_tex_, NULL, NULL, &dstRect.w, &dstRect.h);
-    SDL_RenderCopy(p_ren_, tmp, NULL, &dstRect);
+    SDL_QueryTexture(p_tex_.get(), NULL, NULL, &dstRect.w, &dstRect.h);
+    SDL_RenderCopy(p_ren_.get(), tmp, NULL, &dstRect);
     SDL_DestroyTexture(tmp);
-    SDL_SetRenderTarget(p_ren_, NULL);
+    SDL_SetRenderTarget(p_ren_.get(), NULL);
 }
 
 void Term::setWindowSize(size_t width, size_t height) {    
@@ -111,7 +106,7 @@ void Term::setWindowSize(size_t width, size_t height) {
             data_[j * ncols + i] = data2d[i][j];
 
     /* resize window */
-    SDL_SetWindowSize(p_win_, width, height);
+    SDL_SetWindowSize(p_win_.get(), width, height);
     updateTexture();
     
     int cursorX = cursorPos_ % cols_;
@@ -119,7 +114,7 @@ void Term::setWindowSize(size_t width, size_t height) {
     cursorPos_ = cursorY * ncols + cursorX;
     cols_ = ncols;
     rows_ = nrows;
-    SDL_RenderClear(p_ren_);
+    SDL_RenderClear(p_ren_.get());
     redraw();
 }
 
@@ -204,7 +199,7 @@ void Term::setFullscreen(bool fullscr) {
     if (!isFullscr) {
         if (windowedMode == NULL) {
             windowedMode = new SDL_DisplayMode;
-            SDL_GetWindowDisplayMode(p_win_, windowedMode);
+            SDL_GetWindowDisplayMode(p_win_.get(), windowedMode);
         }
         prevCols = cols(), prevRows = rows();
     }
@@ -212,7 +207,7 @@ void Term::setFullscreen(bool fullscr) {
     if (isFullscr == fullscr)
         return;
 
-    SDL_SetWindowFullscreen(p_win_, (fullscr ? SDL_WINDOW_FULLSCREEN : 0));
+    SDL_SetWindowFullscreen(p_win_.get(), (fullscr ? SDL_WINDOW_FULLSCREEN : 0));
 
     /* set correct resolution */
     int ncols = prevCols, nrows = prevRows;
@@ -224,7 +219,7 @@ void Term::setFullscreen(bool fullscr) {
     }
     else
         mode = *windowedMode;
-    SDL_SetWindowDisplayMode(p_win_, &mode);
+    SDL_SetWindowDisplayMode(p_win_.get(), &mode);
 
     isFullscr = !isFullscr;
     resize(ncols, nrows);
@@ -232,7 +227,7 @@ void Term::setFullscreen(bool fullscr) {
 
 void Term::setResizable(bool resizable) {
 #if SDL_MAJOR_VERSION >= 2 && SDL_PATCHLEVEL >= 5
-    SDL_SetWindowResizable(p_win_, (resizable ? SDL_TRUE : SDL_FALSE));  
+    SDL_SetWindowResizable(p_win_.get(), (resizable ? SDL_TRUE : SDL_FALSE));  
 #else
     SDL_Log("SDL version %d.%d.%d doesn't support setWindowResizable, update it to 2.0.5", 
              SDL_MAJOR_VERSION,
@@ -242,11 +237,11 @@ void Term::setResizable(bool resizable) {
 }
 
 void Term::setMinWindowSize(size_t width, size_t height) {
-    SDL_SetWindowMinimumSize(p_win_, width, height);
+    SDL_SetWindowMinimumSize(p_win_.get(), width, height);
 }
 
 void Term::setMaxWindowSize(size_t width, size_t height) {
-    SDL_SetWindowMaximumSize(p_win_, width, height);
+    SDL_SetWindowMaximumSize(p_win_.get(), width, height);
 }
 
 void Term::setFont(const std::string &path, size_t sz) {
@@ -305,13 +300,13 @@ void Term::redraw() {
 void Term::renderToScreen() {
     SDL_Rect textureRect{0, 0, 0, 0};
     SDL_Rect windowRect{0, 0, 0, 0};
-    SDL_QueryTexture(p_tex_, NULL, NULL, &textureRect.w, &textureRect.h);
-    SDL_GetWindowSize(p_win_, &windowRect.w, &windowRect.h);
+    SDL_QueryTexture(p_tex_.get(), NULL, NULL, &textureRect.w, &textureRect.h);
+    SDL_GetWindowSize(p_win_.get(), &windowRect.w, &windowRect.h);
     SDL_Rect dstRect{0, 0, std::min(textureRect.w, windowRect.w), 
                            std::min(textureRect.h, windowRect.h)};
-    SDL_RenderClear(p_ren_);
-    SDL_RenderCopy(p_ren_, p_tex_, &dstRect, &dstRect);
-    SDL_RenderPresent(p_ren_);
+    SDL_RenderClear(p_ren_.get());
+    SDL_RenderCopy(p_ren_.get(), p_tex_.get(), &dstRect, &dstRect);
+    SDL_RenderPresent(p_ren_.get());
 }
 
 void Term::redraw(size_t x, size_t y) {
@@ -320,9 +315,9 @@ void Term::redraw(size_t x, size_t y) {
                   static_cast<int>(font_.w()),
                   static_cast<int>(font_.h())};
     Char ch = get(x, y);
-    SDL_SetRenderTarget(p_ren_, p_tex_);
-    font_.render(p_ren_, dst, UTF8CharToBytes(ch.ch_).c_str(), ch.fg_, ch.bg_);
-    SDL_SetRenderTarget(p_ren_, NULL);
+    SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
+    font_.render(p_ren_.get(), dst, UTF8CharToBytes(ch.ch_).c_str(), ch.fg_, ch.bg_);
+    SDL_SetRenderTarget(p_ren_.get(), NULL);
 }
 
 SDL_Event Term::getNextEvent(const std::set<int> &filter) const {

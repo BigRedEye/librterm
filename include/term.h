@@ -6,6 +6,7 @@
 #include <set>
 #include <SDL2/SDL.h>
 
+#include "sdl_ptr.h"
 #include "font.h"
 #include "key.h"
 #include "color.h"
@@ -71,9 +72,9 @@ private:
     std::vector<Char> data_;
     std::vector<char> mask_;
 
-    SDL_Window *p_win_;
-    SDL_Renderer *p_ren_;
-    SDL_Texture *p_tex_;
+    SDL_Ptr<SDL_Window> p_win_;
+    SDL_Ptr<SDL_Renderer> p_ren_;
+    SDL_Ptr<SDL_Texture> p_tex_;
 
     size_t cursorPos_;
     bool quitRequested_;
