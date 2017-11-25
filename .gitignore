@@ -17,4 +17,4 @@ CTestTestfile.cmake
 *.so
 *.a
 
-libterm
+rterm

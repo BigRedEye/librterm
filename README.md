@@ -1,4 +1,4 @@
-libterm [![Build Status](https://travis-ci.com/BigRedEye/libterm.svg?token=HabA2F1p73cnpyrz3Jdj&branch=master)](https://travis-ci.com/BigRedEye/libterm)
+rterm [![Build Status](https://travis-ci.com/BigRedEye/rterm.svg?token=HabA2F1p73cnpyrz3Jdj&branch=master)](https://travis-ci.com/BigRedEye/rterm)
 =======
 
 

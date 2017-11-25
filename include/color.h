@@ -1,5 +1,5 @@
-#ifndef LIBTERM_COLOR_H
-#define LIBTERM_COLOR_H
+#ifndef RTERM_COLOR_H
+#define RTERM_COLOR_H
 
 #include <cstdint>
 #include <SDL2/SDL_pixels.h>
@@ -47,4 +47,4 @@ private:
 }
 
 
-#endif // LIBTERM_COLOR_H
+#endif // RTERM_COLOR_H

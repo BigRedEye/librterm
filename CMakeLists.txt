@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(libterm)
+project(rterm)
 
 file(GLOB SOURCES
     include/*.h

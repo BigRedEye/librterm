@@ -1,5 +1,5 @@
-#ifndef LIBTERM_SDL_PTR_H
-#define LIBTERM_SDL_PTR_H
+#ifndef RTERM_SDL_PTR_H
+#define RTERM_SDL_PTR_H
 
 #include <memory>
 #include <SDL2/SDL.h>
@@ -54,4 +54,4 @@ template<typename T>
 using SDL_Ptr = std::unique_ptr<T, sdl_deleter<T>>;
 }
 
-#endif // LIBTERM_SDL_PTR_H
+#endif // RTERM_SDL_PTR_H

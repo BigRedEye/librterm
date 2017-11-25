@@ -4,10 +4,10 @@
 #include "tilefont.h"
 #include <iostream>
 
-#ifdef LIBTERM_DEBUG
+#ifdef RTERM_DEBUG
 #include <iostream>
 #include <chrono>
-#endif // LIBTERM_DEBUG
+#endif // RTERM_DEBUG
 
 namespace term {
 Term::Term()
@@ -295,9 +295,9 @@ void Term::setFgColor(const Color &fg, size_t x, size_t y) {
 }
 
 void Term::redraw(bool needRender) {
-#ifdef LIBTERM_DEBUG
+#ifdef RTERM_DEBUG
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-#endif // LIBTERM_DEBUG
+#endif // RTERM_DEBUG
 
     bool changed = true;
     for (size_t x = 0; x < cols_; ++x)
@@ -309,12 +309,12 @@ void Term::redraw(bool needRender) {
     if (changed && needRender) {
         renderToScreen();
     }
-#ifdef LIBTERM_DEBUG
+#ifdef RTERM_DEBUG
     static int64_t frame = 0;
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> deltaTime = end - start;
     std::cerr << "frame " << ++frame << ", deltaTime: " << deltaTime.count() << " msec" << std::endl;
-#endif // LIBTERM_DEBUG
+#endif // RTERM_DEBUG
 }
 
 void Term::renderToScreen() {

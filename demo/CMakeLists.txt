@@ -19,7 +19,7 @@ endif (WIN32)
 target_link_libraries(${PROJECT_NAME} -lSDL2)
 target_link_libraries(${PROJECT_NAME} -lSDL2_ttf)
 target_link_libraries(${PROJECT_NAME} -lSDL2_image)
-target_link_libraries(${PROJECT_NAME} -llibterm)
+target_link_libraries(${PROJECT_NAME} -lrterm)
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} -mwindows)

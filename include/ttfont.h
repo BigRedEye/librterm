@@ -1,5 +1,5 @@
-#ifndef LIBTERM_TTFONT_H
-#define LIBTERM_TTFONT_H
+#ifndef RTERM_TTFONT_H
+#define RTERM_TTFONT_H
 
 #include <SDL2/SDL_ttf.h>
 
@@ -25,4 +25,4 @@ private:
 };
 }
 
-#endif // LIBTERM_TTFONT_H
+#endif // RTERM_TTFONT_H

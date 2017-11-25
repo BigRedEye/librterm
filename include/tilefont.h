@@ -1,5 +1,5 @@
-#ifndef LIBTERM_TILEFONT_H
-#define LIBTERM_TILEFONT_H
+#ifndef RTERM_TILEFONT_H
+#define RTERM_TILEFONT_H
 
 #include "font.h"
 #include "sdl_ptr.h"
@@ -27,4 +27,4 @@ private:
 };
 }
 
-#endif // LIBTERM_TILEFONT_H
+#endif // RTERM_TILEFONT_H

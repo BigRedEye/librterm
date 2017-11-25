@@ -1,5 +1,5 @@
-#ifndef LIBTERM_CHAR_H
-#define LIBTERM_CHAR_H
+#ifndef RTERM_CHAR_H
+#define RTERM_CHAR_H
 
 #include <codecvt>
 #include <locale>
@@ -18,4 +18,4 @@ inline std::string UTF8CharToBytes(char_t c) {
 }
 }
 
-#endif // LIBTERM_CHAR_H
+#endif // RTERM_CHAR_H

@@ -1,5 +1,5 @@
-#ifndef LIBTERM_FONT_H
-#define LIBTERM_FONT_H
+#ifndef RTERM_FONT_H
+#define RTERM_FONT_H
 
 #include <cstddef>
 #include <string>
@@ -19,4 +19,4 @@ public:
     virtual size_t h() const { return 1; }
 };
 }
-#endif // LIBTERM_FONT_H
+#endif // RTERM_FONT_H
