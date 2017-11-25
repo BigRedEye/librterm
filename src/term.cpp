@@ -1,5 +1,8 @@
 #include "term.h"
 #include "font.h"
+#include "ttfont.h"
+#include "tilefont.h"
+#include <iostream>
 
 #ifdef LIBTERM_DEBUG
 #include <iostream>
@@ -20,13 +23,14 @@ Term::Term(size_t cols, size_t rows)
       quitRequested_(false),
       fgCol_(0, 255, 0),
       bgCol_(0, 0, 0),
-      font_() {
+      p_font_(new TTFont()) {
+    std::cerr << "Term::Term starts" << std::endl;
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     TTF_Init();
 
     p_win_ = SDL_Ptr<SDL_Window>(SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
                                          SDL_WINDOWPOS_UNDEFINED,
-                                         font_.w() * cols_, font_.h() * rows_, 0));
+                                         p_font_->w() * cols_, p_font_->h() * rows_, 0));
     p_ren_ = SDL_Ptr<SDL_Renderer>(SDL_CreateRenderer(p_win_.get(), -1, 0));
     
     SDL_RenderClear(p_ren_.get());
@@ -38,10 +42,11 @@ Term::Term(size_t cols, size_t rows)
     p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
                                   SDL_GetWindowSurface(p_win_.get())->w, SDL_GetWindowSurface(p_win_.get())->h));
     redraw();
+    std::cerr << "Term::Term ends" << std::endl;
 }
 
 Term::~Term() {
-    font_.destroyFont();
+    delete p_font_;
 
     TTF_Quit();
     SDL_Quit();
@@ -75,8 +80,9 @@ void Term::updateTexture() {
     SDL_Texture * tmp = p_tex_.get();
 
     p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-                               SDL_GetWindowSurface(p_win_.get())->w - SDL_GetWindowSurface(p_win_.get())->w % font_.w(),
-                               SDL_GetWindowSurface(p_win_.get())->h - SDL_GetWindowSurface(p_win_.get())->h % font_.h()));
+                               SDL_GetWindowSurface(p_win_.get())->w - SDL_GetWindowSurface(p_win_.get())->w % p_font_->w(),
+                               SDL_GetWindowSurface(p_win_.get())->h - SDL_GetWindowSurface(p_win_.get())->h % p_font_->h()));
+
     SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
     SDL_Rect dstRect{0, 0, 0, 0};
     SDL_QueryTexture(p_tex_.get(), NULL, NULL, &dstRect.w, &dstRect.h);
@@ -86,8 +92,8 @@ void Term::updateTexture() {
 }
 
 void Term::setWindowSize(size_t width, size_t height) {    
-    size_t ncols = width / font_.w(),
-        nrows = height / font_.h();
+    size_t ncols = width / p_font_->w(),
+           nrows = height / p_font_->h();
     /* we need to clear mask vector before resizing */
     redraw();
 
@@ -119,7 +125,7 @@ void Term::setWindowSize(size_t width, size_t height) {
 }
 
 void Term::resize(size_t ncols, size_t nrows) {
-    setWindowSize(ncols * font_.w(), nrows * font_.h());
+    setWindowSize(ncols * p_font_->w(), nrows * p_font_->h());
 }
 
 void Term::setChar(size_t x, size_t y, char_t c) {
@@ -214,8 +220,8 @@ void Term::setFullscreen(bool fullscr) {
     SDL_DisplayMode mode;
     if (fullscr) {
         SDL_GetDesktopDisplayMode(0, &mode);
-        ncols = mode.w / font_.w();
-        nrows = mode.h / font_.h();
+        ncols = mode.w / p_font_->w();
+        nrows = mode.h / p_font_->h();
     }
     else
         mode = *windowedMode;
@@ -245,7 +251,19 @@ void Term::setMaxWindowSize(size_t width, size_t height) {
 }
 
 void Term::setFont(const std::string &path, size_t sz) {
-    font_ = Font(path, sz);
+    if (p_font_)
+        delete p_font_;
+
+    p_font_ = new TTFont(path, sz);
+    resize(cols_, rows_);
+    redraw();
+}
+
+void Term::setFont(const std::string &path, size_t w, size_t h) {
+    if (p_font_)
+        delete p_font_;
+
+    p_font_ = new TileFont(path, w, h);
     resize(cols_, rows_);
     redraw();
 }
@@ -310,13 +328,13 @@ void Term::renderToScreen() {
 }
 
 void Term::redraw(size_t x, size_t y) {
-    SDL_Rect dst {static_cast<int>(x * font_.w()),
-                  static_cast<int>(y * font_.h()),
-                  static_cast<int>(font_.w()),
-                  static_cast<int>(font_.h())};
+    SDL_Rect dst {static_cast<int>(x * p_font_->w()),
+                  static_cast<int>(y * p_font_->h()),
+                  static_cast<int>(p_font_->w()),
+                  static_cast<int>(p_font_->h())};
     Char ch = get(x, y);
     SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
-    font_.render(p_ren_.get(), dst, UTF8CharToBytes(ch.ch_).c_str(), ch.fg_, ch.bg_);
+    p_font_->render(p_ren_.get(), dst, UTF8CharToBytes(ch.ch_).c_str(), ch.fg_, ch.bg_);
     SDL_SetRenderTarget(p_ren_.get(), NULL);
 }
 

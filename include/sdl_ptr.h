@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 namespace term {
 
@@ -39,6 +40,13 @@ template<>
 struct sdl_deleter<SDL_Texture> {
     void operator()(SDL_Texture* _ptr) {
         SDL_DestroyTexture(_ptr);
+    }
+};
+
+template<>
+struct sdl_deleter<TTF_Font> {
+    void operator()(TTF_Font* _ptr) {
+        TTF_CloseFont(_ptr);
     }
 };
 

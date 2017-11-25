@@ -30,6 +30,7 @@ public:
     void setWindowSize(size_t width, size_t height);
     void setChar(size_t x, size_t y, char_t c);
     void setFont(const std::string &s, size_t sz);
+    void setFont(const std::string &s, size_t w, size_t h);
     void setBgColor(const Color &bg);
     void setBgColor(const Color &bg, size_t x, size_t y);
     void setFgColor(const Color &fg);
@@ -67,11 +68,11 @@ private:
 
     size_t cols_;
     size_t rows_;
-    Font font_;
-
+    
     std::vector<Char> data_;
     std::vector<char> mask_;
-
+    
+    Font *p_font_;
     SDL_Ptr<SDL_Window> p_win_;
     SDL_Ptr<SDL_Renderer> p_ren_;
     SDL_Ptr<SDL_Texture> p_tex_;

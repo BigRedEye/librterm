@@ -12,9 +12,9 @@ int main(int argc, char **argv)
     UNUSED(argc);
     UNUSED(argv);
 
-    term::Term terminal(80, 24);
-    int fontSize = 18;
-    terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", fontSize);
+    term::Term terminal(20, 20);
+    int fontSize = 10;
+    terminal.setFont("10x10.jpg", fontSize, fontSize);
     terminal.setFgColor(term::Color(100, 255, 100));
     terminal.setFullscreen(false);
     terminal.setResizable(true);
