@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 
     term::Term terminal(80, 24);
     int fontSize = 18;
-    terminal.setFont("DejaVuSansMono.ttf", fontSize);
+    terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", fontSize);
     terminal.setFgColor(term::Color(100, 255, 100));
     terminal.setFullscreen(false);
 
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
                 fullscr = !fullscr;
             }
             if ((k.key() == term::NP_PLUS && k.mod() & term::CTRL) || (k.key() == '=' && k.mod() & (term::CTRL | term::SHIFT)))
-                terminal.setFont("DejaVuSansMono.ttf", ++fontSize);
+                terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", ++fontSize);
             else if (k.toChar())
                 terminal.addChar(k.toChar());
             terminal.redraw();
