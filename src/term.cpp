@@ -24,7 +24,6 @@ Term::Term(size_t cols, size_t rows)
       fgCol_(0, 255, 0),
       bgCol_(0, 0, 0),
       p_font_(new TTFont()) {
-    std::cerr << "Term::Term starts" << std::endl;
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     TTF_Init();
 
@@ -42,7 +41,6 @@ Term::Term(size_t cols, size_t rows)
     p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
                                   SDL_GetWindowSurface(p_win_.get())->w, SDL_GetWindowSurface(p_win_.get())->h));
     redraw();
-    std::cerr << "Term::Term ends" << std::endl;
 }
 
 Term::~Term() {
@@ -95,7 +93,7 @@ void Term::setWindowSize(size_t width, size_t height) {
     size_t ncols = width / p_font_->w(),
            nrows = height / p_font_->h();
     /* we need to clear mask vector before resizing */
-    redraw();
+    redraw(false);
 
     /* convert 1d-vector data_ to 2d-vector data2d */
     std::vector<std::vector<Char>> data2d(ncols, std::vector<Char>(nrows, Char(' ', bgCol_, fgCol_)));
@@ -250,6 +248,10 @@ void Term::setMaxWindowSize(size_t width, size_t height) {
     SDL_SetWindowMaximumSize(p_win_.get(), width, height);
 }
 
+void Term::close() {
+
+}
+
 void Term::setFont(const std::string &path, size_t sz) {
     if (p_font_)
         delete p_font_;
@@ -292,7 +294,7 @@ void Term::setFgColor(const Color &fg, size_t x, size_t y) {
     mask_[y * cols_ + x] = true;
 }
 
-void Term::redraw() {
+void Term::redraw(bool needRender) {
 #ifdef LIBTERM_DEBUG
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 #endif // LIBTERM_DEBUG
@@ -304,7 +306,7 @@ void Term::redraw() {
                 redraw(x, y), changed = true;
             mask_[y * cols_ + x] = false;
         }
-    if (changed) {
+    if (changed && needRender) {
         renderToScreen();
     }
 #ifdef LIBTERM_DEBUG

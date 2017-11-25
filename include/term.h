@@ -40,6 +40,7 @@ public:
     void setResizable(bool);
     void setMinWindowSize(size_t width, size_t height);
     void setMaxWindowSize(size_t width, size_t height);
+    void close();
 
     /* wait for next key */
     Key getKey() const;
@@ -48,7 +49,7 @@ public:
 
     void addChar(char_t c);
 
-    void redraw();
+    void redraw(bool needRender = true);
     void redraw(size_t x, size_t y);
 
     char_t charAt(size_t x, size_t y) const;

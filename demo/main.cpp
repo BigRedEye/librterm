@@ -12,9 +12,9 @@ int main(int argc, char **argv)
     UNUSED(argc);
     UNUSED(argv);
 
-    term::Term terminal(20, 20);
+    term::Term terminal(80, 24);
     int fontSize = 10;
-    terminal.setFont("10x10.jpg", fontSize, fontSize);
+    terminal.setFont("../fonts/tile/10x10.jpg", 10, 10);
     terminal.setFgColor(term::Color(100, 255, 100));
     terminal.setFullscreen(false);
     terminal.setResizable(true);

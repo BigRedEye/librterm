@@ -7,7 +7,7 @@ TileFont::TileFont()
 }
 
 TileFont::TileFont(const std::string &path, size_t _w, size_t _h)
-    : w_(_w), h_(_h), p_tilemapTexture(NULL), Font() {
+    : w_(_w), h_(_h), Font() {
     static bool IMG_WasInit = false;
     if (!IMG_WasInit) {
         IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP);
@@ -21,7 +21,7 @@ TileFont::TileFont(const std::string &path, size_t _w, size_t _h)
 
 TileFont& TileFont::operator=(TileFont &&rhs) {
     p_tilemap_ = std::move(rhs.p_tilemap_);
-    p_tilemapTexture_ = SDL_Ptr<SDL_Window>(NULL);
+    p_tilemapTexture_.reset();
     w_ = rhs.w_;
     h_ = rhs.h_;
 
@@ -52,7 +52,7 @@ void TileFont::render(SDL_Renderer *p_ren, SDL_Rect dst, const char *str, Color 
     if (!p_tilemap_)
         return;
     if (!p_tilemapTexture_.get())
-        p_tilemapTexture_ = SDL_Ptr<SDL_Window>(SDL_CreateTextureFromSurface(p_ren, p_tilemap_.get()));
+        p_tilemapTexture_ = SDL_Ptr<SDL_Texture>(SDL_CreateTextureFromSurface(p_ren, p_tilemap_.get()));
     SDL_SetRenderDrawColor(p_ren, bg.r(), bg.g(), bg.b(), bg.a());
     SDL_RenderFillRect(p_ren, &dst);
     
@@ -66,7 +66,7 @@ void TileFont::render(SDL_Renderer *p_ren, SDL_Rect dst, const char *str, Color 
         charDst.x = dst.x + charDst.w * i;
         charDst.h = dst.h;
         charDst.y = dst.y;
-        SDL_RenderCopy(p_ren, p_tilemapTexture, &src, &charDst);
+        SDL_RenderCopy(p_ren, p_tilemapTexture_.get(), &src, &charDst);
     }
 }
 }
