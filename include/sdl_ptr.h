@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-namespace term {
+namespace rterm {
 
 template<typename T>
 struct sdl_deleter {

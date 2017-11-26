@@ -9,7 +9,7 @@
 #include <chrono>
 #endif // RTERM_DEBUG
 
-namespace term {
+namespace rterm {
 Term::Term()
     : Term(0, 0) {
 }

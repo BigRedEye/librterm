@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <SDL2/SDL_pixels.h>
 
-namespace term {
+namespace rterm {
 class Color {
 public:
     explicit Color(uint8_t _r = 0,

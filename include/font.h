@@ -8,7 +8,7 @@
 
 #include "color.h"
 
-namespace term {
+namespace rterm {
 
 class Font
 {
