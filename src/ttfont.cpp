@@ -1,7 +1,7 @@
 #include "ttfont.h"
 #include <SDL2/SDL_ttf.h>
 
-namespace term {
+namespace rterm {
 TTFont::TTFont()
     : Font() {
 }
