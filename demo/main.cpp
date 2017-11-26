@@ -12,10 +12,10 @@ int main(int argc, char **argv)
     UNUSED(argc);
     UNUSED(argv);
 
-    term::Term terminal(80, 24);
+    rterm::Term terminal(80, 24);
     int fontSize = 10;
     terminal.setFont("../fonts/tile/10x10.jpg", 10, 10);
-    terminal.setFgColor(term::Color(100, 255, 100));
+    terminal.setFgColor(rterm::Color(100, 255, 100));
     terminal.setFullscreen(false);
     terminal.setResizable(true);
 
@@ -27,14 +27,14 @@ int main(int argc, char **argv)
     } else {
         bool fullscr = false;
         while(terminal.isRunning()) {
-            term::Key k = terminal.getKey();
-            if (k.key() == term::F4 && k.mod() & term::ALT)
+            rterm::Key k = terminal.getKey();
+            if (k.key() == rterm::F4 && k.mod() & rterm::ALT)
                 return 0;
-            if (k.key() == term::F1) {
+            if (k.key() == rterm::F1) {
                 terminal.setFullscreen(!fullscr);
                 fullscr = !fullscr;
             }
-            if ((k.key() == term::NP_PLUS && k.mod() & term::CTRL) || (k.key() == '=' && k.mod() & (term::CTRL | term::SHIFT)))
+            if ((k.key() == rterm::NP_PLUS && k.mod() & rterm::CTRL) || (k.key() == '=' && k.mod() & (rterm::CTRL | rterm::SHIFT)))
                 terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", ++fontSize);
             else if (k.toChar())
                 terminal.addChar(k.toChar());
