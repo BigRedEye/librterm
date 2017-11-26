@@ -1,7 +1,7 @@
 #include "tilefont.h"
 #include <SDL2/SDL_image.h>
 
-namespace term {
+namespace rterm {
 TileFont::TileFont()
     : Font() {
 }

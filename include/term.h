@@ -11,9 +11,9 @@
 #include "key.h"
 #include "color.h"
 #include "char.h"
+#include "virtualconsole.h"
 
-namespace term {
-typedef char32_t char_t;
+namespace rterm {
 
 class Term {
 public:
@@ -49,7 +49,7 @@ public:
 
     void addChar(char_t c);
 
-    void redraw(bool needRender = true);
+    void redraw(bool force = false);
     void redraw(size_t x, size_t y);
 
     char_t charAt(size_t x, size_t y) const;
@@ -58,42 +58,22 @@ public:
     friend int eventFilter(void *data_, SDL_Event *ev);
 
 private:
-    class Char;
-
     Char& get(size_t x, size_t y);
     Char get(size_t x, size_t y) const;
     void updateTexture();
     void renderToScreen();
 
-    static constexpr int EVENT_POLL_DELAY = 10;
-
-    size_t cols_;
-    size_t rows_;
-    
-    std::vector<Char> data_;
-    std::vector<char> mask_;
+    VirtualConsole console_;
     
     Font *p_font_;
     SDL_Ptr<SDL_Window> p_win_;
     SDL_Ptr<SDL_Renderer> p_ren_;
     SDL_Ptr<SDL_Texture> p_tex_;
 
-    size_t cursorPos_;
     bool quitRequested_;
 
     Color fgCol_;
     Color bgCol_;
-};
-
-class Term::Char {
-public:
-    Char(char_t ch = 0, Color bg = Color(0, 0, 0), Color fg = Color(255, 255, 255))
-        : ch_(ch), bg_(bg), fg_(fg) {}
-
-    friend class Term;
-private:
-    char_t ch_;
-    Color bg_, fg_;
 };
 
 int eventFilter(void *data, SDL_Event *ev);

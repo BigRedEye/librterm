@@ -13,14 +13,16 @@ int main(int argc, char **argv)
     UNUSED(argv);
 
     rterm::Term terminal(80, 24);
+    terminal.setMaxWindowSize(2000, 2000);
+    terminal.setMinWindowSize(200, 100);
+    SDL_Log("%d", terminal.cols());
+    SDL_Log("%d", terminal.rows());
     int fontSize = 10;
     terminal.setFont("../fonts/tile/10x10.jpg", 10, 10);
     terminal.setFgColor(rterm::Color(100, 255, 100));
     terminal.setFullscreen(false);
     terminal.setResizable(true);
 
-    terminal.setMaxWindowSize(1000, 1000);
-    terminal.setMinWindowSize(200, 100);
     if (argc > 1 && !strcmp(argv[1], "--test")) {
         for (int i = 0; i < 1000; ++i)
             terminal.setChar(rand() % terminal.cols(), rand() % terminal.rows(), 'a' + rand() % 26);

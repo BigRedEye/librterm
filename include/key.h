@@ -4,7 +4,7 @@
 #include <SDL2/SDL_keycode.h>
 #include "char.h"
 
-namespace term {
+namespace rterm {
 
 enum KeyCode {
     UNKNOWN = 0,

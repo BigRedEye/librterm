@@ -6,7 +6,7 @@
 #include "font.h"
 #include "sdl_ptr.h"
 
-namespace term {
+namespace rterm {
 
 class TTFont : public Font {
 public:
@@ -25,4 +25,4 @@ private:
 };
 }
 
-#endif // RTERM_TTFONT_H
+#endif // 

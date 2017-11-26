@@ -14,12 +14,8 @@ Term::Term()
     : Term(0, 0) {
 }
 
-Term::Term(size_t cols, size_t rows)
-    : cols_(cols),
-      rows_(rows),
-      data_(rows * cols, ' '),
-      mask_(rows * cols, true),
-      cursorPos_(),
+Term::Term(size_t ncols, size_t nrows)
+    : console_(ncols, nrows),
       quitRequested_(false),
       fgCol_(0, 255, 0),
       bgCol_(0, 0, 0),
@@ -29,7 +25,7 @@ Term::Term(size_t cols, size_t rows)
 
     p_win_ = SDL_Ptr<SDL_Window>(SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
                                          SDL_WINDOWPOS_UNDEFINED,
-                                         p_font_->w() * cols_, p_font_->h() * rows_, 0));
+                                         p_font_->w() * cols(), p_font_->h() * rows(), 0));
     p_ren_ = SDL_Ptr<SDL_Renderer>(SDL_CreateRenderer(p_win_.get(), -1, 0));
     
     SDL_RenderClear(p_ren_.get());
@@ -51,11 +47,11 @@ Term::~Term() {
 }
 
 size_t Term::cols() const {
-    return cols_;
+    return console_.cols();
 }
 
 size_t Term::rows() const {
-    return rows_;
+    return console_.rows();
 }
 
 bool Term::isRunning() const {
@@ -64,14 +60,6 @@ bool Term::isRunning() const {
 
 void Term::delay(uint32_t msec) const {
     SDL_Delay(msec);
-}
-
-Term::Char& Term::get(size_t x, size_t y) {
-    return data_[y * cols_ + x];
-}
-
-Term::Char Term::get(size_t x, size_t y) const {
-    return data_[y * cols_ + x];
 }
 
 void Term::updateTexture() {
@@ -92,34 +80,14 @@ void Term::updateTexture() {
 void Term::setWindowSize(size_t width, size_t height) {    
     size_t ncols = width / p_font_->w(),
            nrows = height / p_font_->h();
-    /* we need to clear mask vector before resizing */
-    redraw(false);
-
-    /* convert 1d-vector data_ to 2d-vector data2d */
-    std::vector<std::vector<Char>> data2d(ncols, std::vector<Char>(nrows, Char(' ', bgCol_, fgCol_)));
-    size_t i = 0;  // current row in data2d
-    auto it = data_.begin();
-    for (int i = 0; i < std::min(cols_, ncols); ++i)
-        for (int j = 0; j < std::min(rows_, nrows); ++j)
-            data2d[i][j] = get(i, j);
-    /* copy data2d to data_ */
-    data_.resize(nrows * ncols);
-    mask_.assign(nrows * ncols, true);
-    for (int i = 0; i < ncols; ++i)
-        for (int j = 0; j < nrows; ++j)
-            data_[j * ncols + i] = data2d[i][j];
+    console_.resize(ncols, nrows);
 
     /* resize window */
     SDL_SetWindowSize(p_win_.get(), width, height);
     updateTexture();
-    
-    int cursorX = cursorPos_ % cols_;
-    int cursorY = cursorPos_ / cols_;
-    cursorPos_ = cursorY * ncols + cursorX;
-    cols_ = ncols;
-    rows_ = nrows;
+
     SDL_RenderClear(p_ren_.get());
-    redraw();
+    redraw(true);
 }
 
 void Term::resize(size_t ncols, size_t nrows) {
@@ -127,30 +95,11 @@ void Term::resize(size_t ncols, size_t nrows) {
 }
 
 void Term::setChar(size_t x, size_t y, char_t c) {
-    mask_[y * cols_ + x] = true;
-    get(x, y).ch_ = c;
+    console_.set(x, y, Char(c, bgCol_, fgCol_));
 }
 
 void Term::addChar(char_t c) {
-    switch (c) {
-    case '\n':
-    case '\r':
-        cursorPos_ = (cursorPos_ + cols_ - cursorPos_ % cols_) % data_.size();
-        break;
-    case '\b':
-        cursorPos_ = cursorPos_ ? cursorPos_ - 1: 0;
-        data_[cursorPos_].ch_ = ' ';
-        mask_[cursorPos_] = true;
-        break;
-    case '\t':
-        for (int i = 0; i < 4; ++i)
-            addChar(' ');
-        break;
-    default:
-        mask_[cursorPos_] = true;
-        data_[cursorPos_++].ch_ = c;
-        cursorPos_ %= data_.size();
-    }
+    console_.addChar(Char(c, bgCol_, fgCol_));
 }
 
 Key Term::getKey() const {
@@ -192,7 +141,7 @@ char_t Term::getChar() const {
 }
 
 char_t Term::charAt(size_t x, size_t y) const {
-    return get(x, y).ch_;
+    return console_.get(x, y).ch_;
 }
 
 void Term::setFullscreen(bool fullscr) {
@@ -257,8 +206,8 @@ void Term::setFont(const std::string &path, size_t sz) {
         delete p_font_;
 
     p_font_ = new TTFont(path, sz);
-    resize(cols_, rows_);
-    redraw();
+    setWindowSize(p_font_->w() * cols(), p_font_->h() * rows());
+    redraw(true);
 }
 
 void Term::setFont(const std::string &path, size_t w, size_t h) {
@@ -266,49 +215,50 @@ void Term::setFont(const std::string &path, size_t w, size_t h) {
         delete p_font_;
 
     p_font_ = new TileFont(path, w, h);
-    resize(cols_, rows_);
-    redraw();
+    setWindowSize(p_font_->w() * cols(), p_font_->h() * rows());
+    redraw(true);
 }
 
 void Term::setBgColor(const Color &bg) {
     bgCol_ = bg;
-    for (int i = 0; i < rows_; ++i)
-        for (int j = 0; j < cols_; ++j)
-            get(j, i).bg_ = bg, mask_[i * cols_ + j] = true;
+    for (int i = 0; i < rows(); ++i)
+        for (int j = 0; j < cols(); ++j)
+            console_.set(j, i, Char(console_.get(j, i).c(),
+                                    bg,
+                                    console_.get(j, i).fg()));
 }
 
 void Term::setBgColor(const Color &bg, size_t x, size_t y) {
-    get(x, y).bg_ = bg;
-    mask_[y * cols_ + x] = true;
+    console_.set(x, y, Char(console_.get(x, y).c(),
+                            bg,
+                            console_.get(x, y).fg()));
 }
 
 void Term::setFgColor(const Color &fg) {
     fgCol_ = fg;
-    for (int i = 0; i < rows_; ++i)
-        for (int j = 0; j < cols_; ++j)
-            get(j, i).fg_ = fg, mask_[i * cols_ + j] = true;
+    for (int i = 0; i < rows(); ++i)
+        for (int j = 0; j < cols(); ++j)
+            console_.set(j, i, Char(console_.get(j, i).c(),
+                                    console_.get(j, i).bg(),
+                                    fg));
 }
 
 void Term::setFgColor(const Color &fg, size_t x, size_t y) {
-    get(x, y).fg_ = fg;
-    mask_[y * cols_ + x] = true;
+    console_.set(x, y, Char(console_.get(x, y).c(),
+                            console_.get(x, y).bg(), 
+                            fg));
 }
 
-void Term::redraw(bool needRender) {
+void Term::redraw(bool force) {
 #ifdef RTERM_DEBUG
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 #endif // RTERM_DEBUG
 
-    bool changed = true;
-    for (size_t x = 0; x < cols_; ++x)
-        for (size_t y = 0; y < rows_; ++y) {
-            if (mask_[y * cols_ + x])
-                redraw(x, y), changed = true;
-            mask_[y * cols_ + x] = false;
-        }
-    if (changed && needRender) {
+    auto update = console_.getUpdatedChars(force);
+    for (auto p : update)
+        redraw(p.first, p.second);
+    if (!update.empty() || force)
         renderToScreen();
-    }
 #ifdef RTERM_DEBUG
     static int64_t frame = 0;
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
@@ -334,7 +284,7 @@ void Term::redraw(size_t x, size_t y) {
                   static_cast<int>(y * p_font_->h()),
                   static_cast<int>(p_font_->w()),
                   static_cast<int>(p_font_->h())};
-    Char ch = get(x, y);
+    Char ch = console_.get(x, y);
     SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
     p_font_->render(p_ren_.get(), dst, UTF8CharToBytes(ch.ch_).c_str(), ch.fg_, ch.bg_);
     SDL_SetRenderTarget(p_ren_.get(), NULL);
@@ -343,11 +293,12 @@ void Term::redraw(size_t x, size_t y) {
 SDL_Event Term::getNextEvent(const std::set<int> &filter) const {
     SDL_Event ev;
     while (true) {
+        SDL_PumpEvents();
+        SDL_WaitEvent(NULL);
         if (SDL_PollEvent(&ev)) {
             if (ev.type == SDL_QUIT || (filter.find(ev.type) != filter.end()))
                 return ev;
         }
-        SDL_Delay(EVENT_POLL_DELAY);
     }
 }
 

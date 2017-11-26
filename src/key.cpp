@@ -1,6 +1,6 @@
 #include "key.h"
 
-namespace term {
+namespace rterm {
 Key::Key(SDL_Keycode code)
     : code_(code),
       mod_(0),
@@ -38,7 +38,7 @@ Key& Key::setKey(int code) {
     case '\t':
         unicode_ = code;
         break;
-    case term::NP_ENTER:
+    case rterm::NP_ENTER:
         unicode_ = '\r';
         break;
     default:

@@ -4,7 +4,7 @@
 #include "font.h"
 #include "sdl_ptr.h"
 
-namespace term {
+namespace rterm {
 
 class TileFont : public Font {
 public:
