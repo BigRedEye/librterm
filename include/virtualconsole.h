@@ -71,6 +71,25 @@ public:
     void set(size_t x, size_t y, Char c);
 
     /**
+     * @brief Cursor X position
+     * @return Cursor X position
+     */
+    size_t cursorX() const;
+
+    /**
+     * @brief Cursor Y position
+     * @return Cursor Y position
+     */
+    size_t cursorY() const;
+    
+    /**
+     * @brief Set cursor position
+     * @param x new x position
+     * @param y new y position
+     */
+    void setCursorPosition(size_t x, size_t y);
+    
+    /**
      * @brief Add char at cursor position and move cursor forward
      * @param c character
      */
@@ -86,8 +105,8 @@ public:
 private:
     std::vector<std::vector<Char>> data_; ///< array of characters
     std::vector<std::vector<char>> mask_; ///< mask_[i][j] = true, if character at (j, i) was uptated
-    size_t cursorX, ///< cursor position
-           cursorY; ///< cursor position
+    size_t cursorX_, ///< cursor position
+           cursorY_; ///< cursor position
 };
 
 /**

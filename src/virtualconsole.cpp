@@ -6,8 +6,8 @@ VirtualConsole::VirtualConsole()
 }
 
 VirtualConsole::VirtualConsole(size_t ncols, size_t nrows)
-    : cursorX(0),
-      cursorY(0) {
+    : cursorX_(0),
+      cursorY_(0) {
     data_.assign(nrows, std::vector<Char>(ncols, ' '));
     mask_.assign(nrows, std::vector<char>(ncols, false));
 }
@@ -23,16 +23,17 @@ size_t VirtualConsole::rows() const {
 }
 
 void VirtualConsole::resize(size_t ncols, size_t nrows, Color bgColor, Color fgColor) {
-    data_.resize(nrows, std::vector<Char>(ncols, Char(' ', bgColor, fgColor)));
+    Char defaultChar(' ', bgColor, fgColor);
+    data_.resize(nrows, std::vector<Char>(ncols, defaultChar));
     mask_.resize(nrows, std::vector<char>(ncols, true));
     for (auto& line : data_)
-        line.resize(ncols, Char(' ', bgColor, fgColor));
+        line.resize(ncols, defaultChar);
 
     for (auto& line : mask_)
         line.resize(ncols, true);
 
-    cursorX = std::min(cursorX, ncols);
-    cursorY = std::min(cursorY, nrows);
+    cursorX_ = std::min(cursorX_, ncols);
+    cursorY_ = std::min(cursorY_, nrows);
 }
 
 Char VirtualConsole::get(size_t x, size_t y) const {
@@ -44,39 +45,47 @@ void VirtualConsole::set(size_t x, size_t y, Char c) {
     mask_[y][x] = true;
 }
 
+size_t VirtualConsole::cursorX() const {
+    return cursorX_;
+}
+
+size_t VirtualConsole::cursorY() const {
+    return cursorY_;
+}
+
 void VirtualConsole::addChar(char_t c) {
     if (cols() * rows() <= 0)
         return;
     switch (c) {
     case '\n':
     case '\r':
-        ++cursorY;
-        cursorX = 0;
+        ++cursorY_;
+        cursorX_ = 0;
         break;
     case '\b':
-        --cursorX;
-        if (cursorX < 0)
-            cursorX = cols() - 1, --cursorY;
-        if (cursorY < 0)
-            cursorY = rows() - 1;
-        data_[cursorY][cursorX].ch_ = ' ';
-        mask_[cursorY][cursorX] = true;
+        --cursorX_;
+        if (cursorX_ < 0)
+            cursorX_ = cols() - 1, --cursorY_;
+        if (cursorY_ < 0)
+            cursorY_ = rows() - 1;
+        data_[cursorY_][cursorX_].ch_ = ' ';
+        mask_[cursorY_][cursorX_] = true;
         break;
     case '\t':
         for (int i = 0; i < 4; ++i)
             addChar(' ');
         break;
     default:
-        mask_[cursorY][cursorX] = true;
-        data_[cursorY][cursorX].ch_ = c;
-        ++cursorX;
-        if (cursorX >= cols())
-            cursorX = 0, ++cursorY;
-        if (cursorY >= rows())
-            cursorY = 0;
+        mask_[cursorY_][cursorX_] = true;
+        data_[cursorY_][cursorX_].ch_ = c;
+        ++cursorX_;
+        if (cursorX_ >= cols())
+            cursorX_ = 0, ++cursorY_;
+        if (cursorY_ >= rows())
+            cursorY_ = 0;
     }
-    cursorX = (cursorX + 2 * cols()) % cols();
-    cursorY = (cursorY + 2 * rows()) % rows();
+    cursorX_ = (cursorX_ + 2 * cols()) % cols();
+    cursorY_ = (cursorY_ + 2 * rows()) % rows();
 }
 
 std::vector<std::pair<size_t, size_t>> VirtualConsole::getUpdatedChars(bool force) {

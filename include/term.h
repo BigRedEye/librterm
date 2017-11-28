@@ -67,6 +67,25 @@ public:
     void delay(uint32_t msec) const;
 
     /**
+     * @brief Get cursor X
+     * @return cursor X position
+     */
+    size_t getCursorX() const;
+
+    /**
+     * @brief Get cursor Y
+     * @return cursor y position
+     */
+    size_t getCursorY() const;
+    
+    /**
+     * @brief Set cursor position
+     * @param x new cursor x
+     * @param y new cursor y
+     */
+    void setCursorPosition(size_t x, size_t y);
+
+    /**
      * @brief Set terminal size in characters, not pixels
      * @param cols_ new number of columns
      * @param rows_ new number of rows

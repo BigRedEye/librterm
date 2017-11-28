@@ -62,6 +62,18 @@ void Term::delay(uint32_t msec) const {
     SDL_Delay(msec);
 }
 
+size_t Term::getCursorX() const {
+    return console_.cursorX();
+}
+
+size_t Term::getCursorY() const {
+    return console_.cursorY();
+}
+
+void Term::setCursorPosition(size_t x, size_t y) {
+    console_.setCursorPosition(x, y);
+}
+
 void Term::updateTexture() {
     SDL_Texture * tmp = p_tex_.get();
 
