@@ -12,7 +12,7 @@ int main(int argc, char **argv)
     UNUSED(argc);
     UNUSED(argv);
 
-    rterm::Term terminal(80, 24);
+    rterm::Term terminal;
     terminal.setMaxWindowSize(2000, 2000);
     terminal.setMinWindowSize(200, 100);
     SDL_Log("%d", terminal.cols());

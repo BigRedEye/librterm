@@ -1,3 +1,5 @@
+/// @cond INTERNAL
+
 #ifndef RTERM_VIRTUAL_CONSOLE_H
 #define RTERM_VIRTUAL_CONSOLE_H
 
@@ -58,3 +60,5 @@ private:
 }
 
 #endif // RTERM_VIRTUAL_CONSOLE_H
+
+/// @endcond INTERNAL

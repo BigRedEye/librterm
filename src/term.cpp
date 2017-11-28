@@ -141,7 +141,15 @@ char_t Term::getChar() const {
 }
 
 char_t Term::charAt(size_t x, size_t y) const {
-    return console_.get(x, y).ch_;
+    return console_.get(x, y).c();
+}
+
+Color Term::bgColorAt(size_t x, size_t y) const {
+    return console_.get(x, y).bg();
+}
+
+Color Term::fgColorAt(size_t x, size_t y) const {
+    return console_.get(x, y).fg();
 }
 
 void Term::setFullscreen(bool fullscr) {
@@ -288,18 +296,6 @@ void Term::redraw(size_t x, size_t y) {
     SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
     p_font_->render(p_ren_.get(), dst, UTF8CharToBytes(ch.ch_).c_str(), ch.fg_, ch.bg_);
     SDL_SetRenderTarget(p_ren_.get(), NULL);
-}
-
-SDL_Event Term::getNextEvent(const std::set<int> &filter) const {
-    SDL_Event ev;
-    while (true) {
-        SDL_PumpEvents();
-        SDL_WaitEvent(NULL);
-        if (SDL_PollEvent(&ev)) {
-            if (ev.type == SDL_QUIT || (filter.find(ev.type) != filter.end()))
-                return ev;
-        }
-    }
 }
 
 int eventFilter(void *data, SDL_Event *ev) {

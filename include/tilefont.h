@@ -1,3 +1,5 @@
+/// @cond INTERNAL
+ 
 #ifndef RTERM_TILEFONT_H
 #define RTERM_TILEFONT_H
 
@@ -28,3 +30,5 @@ private:
 }
 
 #endif // RTERM_TILEFONT_H
+
+/// @endcond INTERNAL

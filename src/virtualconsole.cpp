@@ -45,6 +45,8 @@ void VirtualConsole::set(size_t x, size_t y, Char c) {
 }
 
 void VirtualConsole::addChar(Char c) {
+    if (cols() * rows() <= 0)
+        return;
     switch (c.c()) {
     case '\n':
     case '\r':

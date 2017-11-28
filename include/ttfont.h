@@ -1,3 +1,5 @@
+/// @cond INTERNAL
+
 #ifndef RTERM_TTFONT_H
 #define RTERM_TTFONT_H
 
@@ -25,4 +27,6 @@ private:
 };
 }
 
-#endif // 
+#endif // RTERM_TTFONT_H
+
+/// @endcond INTERNAL

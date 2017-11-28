@@ -7,6 +7,8 @@
 
 namespace rterm {
 
+/// @cond custom deleter for SDL_Ptr
+
 template<typename T>
 struct sdl_deleter {
     void operator()(T* _ptr) {
@@ -49,6 +51,8 @@ struct sdl_deleter<TTF_Font> {
         TTF_CloseFont(_ptr);
     }
 };
+
+/// @endcond custom deleter for SDL_Ptr
 
 template<typename T>    
 using SDL_Ptr = std::unique_ptr<T, sdl_deleter<T>>;
