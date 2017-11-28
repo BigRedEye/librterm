@@ -53,13 +53,15 @@ public:
      */
     TTFont();
 
+    ~TTFont() override = default;
+
     /**
      * @brief Constructs TTFont from the given .ttf file
      * @param path path to .ttf file
      * @param sz point size
      */
     TTFont(const std::string &path, size_t sz);
-    
+
     /**
      * @brief Move operator=
      * @param rhs rvalue reference to another TileFont
@@ -91,7 +93,7 @@ public:
 
 private:
     SDL_Ptr<TTF_Font> p_font_; ///< real font
-    
+
     FastCharUnorderedMap<char_t, SDL_SharedPtr<SDL_Texture>> cache_; ///< cached rendered symbols
 };
 

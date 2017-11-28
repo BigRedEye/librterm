@@ -27,6 +27,8 @@ public:
      */
     TileFont();
 
+    ~TileFont() override = default;
+
     /**
      * @brief Constructs TileFont from given tilemap
      * @param path path to the tilemap (image file)
@@ -71,7 +73,7 @@ private:
      * @return SDL_Rect of tile on the tilemap
      */
     SDL_Rect getRect(char_t c) const;
-    
+
     SDL_Ptr<SDL_Surface> p_tilemap_; ///< tilemap surface
     SDL_Ptr<SDL_Texture> p_tilemapTexture_; ///< cached tilemap texture
     size_t w_, ///< tile width

@@ -84,7 +84,10 @@ void Term::setWindowSize(size_t width, size_t height) {
     console_.resize(ncols, nrows);
 
     /* resize window */
-    SDL_SetWindowSize(p_win_.get(), width, height);
+    int curw, curh;
+    SDL_GetWindowSize(p_win_.get(), &curw, &curh);
+    if (curw != width || curh != height)
+        SDL_SetWindowSize(p_win_.get(), width, height);
     updateTexture();
 
     SDL_RenderClear(p_ren_.get());
@@ -127,8 +130,8 @@ Key Term::getKey() const {
             default:
                 break;
             }
-            if (result.key() || result.toChar()) {
-                return result;
+        if (result.key() || result.toChar()) {
+            return result;
         }
     }
     return Key();
@@ -309,6 +312,8 @@ int eventFilter(void *data, SDL_Event *ev) {
         switch (ev->window.event) {
         case SDL_WINDOWEVENT_RESIZED:
             term->setWindowSize(ev->window.data1, ev->window.data2);
+            SDL_Log("Resized to %d x %d", ev->window.data1, ev->window.data2);
+            return 0;
             break;
         case SDL_WINDOWEVENT_EXPOSED:
             term->renderToScreen();

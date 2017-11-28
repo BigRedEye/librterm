@@ -9,7 +9,6 @@ file(GLOB SOURCES
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 

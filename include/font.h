@@ -20,12 +20,14 @@ namespace rterm {
 
 /**
  * @brief The Font class
- * 
+ *
  * Abstract font class that contains font data and can render string with SDL_Renderer
  */
 class Font
 {
 public:
+    virtual ~Font() = default;
+
     /**
      * @brief render a string of UTF8 bytes
      * @param p_ren renderer for current render target
@@ -41,7 +43,7 @@ public:
      * @return width of a single character
      */
     virtual size_t w() const { return 1; }
-    
+
     /**
      * @brief font height
      * @return height of a single character
