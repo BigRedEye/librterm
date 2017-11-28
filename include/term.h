@@ -49,7 +49,7 @@ public:
     bool isRunning() const;
     
     /**
-     * @brief Get number of cols
+     * @brief Get number of columns
      * @return number of columns in terminal 
      */
     size_t cols() const;
@@ -61,7 +61,7 @@ public:
     size_t rows() const;
 
     /**
-     * @brief Do nothing for some time
+     * @brief Wait for some time
      * @param msec number of milliseconds to wait
      */
     void delay(uint32_t msec) const;
@@ -167,7 +167,7 @@ public:
     void close();
 
     /**
-     * @brief wait for next key
+     * @brief Wait for next key
      * @return Key object represents next pressed key
      * @note if during this function the terminal will be closed it will return Key(rterm::UNKNOWN)
      * @see getChar if you want only printable characters
@@ -175,7 +175,7 @@ public:
     Key getKey() const;
 
     /**
-     * @brief wait for next printable character
+     * @brief Wait for next printable character
      * @return Key object represents next pressed printable key
      * @note if during this function the terminal will be closed it will return Key(rterm::UNKNOWN)
      * @see getKey if you want not only printable characters
@@ -189,7 +189,7 @@ public:
     void addChar(char_t c);
 
     /**
-     * @brief draw all changes to screen
+     * @brief Draw all changes to screen
      * @param force if true the whole screen will be redrawn otherwise only updated part
      * 
      * This function applies all changes since last redraw() call and renders them on the screen
@@ -197,7 +197,7 @@ public:
     void redraw(bool force = false);
 
     /**
-     * @brief get char at specific position
+     * @brief Get char at specific position
      * @param x position
      * @param y position
      * @return unicode char at (x, y)
@@ -205,7 +205,7 @@ public:
     char_t charAt(size_t x, size_t y) const;
 
     /**
-     * @brief get background color at specific position
+     * @brief Get background color at specific position
      * @param x position
      * @param y position
      * @return background color at (x, y)
@@ -213,7 +213,7 @@ public:
     Color bgColorAt(size_t x, size_t y) const;
 
     /**
-     * @brief get foreground color at specific position
+     * @brief Get foreground color at specific position
      * @param x position
      * @param y position
      * @return foreground color at (x, y)
@@ -249,12 +249,12 @@ private:
     Char get(size_t x, size_t y) const;
 
     /**
-     * @brief update terminal texture after window resizing
+     * @brief Update terminal texture after window resizing
      */
     void updateTexture();
 
     /**
-     * @brief render texture to screen
+     * @brief Render texture to screen
      */
     void renderToScreen();
 
@@ -269,8 +269,11 @@ private:
 
     Color fgCol_; ///< default foreground color
     Color bgCol_; ///< default background color
+
+    /// @endcond
 };
 
+/// @cond INTERNAL
 /**
  * @brief SDL event filter
  * @param data pointer to terminal
@@ -280,5 +283,6 @@ private:
 int eventFilter(void *data, SDL_Event *ev);
 
 /// @endcond
+
 }
 #endif // RTERM_TERM_H
