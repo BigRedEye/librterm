@@ -12,11 +12,9 @@ int main(int argc, char **argv)
     UNUSED(argc);
     UNUSED(argv);
 
-    rterm::Term terminal;
+    rterm::Term terminal(80, 24);
     terminal.setMaxWindowSize(2000, 2000);
     terminal.setMinWindowSize(200, 100);
-    SDL_Log("%d", terminal.cols());
-    SDL_Log("%d", terminal.rows());
     int fontSize = 10;
     terminal.setFont("../fonts/tile/10x10.jpg", 10, 10);
     terminal.setFgColor(rterm::Color(100, 255, 100));
