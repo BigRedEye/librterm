@@ -65,12 +65,15 @@ void Term::delay(uint32_t msec) const {
 void Term::updateTexture() {
     SDL_Texture * tmp = p_tex_.get();
 
+    int w, h;
+    SDL_GetWindowSize(p_win_.get(), &w, &h);
     p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-                               SDL_GetWindowSurface(p_win_.get())->w - SDL_GetWindowSurface(p_win_.get())->w % p_font_->w(),
-                               SDL_GetWindowSurface(p_win_.get())->h - SDL_GetWindowSurface(p_win_.get())->h % p_font_->h()));
+                                  w - w % p_font_->w(),
+                                  h - h % p_font_->h()));
 
     SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
     SDL_SetRenderDrawColor(p_ren_.get(), bgCol_.r(), bgCol_.g(), bgCol_.b(), bgCol_.a());
+    SDL_RenderClear(p_ren_.get());
     SDL_Rect dstRect{0, 0, 0, 0};
     SDL_QueryTexture(p_tex_.get(), NULL, NULL, &dstRect.w, &dstRect.h);
     SDL_RenderCopy(p_ren_.get(), tmp, NULL, &dstRect);
@@ -81,7 +84,7 @@ void Term::updateTexture() {
 void Term::setWindowSize(size_t width, size_t height) {    
     size_t ncols = width / p_font_->w(),
            nrows = height / p_font_->h();
-    console_.resize(ncols, nrows);
+    console_.resize(ncols, nrows, bgCol_, fgCol_);
 
     /* resize window */
     int curw, curh;

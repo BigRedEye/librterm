@@ -35,8 +35,10 @@ public:
      * @brief Resize VirtualConsole
      * @param ncols new number of columns
      * @param nrows new number of rows
+     * @param bgColor default background color
+     * @param fgColor default foreground color
      */
-    void resize(size_t ncols, size_t nrows);
+    void resize(size_t ncols, size_t nrows, Color bgColor, Color fgColor);
 
     /**
      * @brief Gen number of columns

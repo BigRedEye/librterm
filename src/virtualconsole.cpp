@@ -22,11 +22,11 @@ size_t VirtualConsole::rows() const {
     return data_.size();
 }
 
-void VirtualConsole::resize(size_t ncols, size_t nrows) {
-    data_.resize(nrows, std::vector<Char>(ncols, ' '));
+void VirtualConsole::resize(size_t ncols, size_t nrows, Color bgColor, Color fgColor) {
+    data_.resize(nrows, std::vector<Char>(ncols, Char(' ', bgColor, fgColor)));
     mask_.resize(nrows, std::vector<char>(ncols, true));
     for (auto& line : data_)
-        line.resize(ncols, ' ');
+        line.resize(ncols, Char(' ', bgColor, fgColor));
 
     for (auto& line : mask_)
         line.resize(ncols, true);
