@@ -53,6 +53,14 @@ size_t VirtualConsole::cursorY() const {
     return cursorY_;
 }
 
+void VirtualConsole::setCursorPosition(size_t x, size_t y) {
+    assert(x <= cols());
+    assert(y <= rows());
+
+    cursorX_ = x;
+    cursorY_ = y;
+}
+
 void VirtualConsole::addChar(char_t c) {
     if (cols() * rows() <= 0)
         return;
