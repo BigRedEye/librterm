@@ -1,5 +1,5 @@
-# rterm [![Build Status](https://travis-ci.com/BigRedEye/rterm.svg?token=HabA2F1p73cnpyrz3Jdj&branch=master)](https://travis-ci.com/BigRedEye/rterm)
-#
+# rterm [![Build Status](https://travis-ci.com/BigRedEye/rterm.svg?token=HabA2F1p73cnpyrz3Jdj&branch=master)](https://travis-ci.com/BigRedEye/rterm) #
+
 
 
 Minimalistic terminal emulator written on C++ and SDL2.
