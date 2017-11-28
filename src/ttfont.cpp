@@ -36,18 +36,76 @@ size_t TTFont::h() const {
     return TTF_FontHeight(p_font_.get());
 }
 
-void TTFont::render(SDL_Renderer *p_ren, SDL_Rect dst, const char *str, Color fg, Color bg) {
+void TTFont::render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) {
     if (!p_font_.get())
         return;
-    SDL_Ptr<SDL_Surface> p_surf(TTF_RenderUTF8_Blended(p_font_.get(),
-                                            str,
-                                            fg.toSDL_Color()));
+
+    SDL_SharedPtr<SDL_Texture> p_tex;
+    if (!cache_.get(ch, p_tex)) {
+        std::string str = UTF8CharToBytes(ch);
+        SDL_Ptr<SDL_Surface> p_surf(TTF_RenderUTF8_Blended(p_font_.get(),
+                                    str.c_str(),
+                                    SDL_Color{255, 255, 255}));
+        p_tex = make_SDL_SharedPtr(SDL_CreateTextureFromSurface(p_ren, p_surf.get()));
+        cache_.set(ch, p_tex);
+    }
+
     SDL_SetRenderDrawColor(p_ren, bg.r(), bg.g(), bg.b(), bg.a());
     SDL_RenderFillRect(p_ren, &dst);
-    SDL_Ptr<SDL_Texture> tex(SDL_CreateTextureFromSurface(p_ren, p_surf.get()));
     int h, w;
-    SDL_QueryTexture(tex.get(), NULL, NULL, &w, &h);
+    SDL_QueryTexture(p_tex.get(), NULL, NULL, &w, &h);
     dst.h = h, dst.w = w;
-    SDL_RenderCopy(p_ren, tex.get(), NULL, &dst);
+
+    SDL_SetTextureColorMod(p_tex.get(), fg.r(), fg.g(), fg.b());
+    SDL_RenderCopy(p_ren, p_tex.get(), NULL, &dst);
+    SDL_SetTextureColorMod(p_tex.get(), 0xff, 0xff, 0xff);
+}
+
+template<typename _Key,
+         typename _Val,
+         typename _SparceContainer,
+         typename _DenseContainer>
+FastCharUnorderedMap<_Key,
+                     _Val,
+                     _SparceContainer,
+                     _DenseContainer>::FastCharUnorderedMap(_Key maxKey)
+    : maxKey_(maxKey),
+      smallKeys_(maxKey, std::make_pair(_Val(), false)) {
+}
+
+template<typename _Key,
+         typename _Val,
+         typename _SparceContainer,
+         typename _DenseContainer>
+bool FastCharUnorderedMap<_Key,
+                          _Val,
+                          _SparceContainer,
+                          _DenseContainer>::get(_Key key, _Val &val) {
+    if (key <= maxKey_) {
+        val = smallKeys_[key].first;
+        return smallKeys_[key].second;
+    } else {
+        auto foundIt = mappedKeys_.find(key);
+        if (foundIt == mappedKeys_.end())
+            return false;
+        val = foundIt->second;
+        return true;
+    }
+}
+
+template<typename _Key,
+         typename _Val,
+         typename _SparceContainer,
+         typename _DenseContainer>
+void FastCharUnorderedMap<_Key,
+                          _Val,
+                          _SparceContainer,
+                          _DenseContainer>::set(_Key key, _Val val) {
+    if (key < maxKey_) {
+        smallKeys_[key].second = true;
+        smallKeys_[key].first = val;
+    } else {
+        mappedKeys_.insert(std::make_pair(key, val));
+    }
 }
 }

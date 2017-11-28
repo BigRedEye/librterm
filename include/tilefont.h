@@ -50,7 +50,7 @@ public:
      * @param fg foreground color
      * @param bg background color
      */
-    virtual void render(SDL_Renderer *p_ren, SDL_Rect dst, const char *str, Color fg, Color bg) override;
+    virtual void render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) override;
 
     /**
      * @brief Font width

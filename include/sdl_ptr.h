@@ -56,6 +56,14 @@ struct sdl_deleter<TTF_Font> {
 
 template<typename T>    
 using SDL_Ptr = std::unique_ptr<T, sdl_deleter<T>>;
+
+template<typename T>
+using SDL_SharedPtr = std::shared_ptr<T>;
+
+template<typename T>
+inline SDL_SharedPtr<T> make_SDL_SharedPtr(T* ptr) {
+    return SDL_SharedPtr<T>(ptr, sdl_deleter<T>());
+}
 }
 
 #endif // RTERM_SDL_PTR_H

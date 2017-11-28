@@ -44,10 +44,10 @@ void VirtualConsole::set(size_t x, size_t y, Char c) {
     mask_[y][x] = true;
 }
 
-void VirtualConsole::addChar(Char c) {
+void VirtualConsole::addChar(char_t c) {
     if (cols() * rows() <= 0)
         return;
-    switch (c.c()) {
+    switch (c) {
     case '\n':
     case '\r':
         ++cursorY;
@@ -64,11 +64,11 @@ void VirtualConsole::addChar(Char c) {
         break;
     case '\t':
         for (int i = 0; i < 4; ++i)
-            addChar(Char(' ', c.bg(), c.fg()));
+            addChar(' ');
         break;
     default:
         mask_[cursorY][cursorX] = true;
-        data_[cursorY][cursorX] = c;
+        data_[cursorY][cursorX].ch_ = c;
         ++cursorX;
         if (cursorX >= cols())
             cursorX = 0, ++cursorY;

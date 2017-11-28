@@ -14,6 +14,7 @@
 #include <SDL2/SDL.h>
 
 #include "color.h"
+#include "char.h"
 
 namespace rterm {
 
@@ -33,7 +34,7 @@ public:
      * @param fg foreground color
      * @param bg background color
      */
-    virtual void render(SDL_Renderer *p_ren, SDL_Rect dst, const char *str, Color fg, Color bg) {}
+    virtual void render(SDL_Renderer *p_ren, SDL_Rect dst, char_t str, Color fg, Color bg) {}
 
     /**
      * @brief font width

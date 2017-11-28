@@ -51,25 +51,15 @@ SDL_Rect TileFont::getRect(char_t c) const {
     return result;
 }
 
-void TileFont::render(SDL_Renderer *p_ren, SDL_Rect dst, const char *str, Color fg, Color bg) {
+void TileFont::render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) {
     if (!p_tilemap_)
         return;
     if (!p_tilemapTexture_.get())
         p_tilemapTexture_ = SDL_Ptr<SDL_Texture>(SDL_CreateTextureFromSurface(p_ren, p_tilemap_.get()));
     SDL_SetRenderDrawColor(p_ren, bg.r(), bg.g(), bg.b(), bg.a());
     SDL_RenderFillRect(p_ren, &dst);
-    
-    size_t len = strlen(str);
-    for (int i = 0; i < len; ++i) {
-        char c = str[i];
         
-        SDL_Rect src = getRect(c);
-        SDL_Rect charDst{0, 0, 0, 0};
-        charDst.w = dst.w / len;
-        charDst.x = dst.x + charDst.w * i;
-        charDst.h = dst.h;
-        charDst.y = dst.y;
-        SDL_RenderCopy(p_ren, p_tilemapTexture_.get(), &src, &charDst);
-    }
+    SDL_Rect src = getRect(ch);
+    SDL_RenderCopy(p_ren, p_tilemapTexture_.get(), &src, &dst);
 }
 }

@@ -70,6 +70,7 @@ void Term::updateTexture() {
                                SDL_GetWindowSurface(p_win_.get())->h - SDL_GetWindowSurface(p_win_.get())->h % p_font_->h()));
 
     SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
+    SDL_SetRenderDrawColor(p_ren_.get(), bgCol_.r(), bgCol_.g(), bgCol_.b(), bgCol_.a());
     SDL_Rect dstRect{0, 0, 0, 0};
     SDL_QueryTexture(p_tex_.get(), NULL, NULL, &dstRect.w, &dstRect.h);
     SDL_RenderCopy(p_ren_.get(), tmp, NULL, &dstRect);
@@ -99,7 +100,7 @@ void Term::setChar(size_t x, size_t y, char_t c) {
 }
 
 void Term::addChar(char_t c) {
-    console_.addChar(Char(c, bgCol_, fgCol_));
+    console_.addChar(c);
 }
 
 Key Term::getKey() const {
@@ -168,7 +169,7 @@ void Term::setFullscreen(bool fullscr) {
     if (isFullscr == fullscr)
         return;
 
-    SDL_SetWindowFullscreen(p_win_.get(), (fullscr ? SDL_WINDOW_FULLSCREEN : 0));
+    SDL_SetWindowFullscreen(p_win_.get(), (fullscr ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
 
     /* set correct resolution */
     int ncols = prevCols, nrows = prevRows;
@@ -294,7 +295,7 @@ void Term::redraw(size_t x, size_t y) {
                   static_cast<int>(p_font_->h())};
     Char ch = console_.get(x, y);
     SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
-    p_font_->render(p_ren_.get(), dst, UTF8CharToBytes(ch.ch_).c_str(), ch.fg_, ch.bg_);
+    p_font_->render(p_ren_.get(), dst, ch.ch_, ch.fg_, ch.bg_);
     SDL_SetRenderTarget(p_ren_.get(), NULL);
 }
 

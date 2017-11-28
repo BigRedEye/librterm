@@ -69,10 +69,10 @@ public:
     void set(size_t x, size_t y, Char c);
 
     /**
-     * @brief Add Char at cursor position and move cursor forward
+     * @brief Add char at cursor position and move cursor forward
      * @param c character
      */
-    void addChar(Char c);
+    void addChar(char_t c);
 
     /**
      * @brief Get updated positions since last getUpdatedChars call
