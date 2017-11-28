@@ -269,8 +269,6 @@ private:
 
     Color fgCol_; ///< default foreground color
     Color bgCol_; ///< default background color
-    
-    /// @endcond
 };
 
 /**
@@ -281,5 +279,6 @@ private:
  */
 int eventFilter(void *data, SDL_Event *ev);
 
+/// @endcond
 }
 #endif // RTERM_TERM_H

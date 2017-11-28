@@ -36,10 +36,13 @@ size_t TileFont::h() const {
     return h_;
 }
 
-SDL_Rect TileFont::getRect(char c) const {
+SDL_Rect TileFont::getRect(char_t c) const {
     size_t tilemapCols = p_tilemap_->w / w(),
            tilemapRows = p_tilemap_->h / h();
     SDL_Rect result{0, 0, 0, 0};
+    if (c >= tilemapCols * tilemapRows)
+        return result;
+
     result.y = h() * (c / tilemapCols);
     result.x = w() * (c % tilemapCols);
     result.h = h();
