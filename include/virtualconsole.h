@@ -1,7 +1,7 @@
-/// @cond INTERNAL
-
 #ifndef RTERM_VIRTUAL_CONSOLE_H
 #define RTERM_VIRTUAL_CONSOLE_H
+
+/// @cond INTERNAL
 
 #include <cstddef>
 #include <utility>
@@ -59,6 +59,6 @@ private:
 
 }
 
-#endif // RTERM_VIRTUAL_CONSOLE_H
-
 /// @endcond INTERNAL
+
+#endif // RTERM_VIRTUAL_CONSOLE_H

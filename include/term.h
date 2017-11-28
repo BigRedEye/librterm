@@ -1,3 +1,8 @@
+/**
+  @file
+  @brief basic rterm functionality
+*/
+
 #ifndef RTERM_TERM_H
 #define RTERM_TERM_H
 
@@ -215,7 +220,7 @@ public:
      */
     Color fgColorAt(size_t x, size_t y) const;
 
-    friend int eventFilter(void *data_, SDL_Event *ev);
+    friend int eventFilter(void *data, SDL_Event *ev);
 
 private:
     /// @cond INTERNAL
@@ -264,6 +269,8 @@ private:
 
     Color fgCol_; ///< default foreground color
     Color bgCol_; ///< default background color
+    
+    /// @endcond
 };
 
 /**
@@ -274,6 +281,5 @@ private:
  */
 int eventFilter(void *data, SDL_Event *ev);
 
-/// @endcond INTERNAL
 }
 #endif // RTERM_TERM_H

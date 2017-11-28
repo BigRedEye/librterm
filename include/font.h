@@ -1,4 +1,3 @@
-/// @cond INTERNAL
 /**
  * @file
  * @brief This file contains abstract font clas
@@ -6,6 +5,8 @@
 
 #ifndef RTERM_FONT_H
 #define RTERM_FONT_H
+
+/// @cond INTERNAL
 
 #include <cstddef>
 #include <string>
@@ -47,6 +48,7 @@ public:
     virtual size_t h() const { return 1; }
 };
 }
-#endif // RTERM_FONT_H
 
-/// @endcond INTERNAL
+/// @endcond
+
+#endif // RTERM_FONT_H

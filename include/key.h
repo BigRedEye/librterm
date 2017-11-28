@@ -91,7 +91,7 @@ private:
     int mod_; ///< OR'ed KeyMod constants
     char_t unicode_; ///< unicode char
     
-/// @endcond INTERNAL
+/// @endcond
 };
 }
 

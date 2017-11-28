@@ -1,7 +1,7 @@
-/// @cond INTERNAL
-
 #ifndef RTERM_TTFONT_H
 #define RTERM_TTFONT_H
+
+/// @cond INTERNAL
 
 #include <SDL2/SDL_ttf.h>
 
@@ -27,6 +27,7 @@ private:
 };
 }
 
+/// @endcond INTERNAL
+
 #endif // RTERM_TTFONT_H
 
-/// @endcond INTERNAL

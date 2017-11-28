@@ -1,7 +1,7 @@
-/// @cond INTERNAL
- 
 #ifndef RTERM_TILEFONT_H
 #define RTERM_TILEFONT_H
+
+/// @cond INTERNAL
 
 #include "font.h"
 #include "sdl_ptr.h"
@@ -29,6 +29,7 @@ private:
 };
 }
 
+/// @endcond
+
 #endif // RTERM_TILEFONT_H
 
-/// @endcond INTERNAL
