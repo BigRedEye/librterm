@@ -10,6 +10,7 @@
 #include <codecvt>
 #include <locale>
 #include <string>
+#include <assert.h>
 
 #include "color.h"
 
