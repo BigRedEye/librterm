@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "char.h"
+#include "color.h"
 
 namespace rterm {
 class Char;

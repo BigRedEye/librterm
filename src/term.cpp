@@ -22,9 +22,7 @@ Term::Term(size_t ncols, size_t nrows)
       quitRequested_(false),
       fgCol_(0, 255, 0),
       bgCol_(0, 0, 0),
-      p_font_(new TTFont()),
-      lastFrameTimePoint_(std::chrono::high_resolution_clock::now()),
-      timeBetweenFrames_(0) {
+      p_font_(new TTFont()) {
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     TTF_Init();
     p_win_ = SDL_Ptr<SDL_Window>(SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
@@ -67,9 +65,11 @@ void Term::delay(uint32_t msec) const {
 }
 
 long double Term::fps() const {
-    if (timeBetweenFrames_.count() < 1e-7)
+    std::chrono::duration<long double, std::ratio<1>> delta = 
+            lastFrameTimePoints_.back() - lastFrameTimePoints_.front();
+    if (delta.count() < 1e-9)
         return std::numeric_limits<long double>::infinity();
-    return 1. / timeBetweenFrames_.count();
+    return static_cast<long double>(lastFrameTimePoints_.size() - 1) / delta.count();
 }
 
 size_t Term::getCursorX() const {
@@ -143,6 +143,21 @@ void Term::setChar(size_t x, size_t y, char_t c) {
 
 void Term::addChar(char_t c) {
     console_.addChar(c);
+}
+
+void Term::print(size_t x, size_t y, const std::string &fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    std::string formatted = vformat(fmt, args);
+    size_t prevCursorX = getCursorX(),
+           prevCursorY = getCursorY();
+    setCursorPosition(x, y);
+    for (auto c : formatted)
+        addChar(c);
+    setCursorPosition(prevCursorX, prevCursorY);
+
+    va_end(args);
 }
 
 Key Term::getKey() const {
@@ -301,20 +316,11 @@ void Term::setFgColor(const Color &fg, size_t x, size_t y) {
 }
 
 void Term::redraw(bool force) {
-#ifdef RTERM_DEBUG
-    std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-#endif // RTERM_DEBUG
     auto update = console_.getUpdatedChars(force);
     for (auto p : update)
         redraw(p.first, p.second);
     if (!update.empty() || force)
         renderToScreen();
-#ifdef RTERM_DEBUG
-    static int64_t frame = 0;
-    std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::milli> deltaTime = end - start;
-    std::cerr << "frame " << ++frame << ", deltaTime: " << deltaTime.count() << " msec" << std::endl;
-#endif // RTERM_DEBUG
 }
 
 void Term::renderToScreen() {
@@ -330,12 +336,9 @@ void Term::renderToScreen() {
     SDL_RenderPresent(p_ren_.get());
     
     /* count fps */
-    std::chrono::high_resolution_clock::time_point redrawStartTimePoint = 
-            std::chrono::high_resolution_clock::now();
-    timeBetweenFrames_ = redrawStartTimePoint - lastFrameTimePoint_;
-    lastFrameTimePoint_ = redrawStartTimePoint;
-    
-    SDL_Log("%ld")
+    lastFrameTimePoints_.push(std::chrono::high_resolution_clock::now());
+    if (lastFrameTimePoints_.size() > Term::maxTimePoints)
+        lastFrameTimePoints_.pop();
 }
 
 void Term::redraw(size_t x, size_t y) {

@@ -7,12 +7,8 @@
 #ifndef RTERM_CHAR_H
 #define RTERM_CHAR_H
 
-#include <codecvt>
-#include <locale>
 #include <string>
 #include <assert.h>
-
-#include "color.h"
 
 /**
  * @brief Namespace for all rterm functionality
@@ -28,10 +24,7 @@ typedef char32_t char_t;
  * @note This function shouldn't be used to convert multiple UTF8 characters
  * @see rterm::UTF8CharToBytes
  */
-inline char_t UTF8BytesToChar(const std::string &str) {
-    static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
-    return static_cast<char_t>(convert.from_bytes(str)[0]);
-}
+char_t UTF8BytesToChar(const std::string &str);
 
 /**
  * @brief Convert an UTF8 character to a number of bytes
@@ -39,17 +32,22 @@ inline char_t UTF8BytesToChar(const std::string &str) {
  * @return std::string that contains an input character represented by bytes
  * @see rterm::UTF8BytesToChar
  */
-inline std::string UTF8CharToBytes(char_t c) {
-    static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
-    return convert.to_bytes(c);
-}
+std::string UTF8CharToBytes(char_t c);
 
 /**
- * @brief Like sprintf, but wihout buffers
+ * @brief Get printf-like formatted string
  * @param fmt printf-style format string
  * @return formatted string
  */
 std::string format(const std::string &fmt, ...);
+
+/**
+ * @brief Get printf-like formatted string
+ * @param fmt printf-style format string
+ * @param args va_list of arguments
+ * @return formatted string
+ */
+std::string vformat(const std::string &fmt, va_list args);
 }
 
 #endif // RTERM_CHAR_H

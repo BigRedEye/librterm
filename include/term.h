@@ -10,6 +10,7 @@
 #include <chrono>
 #include <set>
 #include <vector>
+#include <queue>
 
 #include <SDL2/SDL.h>
 
@@ -228,6 +229,8 @@ public:
      * @param c unicode char to write
      */
     void addChar(char_t c);
+    
+    void print(size_t x, size_t y, const std::string &fmt, ...);
 
     /**
      * @brief Draw all changes to screen
@@ -311,8 +314,8 @@ private:
     Color fgCol_; ///< default foreground color
     Color bgCol_; ///< default background color
     
-    std::chrono::high_resolution_clock::time_point lastFrameTimePoint_; ///< time point for the last redraw() call
-    std::chrono::duration<long double, std::nano> timeBetweenFrames_; ///< time between last two redraw() calls
+    std::queue<std::chrono::high_resolution_clock::time_point> lastFrameTimePoints_; ///< time point for the last redraw() call
+    static constexpr int maxTimePoints = 20; ///< fps is @f$\frac{t_i + t{i - 1} + \ldots + t{i-20}}{20 - 1}@f$
 
     /// @endcond
 };

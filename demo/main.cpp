@@ -19,13 +19,18 @@ int main(int argc, char **argv)
     int fontSize = 18;
     terminal.setTitle("rterm demo")
             .setIcon("terminal.ico");
-    //terminal.setFont("../fonts/tile/10x10.jpg", 10, 10);
     terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", ++fontSize);
     terminal.setFgColor(rterm::Color(100, 255, 100));
     terminal.setFullscreen(false);
     terminal.setResizable(true);
+    int flooditers = 0, randomiters = 0;
+    if (argc > 1 && !strcmp(argv[1], "--benchmark"))
+        flooditers = 2000, randomiters = 10000;
+    else if (argc > 1 && !strcmp(argv[1], "--test"))
+        flooditers = 100, randomiters = 100;
+    
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-    for (int iters = 0; iters < 1000; ++iters) {
+    for (int iters = 0; iters < flooditers; ++iters) {
         for (int i = 0; i < terminal.cols(); ++i)
             for (int j = 0; j < terminal.rows(); ++j) {
                 terminal.setChar(i, j, 'a' + (i + j + iters) % ('z' - 'a'));
@@ -36,9 +41,16 @@ int main(int argc, char **argv)
                                                  255,
                                                  255 - std::min(j * 180 / terminal.cols() + iters * 127 / 1000, (size_t)255ull)), i, j);
         }
+        terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
         terminal.redraw();
     }
-    for (int iters = 0; iters < 100000; ++iters) {
+    
+    std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::ratio<1, 1>> deltaTime = end - start;
+    SDL_Log("Flood time usage: %f s", deltaTime.count());
+    start = end;
+
+    for (int iters = 0; iters < randomiters; ++iters) {
         int i = rand() % terminal.cols(),
             j = rand() % terminal.rows();
         terminal.setChar(i, j, 'a' + rand() % ('z' - 'a'));
@@ -48,13 +60,16 @@ int main(int argc, char **argv)
         terminal.setFgColor(rterm::Color(255 - std::min(i * 255 / terminal.cols(), (size_t)255ull),
                                          255,
                                          255 - std::min(j * 255 / terminal.cols(), (size_t)255ull)), i, j);
+        terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
         terminal.redraw();
     }
-    std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::ratio<1, 1>> deltaTime = end - start;
-    SDL_Log("deltaTime: %f mscec", deltaTime.count());
+    end = std::chrono::high_resolution_clock::now();
+    deltaTime = end - start;
+    SDL_Log("Random time usage: %f s", deltaTime.count());
+
     terminal.setFgColor(rterm::Color(255,  0,  0));
     terminal.setBgColor(rterm::Color(0, 255, 255));
+
     if (argc > 1 && !strcmp(argv[1], "--test")) {
         for (int i = 0; i < 1000; ++i)
             terminal.setChar(rand() % terminal.cols(), rand() % terminal.rows(), 'a' + rand() % 26);
