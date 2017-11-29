@@ -101,6 +101,20 @@ public:
     void setWindowSize(size_t width, size_t height);
 
     /**
+     * @brief Set window title
+     * @param title
+     * @return reference to this Term object
+     */
+    Term& setTitle(const std::string &title);
+
+    /**
+     * @brief Set window icon
+     * @param path path to icon file
+     * @return reference to this Term object
+     */
+    Term& setIcon(const std::string &path);
+
+    /**
      * @brief Set unicode character on certain position
      * @param x position of char
      * @param y position of char

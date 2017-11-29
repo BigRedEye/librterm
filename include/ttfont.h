@@ -30,7 +30,7 @@ public:
     bool get(_Key key, _Val &val);
     void set(_Key key, _Val val);
 private:
-    static constexpr _Key defaultMaxKey = _Key(0xff);
+    static constexpr _Key defaultMaxKey = _Key(0xffff);
     
     _Key maxKey_;
 

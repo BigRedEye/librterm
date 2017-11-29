@@ -127,6 +127,23 @@ public:
         : ch_(ch), bg_(bg), fg_(fg) {}
 
     /**
+     * @brief eq operator
+     * @param other
+     * @return @code
+     * this->c() == other.c() && 
+     * this->bg() == other.bg() && 
+     * this->fg() == other.fg() @endcode
+     */
+    bool operator==(const Char &other) const;
+
+    /**
+     * @brief neq operator
+     * @param other
+     * @return @code !(*this == other) @endcode
+     */
+    bool operator!=(const Char &other) const;
+
+    /**
      * @brief Get UTF8 character
      * @return UTF8 character
      */

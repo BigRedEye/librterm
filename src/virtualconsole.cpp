@@ -41,6 +41,9 @@ Char VirtualConsole::get(size_t x, size_t y) const {
 }
 
 void VirtualConsole::set(size_t x, size_t y, Char c) {
+    if (c == data_[y][x])
+        return;
+
     data_[y][x] = c;
     mask_[y][x] = true;
 }
@@ -76,16 +79,18 @@ void VirtualConsole::addChar(char_t c) {
             cursorX_ = cols() - 1, --cursorY_;
         if (cursorY_ < 0)
             cursorY_ = rows() - 1;
-        data_[cursorY_][cursorX_].ch_ = ' ';
-        mask_[cursorY_][cursorX_] = true;
+        set(cursorX_, cursorY_, Char(' ',
+                                     data_[cursorY_][cursorX_].bg(),
+                                     data_[cursorY_][cursorX_].fg()));
         break;
     case '\t':
         for (int i = 0; i < 4; ++i)
             addChar(' ');
         break;
     default:
-        mask_[cursorY_][cursorX_] = true;
-        data_[cursorY_][cursorX_].ch_ = c;
+        set(cursorX_, cursorY_, Char(c,
+                                     data_[cursorY_][cursorX_].bg(),
+                                     data_[cursorY_][cursorX_].fg()));
         ++cursorX_;
         if (cursorX_ >= cols())
             cursorX_ = 0, ++cursorY_;
@@ -106,4 +111,15 @@ std::vector<std::pair<size_t, size_t>> VirtualConsole::getUpdatedChars(bool forc
             }
     return result;
 }
+
+bool Char::operator ==(const Char &other) const {
+    return this->c() == other.c() && 
+           this->bg() == other.bg() && 
+           this->fg() == other.fg();
+}
+
+bool Char::operator !=(const Char &other) const {
+    return !(*this == other);
+}
+
 }

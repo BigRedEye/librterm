@@ -4,6 +4,8 @@
 #include "tilefont.h"
 #include <iostream>
 
+#include <SDL2/SDL_image.h>
+
 #ifdef RTERM_DEBUG
 #include <iostream>
 #include <chrono>
@@ -107,6 +109,20 @@ void Term::setWindowSize(size_t width, size_t height) {
 
     SDL_RenderClear(p_ren_.get());
     redraw(true);
+}
+
+Term& Term::setTitle(const std::string &title) {
+    SDL_SetWindowTitle(p_win_.get(), title.c_str());
+    return *this;
+}
+
+Term& Term::setIcon(const std::string &path) {
+    SDL_Ptr<SDL_Surface> p_icon(IMG_Load(path.c_str()));
+    if (!p_icon)
+        SDL_Log(IMG_GetError());
+    else
+        SDL_SetWindowIcon(p_win_.get(), p_icon.get());
+    return *this;
 }
 
 void Term::resize(size_t ncols, size_t nrows) {
@@ -225,7 +241,7 @@ void Term::setMaxWindowSize(size_t width, size_t height) {
 }
 
 void Term::close() {
-
+    quitRequested_ = true;
 }
 
 void Term::setFont(const std::string &path, size_t sz) {

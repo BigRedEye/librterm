@@ -6,5 +6,6 @@ copy librterm.dll demo &&^
 cd demo &&^
 cmake . -G "MinGW Makefiles" &&^
 mingw32-make &&^
-demo.exe
+demo.exe ||^
+pause
 cd %STARTDIR%
