@@ -43,6 +43,13 @@ inline std::string UTF8CharToBytes(char_t c) {
     static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
     return convert.to_bytes(c);
 }
+
+/**
+ * @brief Like sprintf, but wihout buffers
+ * @param fmt printf-style format string
+ * @return formatted string
+ */
+std::string format(const std::string &fmt, ...);
 }
 
 #endif // RTERM_CHAR_H

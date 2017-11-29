@@ -7,8 +7,10 @@
 #define RTERM_TERM_H
 
 #include <cstddef>
-#include <vector>
+#include <chrono>
 #include <set>
+#include <vector>
+
 #include <SDL2/SDL.h>
 
 #include "sdl_ptr.h"
@@ -66,6 +68,12 @@ public:
      */
     void delay(uint32_t msec) const;
 
+    /**
+     * @brief Get fps
+     * @return frames per second
+     */
+    long double fps() const;
+    
     /**
      * @brief Get cursor X
      * @return cursor X position
@@ -302,6 +310,9 @@ private:
 
     Color fgCol_; ///< default foreground color
     Color bgCol_; ///< default background color
+    
+    std::chrono::high_resolution_clock::time_point lastFrameTimePoint_; ///< time point for the last redraw() call
+    std::chrono::duration<long double, std::nano> timeBetweenFrames_; ///< time between last two redraw() calls
 
     /// @endcond
 };

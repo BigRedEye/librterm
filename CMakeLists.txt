@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rterm)
 
+set (CMAKE_CXX_STANDARD 11)
+
 file(GLOB SOURCES
     include/*.h
     src/*.cpp

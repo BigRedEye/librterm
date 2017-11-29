@@ -3,6 +3,7 @@
 #include "ttfont.h"
 #include "tilefont.h"
 #include <iostream>
+#include <numeric>
 
 #include <SDL2/SDL_image.h>
 
@@ -21,10 +22,11 @@ Term::Term(size_t ncols, size_t nrows)
       quitRequested_(false),
       fgCol_(0, 255, 0),
       bgCol_(0, 0, 0),
-      p_font_(new TTFont()) {
+      p_font_(new TTFont()),
+      lastFrameTimePoint_(std::chrono::high_resolution_clock::now()),
+      timeBetweenFrames_(0) {
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     TTF_Init();
-
     p_win_ = SDL_Ptr<SDL_Window>(SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
                                          SDL_WINDOWPOS_UNDEFINED,
                                          p_font_->w() * cols(), p_font_->h() * rows(), 0));
@@ -62,6 +64,12 @@ bool Term::isRunning() const {
 
 void Term::delay(uint32_t msec) const {
     SDL_Delay(msec);
+}
+
+long double Term::fps() const {
+    if (timeBetweenFrames_.count() < 1e-7)
+        return std::numeric_limits<long double>::infinity();
+    return 1. / timeBetweenFrames_.count();
 }
 
 size_t Term::getCursorX() const {
@@ -296,7 +304,6 @@ void Term::redraw(bool force) {
 #ifdef RTERM_DEBUG
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 #endif // RTERM_DEBUG
-
     auto update = console_.getUpdatedChars(force);
     for (auto p : update)
         redraw(p.first, p.second);
@@ -319,7 +326,16 @@ void Term::renderToScreen() {
                            std::min(textureRect.h, windowRect.h)};
     SDL_RenderClear(p_ren_.get());
     SDL_RenderCopy(p_ren_.get(), p_tex_.get(), &dstRect, &dstRect);
+    
     SDL_RenderPresent(p_ren_.get());
+    
+    /* count fps */
+    std::chrono::high_resolution_clock::time_point redrawStartTimePoint = 
+            std::chrono::high_resolution_clock::now();
+    timeBetweenFrames_ = redrawStartTimePoint - lastFrameTimePoint_;
+    lastFrameTimePoint_ = redrawStartTimePoint;
+    
+    SDL_Log("%ld")
 }
 
 void Term::redraw(size_t x, size_t y) {
