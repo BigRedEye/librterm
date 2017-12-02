@@ -67,6 +67,7 @@ void VirtualConsole::setCursorPosition(size_t x, size_t y) {
 void VirtualConsole::addChar(char_t c) {
     if (cols() * rows() <= 0)
         return;
+
     switch (c) {
     case '\n':
     case '\r':
@@ -74,11 +75,12 @@ void VirtualConsole::addChar(char_t c) {
         cursorX_ = 0;
         break;
     case '\b':
-        --cursorX_;
-        if (cursorX_ < 0)
-            cursorX_ = cols() - 1, --cursorY_;
-        if (cursorY_ < 0)
-            cursorY_ = rows() - 1;
+        if (cursorX_ == 0) {
+            cursorX_ = cols() - 1;
+            cursorY_ = cursorY_ == 0 ? rows() - 1 : cursorY_ - 1;
+        }
+        else
+            --cursorX_;
         set(cursorX_, cursorY_, Char(' ',
                                      data_[cursorY_][cursorX_].bg(),
                                      data_[cursorY_][cursorX_].fg()));

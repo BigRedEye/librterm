@@ -20,6 +20,7 @@
 #include "color.h"
 #include "char.h"
 #include "virtualconsole.h"
+#include "framerate_counter.h"
 
 namespace rterm {
 
@@ -313,10 +314,8 @@ private:
 
     Color fgCol_; ///< default foreground color
     Color bgCol_; ///< default background color
-    
-    std::queue<std::chrono::high_resolution_clock::time_point> lastFrameTimePoints_; ///< time point for the last redraw() call
-    static constexpr int maxTimePoints = 20; ///< fps is @f$\frac{t_i + t{i - 1} + \ldots + t{i-20}}{20 - 1}@f$
 
+    FrameRateCounter frameRateCounter_; ///< framerate counter
     /// @endcond
 };
 

@@ -3,7 +3,6 @@
 #include "ttfont.h"
 #include "tilefont.h"
 #include <iostream>
-#include <numeric>
 
 #include <SDL2/SDL_image.h>
 
@@ -65,11 +64,7 @@ void Term::delay(uint32_t msec) const {
 }
 
 long double Term::fps() const {
-    std::chrono::duration<long double, std::ratio<1>> delta = 
-            lastFrameTimePoints_.back() - lastFrameTimePoints_.front();
-    if (delta.count() < 1e-9)
-        return std::numeric_limits<long double>::infinity();
-    return static_cast<long double>(lastFrameTimePoints_.size() - 1) / delta.count();
+    return frameRateCounter_.getFps();
 }
 
 size_t Term::getCursorX() const {
@@ -336,9 +331,7 @@ void Term::renderToScreen() {
     SDL_RenderPresent(p_ren_.get());
     
     /* count fps */
-    lastFrameTimePoints_.push(std::chrono::high_resolution_clock::now());
-    if (lastFrameTimePoints_.size() > Term::maxTimePoints)
-        lastFrameTimePoints_.pop();
+    frameRateCounter_.nextFrame(highResClock::now());
 }
 
 void Term::redraw(size_t x, size_t y) {
