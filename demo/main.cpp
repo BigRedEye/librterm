@@ -13,6 +13,9 @@ int main(int argc, char **argv)
     UNUSED(argc);
     UNUSED(argv);
 
+    bool isTest = argc > 1 && !strcmp(argv[1], "--test");
+    bool isBenchmark = argc > 1 && !strcmp(argv[1], "--benchmark");
+
     rterm::Term terminal(80, 24);
     terminal.setMaxWindowSize(2000, 2000);
     terminal.setMinWindowSize(200, 100);
@@ -23,11 +26,10 @@ int main(int argc, char **argv)
     terminal.setFgColor(rterm::Color(100, 255, 100));
     terminal.setFullscreen(false);
     terminal.setResizable(true);
-    rterm::Key k = terminal.getKey();
     int flooditers = 0, randomiters = 2000;
-    if (argc > 1 && !strcmp(argv[1], "--benchmark"))
+    if (isTest)
         flooditers = 2000, randomiters = 10000;
-    else if (argc > 1 && !strcmp(argv[1], "--test"))
+    else if (isBenchmark)
         flooditers = 100, randomiters = 100;
     for (int iters = 0; iters < randomiters; ++iters) {
         int i = rand() % terminal.cols(),
@@ -49,8 +51,8 @@ int main(int argc, char **argv)
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
     for (int iters = 0; iters < flooditers; ++iters) {
         terminal.shift(1, 0);
-        for (int i = 0; i < terminal.cols(); ++i)
-            for (int j = 0; j < terminal.rows(); ++j) {
+        for (int i = 0; i < int(terminal.cols()); ++i)
+            for (int j = 0; j < int(terminal.rows()); ++j) {
                 terminal.setChar(i, j, 'a' + (i + j + iters) % ('z' - 'a'));
                 terminal.setBgColor(rterm::Color(std::min(i * 180 / terminal.cols() + iters * 127 / 1000, (size_t)255ull),
                                                  0,
@@ -89,7 +91,7 @@ int main(int argc, char **argv)
     terminal.setBgColor(rterm::Color(0, 255, 255));
 
     terminal.delay(1000);
-    if (argc > 1 && !strcmp(argv[1], "--test")) {
+    if (isTest) {
         for (int i = 0; i < 1000; ++i)
             terminal.setChar(rand() % terminal.cols(), rand() % terminal.rows(), 'a' + rand() % 26);
     } else {
