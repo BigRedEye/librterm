@@ -25,8 +25,8 @@ Term::Term(size_t ncols, size_t nrows)
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     TTF_Init();
     p_win_ = SDL_Ptr<SDL_Window>(SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
-                                         SDL_WINDOWPOS_UNDEFINED,
-                                         p_font_->w() * cols(), p_font_->h() * rows(), 0));
+                                     SDL_WINDOWPOS_UNDEFINED,
+                                     p_font_->w() * cols(), p_font_->h() * rows(), 0));
     p_ren_ = SDL_Ptr<SDL_Renderer>(SDL_CreateRenderer(p_win_.get(), -1, 0));
     
     SDL_RenderClear(p_ren_.get());
@@ -314,8 +314,34 @@ void Term::redraw(bool force) {
     auto update = console_.getUpdatedChars(force);
     for (auto p : update)
         redraw(p.first, p.second);
-    if (!update.empty() || force)
+    if (wasShift_ || !update.empty() || force)
         renderToScreen();
+}
+
+void Term::shift(int dx, int dy) {
+    console_.shift(dx, dy);
+
+    SDL_Ptr<SDL_Texture> prevTexture(p_tex_.release());
+    updateTexture();
+    SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
+    SDL_RenderClear(p_ren_.get());
+    int w = static_cast<int>(cols() * p_font_->w()),
+        h = static_cast<int>(rows() * p_font_->h());
+    SDL_Rect dstRect{0, 0, 0, 0};
+    /*
+     * 0, 0, w, h -> dx, dy, w - dx, h - dy
+     *            -> 0,  0,  w + dx, h + dy */
+    dstRect.w = w - abs(dx * static_cast<int>(p_font_->w()));
+    dstRect.x = dx > 0 ? dx * static_cast<int>(p_font_->w()) : 0;
+    dstRect.h = h - abs(dy * static_cast<int>(p_font_->h()));
+    dstRect.y = dy > 0 ? static_cast<int>(dy * p_font_->h()) : 0;
+    SDL_Rect srcRect{dstRect.x - dx * static_cast<int>(p_font_->w()),
+                     dstRect.y - dy * static_cast<int>(p_font_->h()),
+                     dstRect.w,
+                     dstRect.h};
+    SDL_RenderCopy(p_ren_.get(), prevTexture.get(), &srcRect, &dstRect);
+    wasShift_ = true;
+    SDL_SetRenderTarget(p_ren_.get(), NULL);
 }
 
 void Term::renderToScreen() {
@@ -327,7 +353,7 @@ void Term::renderToScreen() {
                            std::min(textureRect.h, windowRect.h)};
     SDL_RenderClear(p_ren_.get());
     SDL_RenderCopy(p_ren_.get(), p_tex_.get(), &dstRect, &dstRect);
-    
+
     SDL_RenderPresent(p_ren_.get());
     
     /* count fps */

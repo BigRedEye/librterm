@@ -96,6 +96,8 @@ public:
      */
     void addChar(char_t c);
 
+    void shift(int dx, int dy);
+
     /**
      * @brief Get updated positions since last getUpdatedChars call
      * @param force if true, returns whole console
@@ -104,6 +106,8 @@ public:
     std::vector<std::pair<size_t, size_t>> getUpdatedChars(bool force = false);
 
 private:
+    bool getMask(size_t x, size_t y) const;
+
     std::vector<std::vector<Char>> data_; ///< array of characters
     std::vector<std::vector<char>> mask_; ///< mask_[i][j] = true, if character at (j, i) was uptated
     size_t cursorX_, ///< cursor position

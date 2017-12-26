@@ -241,6 +241,8 @@ public:
      */
     void redraw(bool force = false);
 
+    void shift(int dx, int dy);
+
     /**
      * @brief Get char at specific position
      * @param x position
@@ -311,6 +313,7 @@ private:
     SDL_Ptr<SDL_Texture> p_tex_; ///< pointer to SDL_Texture object
 
     bool quitRequested_; ///< was quit requested by user or system
+    bool wasShift_; ///<
 
     Color fgCol_; ///< default foreground color
     Color bgCol_; ///< default background color

@@ -37,7 +37,15 @@ void VirtualConsole::resize(size_t ncols, size_t nrows, Color bgColor, Color fgC
 }
 
 Char VirtualConsole::get(size_t x, size_t y) const {
-    return data_[y][x];
+    if (x < cols() && y < rows())
+        return data_[y][x];
+    return Char(' ');
+}
+
+bool VirtualConsole::getMask(size_t x, size_t y) const {
+    if (x < cols() && y < rows())
+        return mask_[y][x];
+    return false;
 }
 
 void VirtualConsole::set(size_t x, size_t y, Char c) {
@@ -101,6 +109,20 @@ void VirtualConsole::addChar(char_t c) {
     }
     cursorX_ = (cursorX_ + 2 * cols()) % cols();
     cursorY_ = (cursorY_ + 2 * rows()) % rows();
+}
+
+void VirtualConsole::shift(int dx, int dy) {
+    std::vector<std::vector<Char>> tmpData(rows(), std::vector<Char>(cols()));
+    std::vector<std::vector<char>> tmpMask(rows(), std::vector<char>(cols()));
+
+    for (size_t j = 0; j < rows(); ++j)
+        for (size_t i = 0; i < cols(); ++i)
+            if (j + dy >= 0 && i + dx >= 0) {
+                tmpData[j][i] = get(i + dx, j + dy);
+                tmpMask[j][i] = getMask(i + dx, j + dy);
+            }
+    data_.swap(tmpData);
+    mask_.swap(tmpMask);
 }
 
 std::vector<std::pair<size_t, size_t>> VirtualConsole::getUpdatedChars(bool force) {

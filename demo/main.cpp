@@ -23,14 +23,32 @@ int main(int argc, char **argv)
     terminal.setFgColor(rterm::Color(100, 255, 100));
     terminal.setFullscreen(false);
     terminal.setResizable(true);
-    int flooditers = 0, randomiters = 0;
+    rterm::Key k = terminal.getKey();
+    int flooditers = 0, randomiters = 2000;
     if (argc > 1 && !strcmp(argv[1], "--benchmark"))
         flooditers = 2000, randomiters = 10000;
     else if (argc > 1 && !strcmp(argv[1], "--test"))
         flooditers = 100, randomiters = 100;
-    
+    for (int iters = 0; iters < randomiters; ++iters) {
+        int i = rand() % terminal.cols(),
+            j = rand() % terminal.rows();
+        terminal.setChar(i, j, 'a' + rand() % ('z' - 'a'));
+        terminal.setBgColor(rterm::Color(std::min(i * 255 / terminal.cols(), (size_t)255ull),
+                                         0,
+                                         std::min(j * 255 / terminal.cols(), (size_t)255ull)), i, j);
+        terminal.setFgColor(rterm::Color(255 - std::min(i * 255 / terminal.cols(), (size_t)255ull),
+                                         255,
+                                         255 - std::min(j * 255 / terminal.cols(), (size_t)255ull)), i, j);
+        terminal.redraw();
+    }
+    for (int i = 0; i < randomiters; ++i) {
+        terminal.shift((rand() % 3) - 1, (rand() % 3) - 1);
+        terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
+        terminal.redraw();
+    }
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
     for (int iters = 0; iters < flooditers; ++iters) {
+        terminal.shift(1, 0);
         for (int i = 0; i < terminal.cols(); ++i)
             for (int j = 0; j < terminal.rows(); ++j) {
                 terminal.setChar(i, j, 'a' + (i + j + iters) % ('z' - 'a'));
@@ -70,6 +88,7 @@ int main(int argc, char **argv)
     terminal.setFgColor(rterm::Color(255,  0,  0));
     terminal.setBgColor(rterm::Color(0, 255, 255));
 
+    terminal.delay(1000);
     if (argc > 1 && !strcmp(argv[1], "--test")) {
         for (int i = 0; i < 1000; ++i)
             terminal.setChar(rand() % terminal.cols(), rand() % terminal.rows(), 'a' + rand() % 26);
@@ -79,14 +98,29 @@ int main(int argc, char **argv)
             rterm::Key k = terminal.getKey();
             if (k.key() == rterm::F4 && k.mod() & rterm::ALT)
                 return 0;
-            if (k.key() == rterm::F1) {
+            SDL_Log("%s", SDL_GetKeyName(k.key()));
+            switch (k.key()) {
+            case rterm::F1:
                 terminal.setFullscreen(!fullscr);
                 fullscr = !fullscr;
+                break;
+            case rterm::UP:
+                terminal.shift(0, -1);
+                break;
+            case rterm::LEFT:
+                terminal.shift(-1, 0);
+                break;
+            case rterm::RIGHT:
+                terminal.shift(1, 0);
+                break;
+            case rterm::DOWN:
+                terminal.shift(0, 1);
+                break;
+            default:
+                break;
             }
-            if ((k.key() == rterm::NP_PLUS && k.mod() & rterm::CTRL) || (k.key() == '=' && k.mod() & (rterm::CTRL | rterm::SHIFT)))
-                terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", ++fontSize);
-            else if (k.toChar())
-                terminal.addChar(k.toChar());
+            // if (k.toChar())
+            //    terminal.addChar(k.toChar());
             terminal.redraw();
         }
     }
