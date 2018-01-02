@@ -225,6 +225,9 @@ public:
      */
     char_t getChar() const;
 
+    void getMousePosition(size_t &x, size_t &y) const;
+    int getMouseButtons() const;
+
     /**
      * @brief Write next character and move cursor forward
      * @param c unicode char to write

@@ -1,10 +1,12 @@
 #include "../include/term.h"
 #include "../include/key.h"
+#include "../include/mouse.h"
 #include <iostream>
 #include <random>
 #include <complex>
 #include <cstring>
 #include <chrono>
+#include <vector>
 
 #define UNUSED(cond) (void)(cond)
 
@@ -13,18 +15,59 @@ int main(int argc, char **argv)
     UNUSED(argc);
     UNUSED(argv);
 
-    bool isTest = argc > 1 && !strcmp(argv[1], "--test");
+    bool isTest      = argc > 1 && !strcmp(argv[1], "--test");
     bool isBenchmark = argc > 1 && !strcmp(argv[1], "--benchmark");
+    bool isSnow      = argc > 1 && !strcmp(argv[1], "--snow");
 
-    rterm::Term terminal(80, 24);
+    rterm::Term terminal(200, 100);
     terminal.setMaxWindowSize(2000, 2000);
     terminal.setMinWindowSize(200, 100);
-    int fontSize = 18;
+    //int fontSize = 4;
     terminal.setTitle("rterm demo")
             .setIcon("terminal.ico");
-    terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", ++fontSize);
-    terminal.setFgColor(rterm::Color(100, 255, 100));
+    //terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", ++fontSize);
+    terminal.setFont("../fonts/tile/10x10.jpg", 5, 5);
+    terminal.setFgColor(rterm::Color(255, 255, 255));
     terminal.setFullscreen(false);
+
+    std::vector<std::vector<int>> buf1, buf2;
+    buf1.resize(terminal.cols(), std::vector<int>(terminal.rows()));
+    buf2.resize(terminal.cols(), std::vector<int>(terminal.rows()));
+    if (!isSnow) {
+        while (terminal.isRunning()) {
+            if (rand() % 100 > 50 && (terminal.getMouseButtons() & rterm::MouseButton::LEFT)) {
+                size_t mx, my;
+                terminal.getMousePosition(mx, my);
+                buf1[mx][terminal.rows() - 1 - my] = 1;
+            }
+            for (int i = 0; i < terminal.cols(); ++i)
+                for (int j = 0; j < terminal.rows(); ++j) {
+                    if (buf1[i][j]) {
+                        if (j > 0 && !buf1[i][j-1])
+                            buf1[i][j] = 0, buf1[i][j - 1] = 1;
+                        else if (j > 0 && i > 0 && !buf1[i-1][j-1])
+                            buf1[i][j] = 0, buf1[i-1][j-1] = 1;
+                        else if (j > 0 && i < terminal.cols() - 1 && !buf1[i+1][j-1])
+                            buf1[i][j] = 0, buf1[i+1][j-1] = 1;
+                    }
+                }
+            for (int i = 0; i < terminal.cols(); ++i)
+                for (int j = 0; j < terminal.rows(); ++j)
+                    if (buf1[i][j] != buf2[i][j]) {
+                        if (buf1[i][j] == 0)
+                            terminal.setChar(i, terminal.rows() - 1 - j, 0);
+                            //terminal.setBgColor(rterm::Color(0, 0, 0), i, terminal.rows() - 1 - j);
+                        else if (buf1[i][j] == 1)
+                            terminal.setChar(i, terminal.rows() - 1 - j, 13 * 32 + 11 * 2);
+                            //terminal.setBgColor(rterm::Color(0xff, 0xff, 0xff), i, terminal.rows() - 1 - j);
+                        buf2[i][j] = buf1[i][j];
+                    }
+            terminal.redraw();
+            //terminal.delay(100);
+            SDL_PumpEvents();
+        }
+    }
+    return 0;
     terminal.setResizable(true);
     int flooditers = 0, randomiters = 2000;
     if (isTest)

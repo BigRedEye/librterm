@@ -2,6 +2,7 @@
 #include "font.h"
 #include "ttfont.h"
 #include "tilefont.h"
+#include "mouse.h"
 #include <iostream>
 
 #include <SDL2/SDL_image.h>
@@ -193,6 +194,20 @@ char_t Term::getChar() const {
     return key.toChar();
 }
 
+void Term::getMousePosition(size_t &x, size_t &y) const {
+    int mx = 0, my = 0;
+    SDL_GetMouseState(&mx, &my);
+    x = mx / p_font_->w();
+    y = my / p_font_->h();
+    x = std::max(std::min(x, cols() - 1), 0ul);
+    y = std::max(std::min(y, rows() - 1), 0ul);
+}
+
+int Term::getMouseButtons() const {
+    int result = SDL_GetMouseState(NULL, NULL);
+    return result;
+}
+
 char_t Term::charAt(size_t x, size_t y) const {
     return console_.get(x, y).c();
 }
@@ -311,6 +326,7 @@ void Term::setFgColor(const Color &fg, size_t x, size_t y) {
 }
 
 void Term::redraw(bool force) {
+    SDL_PumpEvents();
     auto update = console_.getUpdatedChars(force);
     for (auto p : update)
         redraw(p.first, p.second);
