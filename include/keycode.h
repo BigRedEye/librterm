@@ -14,7 +14,7 @@ namespace rterm {
  * @brief Key codes enumeration. For alphanumeric keys their codes are the same as their char representation.
  */
 struct KeyCode {
-    enum Key {
+    enum Keys {
         UNKNOWN = SDLK_UNKNOWN, ///< Not recognized
 
         TAB = '\t', ///< Tab

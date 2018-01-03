@@ -141,24 +141,24 @@ int main(int argc, char **argv)
         bool fullscr = false;
         while(terminal.isRunning()) {
             rterm::Key k = terminal.getKey();
-            if (k.key() == rterm::F4 && k.mod() & rterm::ALT)
+            if (k.key() == rterm::KeyCode::F4 && k.mod() & rterm::KeyMod::ALT)
                 return 0;
             SDL_Log("%s", SDL_GetKeyName(k.key()));
             switch (k.key()) {
-            case rterm::F1:
+            case rterm::KeyCode::F1:
                 terminal.setFullscreen(!fullscr);
                 fullscr = !fullscr;
                 break;
-            case rterm::UP:
+            case rterm::KeyCode::UP:
                 terminal.shift(0, -1);
                 break;
-            case rterm::LEFT:
+            case rterm::KeyCode::LEFT:
                 terminal.shift(-1, 0);
                 break;
-            case rterm::RIGHT:
+            case rterm::KeyCode::RIGHT:
                 terminal.shift(1, 0);
                 break;
-            case rterm::DOWN:
+            case rterm::KeyCode::DOWN:
                 terminal.shift(0, 1);
                 break;
             default:
