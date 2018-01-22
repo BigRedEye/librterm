@@ -95,7 +95,12 @@ public:
      * @param c character
      */
     void addChar(char_t c);
-
+    
+    /**
+     * @brief Effectively move console data
+     * @param dx horizontal component
+     * @param dy vertical component 
+     */
     void shift(int dx, int dy);
 
     /**
@@ -174,6 +179,7 @@ public:
     
     friend class VirtualConsole;
     friend class Term;
+
 private:
     char_t ch_; ///< real UTF8 char
     Color bg_, ///< background color

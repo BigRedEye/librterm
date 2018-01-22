@@ -57,6 +57,7 @@ size_t Term::rows() const {
 }
 
 bool Term::isRunning() const {
+    SDL_PumpEvents();
     return !quitRequested_;
 }
 
@@ -156,12 +157,20 @@ void Term::print(size_t x, size_t y, const std::string &fmt, ...) {
     va_end(args);
 }
 
-Key Term::getKey() const {
+Key Term::getKey(int32_t timeout) const {
+    uint32_t endTick = SDL_GetTicks() + static_cast<uint32_t>(timeout);
     SDL_StartTextInput();
-    while (isRunning()) {
+    while (isRunning() && (timeout == -1 || !SDL_TICKS_PASSED(SDL_GetTicks(), endTick))) {
         SDL_Event evs[2];
         SDL_PumpEvents();
-        SDL_WaitEvent(NULL);
+        if (timeout < 0ll)
+            SDL_WaitEvent(NULL);
+        else {
+            SDL_WaitEventTimeout(NULL, static_cast<uint32_t>(timeout));
+            timeout = static_cast<int32_t>(endTick) - static_cast<int32_t>(SDL_GetTicks());
+            if (timeout < 0)
+                break;
+        }
         int sz = 0;
         if (SDL_PeepEvents(&evs[sz], 1, SDL_GETEVENT, SDL_KEYDOWN, SDL_KEYDOWN) > 0)
             ++sz;
@@ -187,9 +196,18 @@ Key Term::getKey() const {
     return Key();
 }
 
-char_t Term::getChar() const {
+char_t Term::getChar(int32_t timeout) const {
     Key key;
-    while (isRunning() && !((key = getKey()).toChar())) {
+    uint32_t endTick = SDL_GetTicks() + static_cast<uint32_t>(timeout);
+    while (isRunning()) {
+         key = getKey(timeout);
+         if (key.toChar())
+             break;
+         if (timeout >= 0) {
+             timeout = static_cast<int32_t>(endTick) - static_cast<int32_t>(SDL_GetTicks());
+             if (timeout < 0)
+                 break;
+         }
     }
     return key.toChar();
 }
@@ -199,8 +217,8 @@ void Term::getMousePosition(size_t &x, size_t &y) const {
     SDL_GetMouseState(&mx, &my);
     x = mx / p_font_->w();
     y = my / p_font_->h();
-    x = std::max(std::min(x, cols() - 1), 0ul);
-    y = std::max(std::min(y, rows() - 1), 0ul);
+    x = std::max(std::min(x, cols() - size_t(1)), size_t(0ul));
+    y = std::max(std::min(y, rows() - size_t(1)), size_t(0ul));
 }
 
 int Term::getMouseButtons() const {

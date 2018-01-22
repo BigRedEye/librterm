@@ -1,8 +1,9 @@
 #include "../include/term.h"
 #include "../include/key.h"
+#include "../include/mouse.h"
+
 #include <iostream>
 #include <random>
-#include <complex>
 #include <cstring>
 #include <chrono>
 
@@ -42,11 +43,15 @@ int main(int argc, char **argv)
                                          255,
                                          255 - std::min(j * 255 / terminal.cols(), (size_t)255ull)), i, j);
         terminal.redraw();
+        if (!terminal.isRunning())
+            return 0;
     }
     for (int i = 0; i < randomiters; ++i) {
         terminal.shift((rand() % 3) - 1, (rand() % 3) - 1);
         terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
         terminal.redraw();
+        if (!terminal.isRunning())
+            return 0;
     }
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
     for (int iters = 0; iters < flooditers; ++iters) {
@@ -63,8 +68,10 @@ int main(int argc, char **argv)
         }
         terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
         terminal.redraw();
+        if (!terminal.isRunning())
+            return 0;
     }
-    
+
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::ratio<1, 1>> deltaTime = end - start;
     SDL_Log("Flood time usage: %f s", deltaTime.count());
@@ -96,11 +103,12 @@ int main(int argc, char **argv)
             terminal.setChar(rand() % terminal.cols(), rand() % terminal.rows(), 'a' + rand() % 26);
     } else {
         bool fullscr = false;
-        while(terminal.isRunning()) {
-            rterm::Key k = terminal.getKey();
+        while (terminal.isRunning()) {
+            rterm::Key k = terminal.getKey(16);
             if (k.key() == rterm::KeyCode::F4 && k.mod() & rterm::KeyMod::ALT)
                 return 0;
-            SDL_Log("%s", SDL_GetKeyName(k.key()));
+            if (k.key() != rterm::KeyCode::UNKNOWN)
+                SDL_Log("%s", SDL_GetKeyName(k.key()));
             switch (k.key()) {
             case rterm::KeyCode::F1:
                 terminal.setFullscreen(!fullscr);
@@ -121,8 +129,27 @@ int main(int argc, char **argv)
             default:
                 break;
             }
-            // if (k.toChar())
-            //    terminal.addChar(k.toChar());
+            static int mx = -1,
+                       my = -1;
+            size_t x = 0,
+                   y = 0;
+            terminal.getMousePosition(x, y);
+            if (terminal.getMouseButtons() & rterm::MouseButton::LEFT)
+                terminal.setBgColor(rterm::Color(0xff, 0xff, 0xff), x, y);
+            if (terminal.getMouseButtons() & rterm::MouseButton::RIGHT) {
+                if (mx >= 0 && my >= 0)
+                    terminal.shift(x - mx, y - my);
+                SDL_Log("Shift: %d %d -> %d %d", mx, my, x, y);
+                mx = x;
+                my = y;
+            } else {
+                mx = -1;
+                my = -1;
+            }
+
+            if (k.toChar())
+                terminal.addChar(k.toChar());
+            terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
             terminal.redraw();
         }
     }

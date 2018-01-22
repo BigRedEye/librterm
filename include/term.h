@@ -210,22 +210,34 @@ public:
     void close();
 
     /**
-     * @brief Wait for next key
+     * @brief Wait for the next pressed key
+     * @param timeout if the user does not enter anything within timeout milliseconds this function will return Key(rterm::UNKNOWN).
      * @return Key object represents next pressed key
-     * @note if during this function the terminal will be closed it will return Key(rterm::UNKNOWN)
+     * @note if during this function call the terminal will be closed it will return Key(rterm::UNKNOWN)
      * @see getChar if you want only printable characters
      */
-    Key getKey() const;
+    Key getKey(int32_t timeout = -1ll) const;    
 
     /**
-     * @brief Wait for next printable character
+     * @brief Wait for the next printable character
+     * @param timeout if the user does not enter anything within timeout milliseconds this function will return Key(rterm::UNKNOWN).
      * @return Key object represents next pressed printable key
-     * @note if during this function the terminal will be closed it will return Key(rterm::UNKNOWN)
-     * @see getKey if you want not only printable characters
+     * @note if during this function call the terminal will be closed it will return Key(rterm::UNKNOWN)
+     * @see getKey if you doesn't want only printable characters
      */
-    char_t getChar() const;
+    char_t getChar(int32_t timeout = -1ll) const;
 
+    /**
+     * @brief Get mouse position in tile
+     * @param[out] x mouse position
+     * @param[out] y mouse position
+     */
     void getMousePosition(size_t &x, size_t &y) const;
+
+    /**
+     * @brief Get pressed mouse buttons
+     * @return OR-ed combination of rterm::MouseButton constants
+     */
     int getMouseButtons() const;
 
     /**
@@ -233,7 +245,13 @@ public:
      * @param c unicode char to write
      */
     void addChar(char_t c);
-    
+
+    /**
+     * @brief Print printf-style fomated data
+     * @param x position of the first character
+     * @param y position of the first character
+     * @param fmt format
+     */
     void print(size_t x, size_t y, const std::string &fmt, ...);
 
     /**
@@ -244,6 +262,11 @@ public:
      */
     void redraw(bool force = false);
 
+    /**
+     * @brief Effectively move console data
+     * @param dx horizontal component
+     * @param dy vertical component 
+     */
     void shift(int dx, int dy);
 
     /**
@@ -322,6 +345,8 @@ private:
     Color bgCol_; ///< default background color
 
     FrameRateCounter frameRateCounter_; ///< framerate counter
+
+    const Uint8 *keyboardState_; ///< from SDL_GetKeyboardState
     /// @endcond
 };
 
