@@ -21,6 +21,7 @@
 #include "char.h"
 #include "virtualconsole.h"
 #include "framerate_counter.h"
+#include "inputsystem.h"
 
 namespace rterm {
 
@@ -216,7 +217,7 @@ public:
      * @note if during this function call the terminal will be closed it will return Key(rterm::UNKNOWN)
      * @see getChar if you want only printable characters
      */
-    Key getKey(int32_t timeout = -1ll) const;    
+    Key getKey(int32_t timeout = -1ll) const;
 
     /**
      * @brief Wait for the next printable character
@@ -347,6 +348,8 @@ private:
     FrameRateCounter frameRateCounter_; ///< framerate counter
 
     const Uint8 *keyboardState_; ///< from SDL_GetKeyboardState
+
+    InputSystem inputSystem_; ///< input system
     /// @endcond
 };
 

@@ -22,7 +22,7 @@ TTFont& TTFont::operator=(TTFont &&rhs) {
 
 size_t TTFont::w() const {
     if (!p_font_.get())
-        return 1;
+        return 2;
     static int w = -1, h = -1;
     if (w == -1)
         TTF_SizeText(p_font_.get(), "@", &w, &h);

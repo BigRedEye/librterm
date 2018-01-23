@@ -23,10 +23,11 @@ int main(int argc, char **argv)
     int fontSize = 18;
     terminal.setTitle("rterm demo")
             .setIcon("terminal.ico");
-    terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", ++fontSize);
+    terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", fontSize);
     terminal.setFgColor(rterm::Color(100, 255, 100));
     terminal.setFullscreen(false);
     terminal.setResizable(true);
+    terminal.resize(80, 24);
     int flooditers = 0, randomiters = 2000;
     if (isTest)
         flooditers = 2000, randomiters = 10000;
@@ -94,8 +95,8 @@ int main(int argc, char **argv)
     deltaTime = end - start;
     SDL_Log("Random time usage: %f s", deltaTime.count());
 
-    terminal.setFgColor(rterm::Color(255,  0,  0));
-    terminal.setBgColor(rterm::Color(0, 255, 255));
+    terminal.setFgColor(rterm::Color(0, 0xff, 0));
+    terminal.setBgColor(rterm::Color(0, 0, 0));
 
     terminal.delay(1000);
     if (isTest) {
@@ -107,8 +108,6 @@ int main(int argc, char **argv)
             rterm::Key k = terminal.getKey(16);
             if (k.key() == rterm::KeyCode::F4 && k.mod() & rterm::KeyMod::ALT)
                 return 0;
-            if (k.key() != rterm::KeyCode::UNKNOWN)
-                SDL_Log("%s", SDL_GetKeyName(k.key()));
             switch (k.key()) {
             case rterm::KeyCode::F1:
                 terminal.setFullscreen(!fullscr);
@@ -155,4 +154,3 @@ int main(int argc, char **argv)
     }
     return 0;
 }
-

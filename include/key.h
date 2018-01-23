@@ -41,7 +41,7 @@ public:
     /**
      * @brief Get printable unicode char of the Key
      * @return printable unicode char
-     * @return 0, if this key doesn't have printable representation, for example, rterm::LEFT
+     * @return 0, if this key doesn't have printable representation,for example, rterm::KeyCode::LEFT
      */
     char_t toChar() const;
     
@@ -59,7 +59,7 @@ public:
      */
     int mod() const;
 
-    friend class Term;
+    friend class InputSystem;
 
 private:
 /// @cond INTERNAL

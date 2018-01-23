@@ -3,7 +3,9 @@
 #include "ttfont.h"
 #include "tilefont.h"
 #include "mouse.h"
+
 #include <iostream>
+#include <functional>
 
 #include <SDL2/SDL_image.h>
 
@@ -100,7 +102,7 @@ void Term::updateTexture() {
     SDL_SetRenderTarget(p_ren_.get(), NULL);
 }
 
-void Term::setWindowSize(size_t width, size_t height) {    
+void Term::setWindowSize(size_t width, size_t height) {
     size_t ncols = width / p_font_->w(),
            nrows = height / p_font_->h();
     console_.resize(ncols, nrows, bgCol_, fgCol_);
@@ -158,58 +160,11 @@ void Term::print(size_t x, size_t y, const std::string &fmt, ...) {
 }
 
 Key Term::getKey(int32_t timeout) const {
-    uint32_t endTick = SDL_GetTicks() + static_cast<uint32_t>(timeout);
-    SDL_StartTextInput();
-    while (isRunning() && (timeout == -1 || !SDL_TICKS_PASSED(SDL_GetTicks(), endTick))) {
-        SDL_Event evs[2];
-        SDL_PumpEvents();
-        if (timeout < 0ll)
-            SDL_WaitEvent(NULL);
-        else {
-            SDL_WaitEventTimeout(NULL, static_cast<uint32_t>(timeout));
-            timeout = static_cast<int32_t>(endTick) - static_cast<int32_t>(SDL_GetTicks());
-            if (timeout < 0)
-                break;
-        }
-        int sz = 0;
-        if (SDL_PeepEvents(&evs[sz], 1, SDL_GETEVENT, SDL_KEYDOWN, SDL_KEYDOWN) > 0)
-            ++sz;
-        if (SDL_PeepEvents(&evs[sz], 1, SDL_GETEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT) > 0)
-            ++sz;
-        Key result;
-        for (int i = 0; i < sz; ++i)
-            switch (evs[i].type) {
-            case SDL_KEYDOWN:
-                result.setKey(evs[i].key.keysym.sym)
-                      .addMod(evs[i].key.keysym.mod);
-                break;
-            case SDL_TEXTINPUT:
-                result.setChar(UTF8BytesToChar(evs[i].text.text));
-                break;
-            default:
-                break;
-            }
-        if (result.key() || result.toChar()) {
-            return result;
-        }
-    }
-    return Key();
+    return inputSystem_.getKey(timeout, std::bind(&Term::isRunning, this));
 }
 
 char_t Term::getChar(int32_t timeout) const {
-    Key key;
-    uint32_t endTick = SDL_GetTicks() + static_cast<uint32_t>(timeout);
-    while (isRunning()) {
-         key = getKey(timeout);
-         if (key.toChar())
-             break;
-         if (timeout >= 0) {
-             timeout = static_cast<int32_t>(endTick) - static_cast<int32_t>(SDL_GetTicks());
-             if (timeout < 0)
-                 break;
-         }
-    }
-    return key.toChar();
+    return inputSystem_.getChar(timeout, std::bind(&Term::isRunning, this));
 }
 
 void Term::getMousePosition(size_t &x, size_t &y) const {
@@ -415,7 +370,6 @@ int eventFilter(void *data, SDL_Event *ev) {
         switch (ev->window.event) {
         case SDL_WINDOWEVENT_RESIZED:
             term->setWindowSize(ev->window.data1, ev->window.data2);
-            SDL_Log("Resized to %d x %d", ev->window.data1, ev->window.data2);
             return 0;
             break;
         case SDL_WINDOWEVENT_EXPOSED:
