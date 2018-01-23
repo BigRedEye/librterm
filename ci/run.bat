@@ -2,10 +2,10 @@ SET STARTDIR="%cd%"
 cd .. &&^
 cmake . -G "MinGW Makefiles" &&^
 mingw32-make &&^
-copy librterm.dll demo &&^
-cd demo &&^
+copy librterm.dll test &&^
+cd test &&^
 cmake . -G "MinGW Makefiles" &&^
 mingw32-make &&^
-demo.exe --benchmark ||^
+benchmark.exe ||^
 pause
 cd %STARTDIR%

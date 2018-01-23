@@ -8,14 +8,19 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 
-*.exe
-*.dll
 *.user
 *.ninja
 .*ninja_*
 *.cbp
+
+# binaries
+
+*.exe
+*.dll
 *.so
 *.a
 
-rterm
+test/benchmark
+test/userinput
+
 doxygen
