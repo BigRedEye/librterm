@@ -33,8 +33,4 @@ before_script:
 
 
 script:
-    - cmake . && make
-    - sudo install librterm.so /usr/local/bin/
-    - cd ./demo/
-    - cmake . && make
-    - ./demo --test
+    - ci/run.sh
