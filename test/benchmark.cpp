@@ -1,4 +1,5 @@
 #include "../include/term.h"
+#include "logger.h"
 
 #include <iostream>
 #include <random>
@@ -65,7 +66,7 @@ int main(int argc, char **argv) {
 
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::ratio<1, 1>> deltaTime = end - start;
-    SDL_Log("Flood time usage: %f s", deltaTime.count());
+    rterm::Logger().printf("Flood time usage: %f s", deltaTime.count());
     start = end;
 
     for (int iters = 0; iters < randomiters; ++iters) {
@@ -85,7 +86,7 @@ int main(int argc, char **argv) {
     }
     end = std::chrono::high_resolution_clock::now();
     deltaTime = end - start;
-    SDL_Log("Random time usage: %f s", deltaTime.count());
+    rterm::Logger().printf("Random time usage: %f s", deltaTime.count());
 
     terminal.setFgColor(rterm::Color(0, 0xff, 0));
     terminal.setBgColor(rterm::Color(0, 0, 0));
@@ -95,5 +96,6 @@ int main(int argc, char **argv) {
         terminal.setChar(rand() % terminal.cols(),
                          rand() % terminal.rows(),
                          'a' + rand() % ('z' - 'a'));
+    std::cout << "Done" << std::endl;
     return 0;
 }

@@ -7,7 +7,7 @@
 
 namespace rterm {
 
-/// @cond custom_deleter
+/// @cond INTERNAL
 
 template<typename T>
 struct sdl_deleter {
@@ -17,7 +17,7 @@ struct sdl_deleter {
     }
 };
 
-template< >
+template<>
 struct sdl_deleter<SDL_Window> {
     void operator()(SDL_Window* _ptr) {
         SDL_DestroyWindow(_ptr);
@@ -52,8 +52,6 @@ struct sdl_deleter<TTF_Font> {
     }
 };
 
-/// @endcond
-
 template<typename T>    
 using SDL_Ptr = std::unique_ptr<T, sdl_deleter<T>>;
 
@@ -64,6 +62,9 @@ template<typename T>
 inline SDL_SharedPtr<T> make_SDL_SharedPtr(T* ptr) {
     return SDL_SharedPtr<T>(ptr, sdl_deleter<T>());
 }
+
+/// @INTERNAL
+
 }
 
 #endif // RTERM_SDL_PTR_H

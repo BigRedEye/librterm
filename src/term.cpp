@@ -3,6 +3,7 @@
 #include "ttfont.h"
 #include "tilefont.h"
 #include "mouse.h"
+#include "logger.h"
 
 #include <iostream>
 #include <functional>
@@ -126,7 +127,7 @@ Term& Term::setTitle(const std::string &title) {
 Term& Term::setIcon(const std::string &path) {
     SDL_Ptr<SDL_Surface> p_icon(IMG_Load(path.c_str()));
     if (!p_icon)
-        SDL_Log(IMG_GetError());
+        Logger(Logger::CRITICAL) << IMG_GetError();
     else
         SDL_SetWindowIcon(p_win_.get(), p_icon.get());
     return *this;
@@ -231,10 +232,10 @@ void Term::setResizable(bool resizable) {
 #if SDL_MAJOR_VERSION >= 2 && SDL_PATCHLEVEL >= 5
     SDL_SetWindowResizable(p_win_.get(), (resizable ? SDL_TRUE : SDL_FALSE));  
 #else
-    SDL_Log("SDL version %d.%d.%d doesn't support setWindowResizable, update it to 2.0.5", 
-             SDL_MAJOR_VERSION,
-             SDL_MINOR_VERSION,
-             SDL_PATCHLEVEL);
+    Logger(Logger::ERROR).printf("SDL version %d.%d.%d doesn't support setWindowResizable, update it to 2.0.5", 
+                                  SDL_MAJOR_VERSION,
+                                  SDL_MINOR_VERSION,
+                                  SDL_PATCHLEVEL);
 #endif
 }
 
