@@ -1,5 +1,5 @@
-#include "../include/term.h"
-#include "logger.h"
+#include <rterm/term.h>
+#include <rterm/logger.h>
 
 #include <iostream>
 #include <random>
@@ -39,7 +39,6 @@ int main(int argc, char **argv) {
             return 0;
     }
     for (int i = 0; i < randomiters; ++i) {
-        terminal.shift((rand() % 3) - 1, (rand() % 3) - 1);
         terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
         terminal.redraw();
         if (!terminal.isRunning())

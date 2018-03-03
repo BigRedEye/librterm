@@ -7,6 +7,7 @@
 #define RTERM_KEY_H
 
 #include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_keyboard.h>
 #include "char.h"
 #include "keycode.h"
 
@@ -37,6 +38,12 @@ public:
      * @param ch unicode char
      */
     Key(char_t ch);
+
+    /**
+     * @brief Construct Key from SDL_Keysym
+     * @param sym SDL_Keysym from SDL events
+     */
+    Key(SDL_Keysym sym);
 
     /**
      * @brief Get printable unicode char of the Key

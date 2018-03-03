@@ -17,6 +17,11 @@ Key::Key(char_t ch)
       unicode_(ch) {
 }
 
+Key::Key(SDL_Keysym sym)
+    : Key(sym.sym) {
+    addMod(sym.mod);
+}
+
 char_t Key::toChar() const {
     return unicode_;
 }

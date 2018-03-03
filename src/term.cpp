@@ -39,12 +39,26 @@ Term::Term(size_t ncols, size_t nrows)
     
     SDL_RenderClear(p_ren_.get());
     SDL_RenderPresent(p_ren_.get());
+    sdlMutex_.lock();
+    sdlMutex_.unlock();
     p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
                                   SDL_GetWindowSurface(p_win_.get())->w, SDL_GetWindowSurface(p_win_.get())->h));
+    eventPumpThread_ = std::thread([this](){
+        while (!this->quitRequested_) {
+            this->sdlMutex_.lock();
+            SDL_PumpEvents();
+            this->sdlMutex_.unlock();
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+    });
     redraw();
 }
 
 Term::~Term() {
+    quitRequested_ = true;
+    if (eventPumpThread_.joinable())
+        eventPumpThread_.join();
+
     delete p_font_;
 
     TTF_Quit();
@@ -60,7 +74,6 @@ size_t Term::rows() const {
 }
 
 bool Term::isRunning() const {
-    SDL_PumpEvents();
     return !quitRequested_;
 }
 
@@ -85,6 +98,7 @@ void Term::setCursorPosition(size_t x, size_t y) {
 }
 
 void Term::updateTexture() {
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     SDL_Texture * tmp = p_tex_.get();
 
     int w, h;
@@ -104,6 +118,7 @@ void Term::updateTexture() {
 }
 
 void Term::setWindowSize(size_t width, size_t height) {
+    sdlMutex_.lock();
     size_t ncols = width / p_font_->w(),
            nrows = height / p_font_->h();
     console_.resize(ncols, nrows, bgCol_, fgCol_);
@@ -113,9 +128,12 @@ void Term::setWindowSize(size_t width, size_t height) {
     SDL_GetWindowSize(p_win_.get(), &curw, &curh);
     if (curw != width || curh != height)
         SDL_SetWindowSize(p_win_.get(), width, height);
+    sdlMutex_.unlock();
     updateTexture();
 
+    sdlMutex_.lock();
     SDL_RenderClear(p_ren_.get());
+    sdlMutex_.unlock();
     redraw(true);
 }
 
@@ -160,15 +178,18 @@ void Term::print(size_t x, size_t y, const std::string &fmt, ...) {
     va_end(args);
 }
 
-Key Term::getKey(int32_t timeout) const {
+Key Term::getKey(int32_t timeout) {
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     return inputSystem_.getKey(timeout, std::bind(&Term::isRunning, this));
 }
 
-char_t Term::getChar(int32_t timeout) const {
+char_t Term::getChar(int32_t timeout) {
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     return inputSystem_.getChar(timeout, std::bind(&Term::isRunning, this));
 }
 
-void Term::getMousePosition(size_t &x, size_t &y) const {
+void Term::getMousePosition(size_t &x, size_t &y) {
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     int mx = 0, my = 0;
     SDL_GetMouseState(&mx, &my);
     x = mx / p_font_->w();
@@ -177,7 +198,8 @@ void Term::getMousePosition(size_t &x, size_t &y) const {
     y = std::max(std::min(y, rows() - size_t(1)), size_t(0ul));
 }
 
-int Term::getMouseButtons() const {
+int Term::getMouseButtons() {
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     int result = SDL_GetMouseState(NULL, NULL);
     return result;
 }
@@ -195,40 +217,45 @@ Color Term::fgColorAt(size_t x, size_t y) const {
 }
 
 void Term::setFullscreen(bool fullscr) {
-    static bool isFullscr = false;
-    static SDL_DisplayMode *windowedMode = NULL;
-    static int prevCols = 0, prevRows = 0;
+    int ncols, nrows;
+    {
+        std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
+        static bool isFullscr = false;
+        static SDL_DisplayMode *windowedMode = NULL;
+        static int prevCols = 0, prevRows = 0;
 
-    if (!isFullscr) {
-        if (windowedMode == NULL) {
-            windowedMode = new SDL_DisplayMode;
-            SDL_GetWindowDisplayMode(p_win_.get(), windowedMode);
+        if (!isFullscr) {
+            if (windowedMode == NULL) {
+                windowedMode = new SDL_DisplayMode;
+                SDL_GetWindowDisplayMode(p_win_.get(), windowedMode);
+            }
+            prevCols = cols(), prevRows = rows();
         }
-        prevCols = cols(), prevRows = rows();
+
+        if (isFullscr == fullscr)
+            return;
+
+        SDL_SetWindowFullscreen(p_win_.get(), (fullscr ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
+
+        /* set correct resolution */
+        ncols = prevCols, nrows = prevRows;
+        SDL_DisplayMode mode;
+        if (fullscr) {
+            SDL_GetDesktopDisplayMode(0, &mode);
+            ncols = mode.w / p_font_->w();
+            nrows = mode.h / p_font_->h();
+        }
+        else
+            mode = *windowedMode;
+        SDL_SetWindowDisplayMode(p_win_.get(), &mode);
+
+        isFullscr = !isFullscr;
     }
-
-    if (isFullscr == fullscr)
-        return;
-
-    SDL_SetWindowFullscreen(p_win_.get(), (fullscr ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
-
-    /* set correct resolution */
-    int ncols = prevCols, nrows = prevRows;
-    SDL_DisplayMode mode;
-    if (fullscr) {
-        SDL_GetDesktopDisplayMode(0, &mode);
-        ncols = mode.w / p_font_->w();
-        nrows = mode.h / p_font_->h();
-    }
-    else
-        mode = *windowedMode;
-    SDL_SetWindowDisplayMode(p_win_.get(), &mode);
-
-    isFullscr = !isFullscr;
     resize(ncols, nrows);
 }
 
 void Term::setResizable(bool resizable) {
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
 #if SDL_MAJOR_VERSION >= 2 && SDL_PATCHLEVEL >= 5
     SDL_SetWindowResizable(p_win_.get(), (resizable ? SDL_TRUE : SDL_FALSE));  
 #else
@@ -240,18 +267,22 @@ void Term::setResizable(bool resizable) {
 }
 
 void Term::setMinWindowSize(size_t width, size_t height) {
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     SDL_SetWindowMinimumSize(p_win_.get(), width, height);
 }
 
 void Term::setMaxWindowSize(size_t width, size_t height) {
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     SDL_SetWindowMaximumSize(p_win_.get(), width, height);
 }
 
 void Term::close() {
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     quitRequested_ = true;
 }
 
 void Term::setFont(const std::string &path, size_t sz) {
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     if (p_font_)
         delete p_font_;
 
@@ -261,6 +292,7 @@ void Term::setFont(const std::string &path, size_t sz) {
 }
 
 void Term::setFont(const std::string &path, size_t w, size_t h) {
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     if (p_font_)
         delete p_font_;
 
@@ -300,7 +332,7 @@ void Term::setFgColor(const Color &fg, size_t x, size_t y) {
 }
 
 void Term::redraw(bool force) {
-    SDL_PumpEvents();
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     auto update = console_.getUpdatedChars(force);
     for (auto p : update)
         redraw(p.first, p.second);
@@ -311,6 +343,7 @@ void Term::redraw(bool force) {
 void Term::shift(int dx, int dy) {
     console_.shift(dx, dy);
 
+    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     SDL_Ptr<SDL_Texture> prevTexture(p_tex_.release());
     updateTexture();
     SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
@@ -379,6 +412,10 @@ int eventFilter(void *data, SDL_Event *ev) {
         default:
             break;
         }
+        break;
+    case SDL_KEYDOWN:
+        if (term->onKeyDown_)
+            term->onKeyDown_(Key(ev->key.keysym));
         break;
     default:
         break;

@@ -8,9 +8,9 @@
 
 #include <cstddef>
 #include <chrono>
-#include <set>
-#include <vector>
-#include <queue>
+#include <thread>
+#include <mutex>
+#include <atomic>
 
 #include <SDL2/SDL.h>
 
@@ -217,7 +217,7 @@ public:
      * @note if during this function call the terminal will be closed it will return Key(rterm::UNKNOWN)
      * @see getChar if you want only printable characters
      */
-    Key getKey(int32_t timeout = -1ll) const;
+    Key getKey(int32_t timeout = -1);
 
     /**
      * @brief Wait for the next printable character
@@ -226,20 +226,20 @@ public:
      * @note if during this function call the terminal will be closed it will return Key(rterm::UNKNOWN)
      * @see getKey if you doesn't want only printable characters
      */
-    char_t getChar(int32_t timeout = -1ll) const;
+    char_t getChar(int32_t timeout = -1);
 
     /**
      * @brief Get mouse position in tile
      * @param[out] x mouse position
      * @param[out] y mouse position
      */
-    void getMousePosition(size_t &x, size_t &y) const;
+    void getMousePosition(size_t &x, size_t &y);
 
     /**
      * @brief Get pressed mouse buttons
      * @return OR-ed combination of rterm::MouseButton constants
      */
-    int getMouseButtons() const;
+    int getMouseButtons();
 
     /**
      * @brief Write next character and move cursor forward
@@ -294,6 +294,14 @@ public:
      */
     Color fgColorAt(size_t x, size_t y) const;
 
+    template<typename F>
+    void onKeyDown(F callback) {
+        onKeyDown_ = std::function<void(Key)>(callback);
+    }
+
+    template<typename F>
+    void onMouseMove(F callback);
+
     friend int eventFilter(void *data, SDL_Event *ev);
 
 private:
@@ -339,7 +347,7 @@ private:
     SDL_Ptr<SDL_Renderer> p_ren_; ///< pointer to SDL_Renderer object
     SDL_Ptr<SDL_Texture> p_tex_; ///< pointer to SDL_Texture object
 
-    bool quitRequested_; ///< was quit requested by user or system
+    std::atomic_bool quitRequested_; ///< was quit requested by user or system
     bool wasShift_; ///<
 
     Color fgCol_; ///< default foreground color
@@ -350,6 +358,12 @@ private:
     const Uint8 *keyboardState_; ///< from SDL_GetKeyboardState
 
     InputSystem inputSystem_; ///< input system
+
+    std::recursive_mutex sdlMutex_; ///< mutex that protects not thread-safe SDL functions.
+    std::thread eventPumpThread_; ///< thread that pumps events
+
+    std::function<void(Key)> onKeyDown_; ///< onKeyDown callback
+    std::function<void(int, int)> onMouseMove_; ///< onMouseMove callback
     /// @endcond
 };
 

@@ -1,6 +1,6 @@
-#include "../include/term.h"
-#include "../include/key.h"
-#include "../include/mouse.h"
+#include <rterm/term.h>
+#include <rterm/key.h>
+#include <rterm/mouse.h>
 
 #include <iostream>
 #include <random>
@@ -68,8 +68,7 @@ int main(int argc, char **argv)
 
         if (k.toChar())
             terminal.addChar(k.toChar());
-        terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
-        terminal.redraw(); 
+        terminal.redraw();
     }
     return 0;
 }
