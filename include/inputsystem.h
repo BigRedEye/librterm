@@ -1,3 +1,5 @@
+/* DEPRECATED, see event_system.h */
+
 #ifndef RTERM_INPUTSYSTEM_H
 #define RTERM_INPUTSYSTEM_H
 

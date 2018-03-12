@@ -295,9 +295,7 @@ public:
     Color fgColorAt(size_t x, size_t y) const;
 
     template<typename F>
-    void onKeyDown(F callback) {
-        onKeyDown_ = std::function<void(Key)>(callback);
-    }
+    void onKeyDown(F callback);
 
     template<typename F>
     void onMouseMove(F callback);
@@ -358,12 +356,6 @@ private:
     const Uint8 *keyboardState_; ///< from SDL_GetKeyboardState
 
     InputSystem inputSystem_; ///< input system
-
-    std::recursive_mutex sdlMutex_; ///< mutex that protects not thread-safe SDL functions.
-    std::thread eventPumpThread_; ///< thread that pumps events
-
-    std::function<void(Key)> onKeyDown_; ///< onKeyDown callback
-    std::function<void(int, int)> onMouseMove_; ///< onMouseMove callback
     /// @endcond
 };
 

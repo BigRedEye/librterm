@@ -1,5 +1,8 @@
+/* DEPRECATED, see event_system.h */
+
 #include "inputsystem.h"
 #include "char.h"
+#include "sdl_lock.h"
 
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_events.h>
@@ -13,6 +16,7 @@ InputSystem::InputSystem()
 
 Key InputSystem::getKey(int32_t timeout, std::function<bool(void)> isRunning) const {
     uint32_t endTick = SDL_GetTicks() + static_cast<uint32_t>(timeout);
+    auto lock = acquireSDLMutex();
     SDL_StartTextInput();
     while (isRunning() && (timeout == -1 || !SDL_TICKS_PASSED(SDL_GetTicks(), endTick))) {
         SDL_Event evs[2];
