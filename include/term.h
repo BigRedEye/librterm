@@ -22,6 +22,7 @@
 #include "virtualconsole.h"
 #include "framerate_counter.h"
 #include "inputsystem.h"
+#include "event_system.h"
 
 namespace rterm {
 
@@ -300,7 +301,7 @@ public:
     template<typename F>
     void onMouseMove(F callback);
 
-    friend int eventFilter(void *data, SDL_Event *ev);
+    friend int unusedEventFilter(void *data, SDL_Event *ev);
 
 private:
     /// @cond INTERNAL
@@ -356,6 +357,7 @@ private:
     const Uint8 *keyboardState_; ///< from SDL_GetKeyboardState
 
     InputSystem inputSystem_; ///< input system
+    EventSystem eventSystem_;
     /// @endcond
 };
 
@@ -366,7 +368,7 @@ private:
  * @param ev next event
  * @return 1
  */
-int eventFilter(void *data, SDL_Event *ev);
+int unusedEventFilter(void *data, SDL_Event *ev);
 
 /// @endcond
 

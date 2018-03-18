@@ -2,16 +2,33 @@
 #define RTERM_EVENT_SYSTEM_H
 
 #include <thread>
+#include <atomic>
+#include <array>
+#include <vector>
+#include <functional>
 
 #include "SDL2/SDL_events.h"
+#include "event.h"
 
 namespace rterm {
 class EventSystem {
 public:
     EventSystem();
+    ~EventSystem();
+
+    template<typename F>
+    void registerCallback(int eventType, F &&callable) {
+        callbacks_[eventType].emplace_back(callable);
+    }
+    bool quitRequested() const;
+    void startPolling();
+    void stopPolling();
+    int eventHandler(SDL_Event *ev);
 
 private:
     std::thread eventPumpThread_;
+    std::atomic_bool quitRequested_;
+    std::array<std::vector<std::function<void(Event *)>>, EventType::COUNT> callbacks_;
 };
 }
 

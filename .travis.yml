@@ -33,4 +33,5 @@ before_script:
 
 
 script:
+    - sudo ci/install.sh
     - ci/run.sh

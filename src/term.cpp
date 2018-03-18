@@ -22,7 +22,8 @@ Term::Term()
 }
 
 Term::Term(size_t ncols, size_t nrows)
-    : console_(ncols, nrows),
+    : eventSystem_(),
+      console_(ncols, nrows),
       quitRequested_(false),
       fgCol_(0, 255, 0),
       bgCol_(0, 0, 0),
@@ -31,24 +32,35 @@ Term::Term(size_t ncols, size_t nrows)
         auto lock = acquireSDLMutex();
         SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
         TTF_Init();
-        p_win_ = SDL_Ptr<SDL_Window>(SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
-                                         SDL_WINDOWPOS_UNDEFINED,
-                                         p_font_->w() * cols(), p_font_->h() * rows(), 0));
+        p_win_ = SDL_Ptr<SDL_Window>(
+            SDL_CreateWindow("Terminal",
+                SDL_WINDOWPOS_UNDEFINED,
+                SDL_WINDOWPOS_UNDEFINED,
+                p_font_->w() * cols(),
+                p_font_->h() * rows(),
+                0)
+        );
         p_ren_ = SDL_Ptr<SDL_Renderer>(SDL_CreateRenderer(p_win_.get(), -1, 0));
 
         SDL_RenderClear(p_ren_.get());
         SDL_RenderPresent(p_ren_.get());
-        SDL_AddEventWatch(eventFilter, this);
 
         SDL_RenderClear(p_ren_.get());
         SDL_RenderPresent(p_ren_.get());
         p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
                                       SDL_GetWindowSurface(p_win_.get())->w, SDL_GetWindowSurface(p_win_.get())->h));
     }
+    eventSystem_.startPolling();
+    eventSystem_.registerCallback(EventType::Quit, [this](Event *ev){
+        this->eventSystem_.stopPolling();
+        this->close();
+        std::cout << "Quit!" << std::endl;
+    });
     redraw();
 }
 
 Term::~Term() {
+    eventSystem_.stopPolling();
     quitRequested_ = true;
     delete p_font_;
 
@@ -388,7 +400,7 @@ void Term::redraw(size_t x, size_t y) {
     SDL_SetRenderTarget(p_ren_.get(), NULL);
 }
 
-int eventFilter(void *data, SDL_Event *ev) {
+int unusedEventFilter(void *data, SDL_Event *ev) {
     Term *term = reinterpret_cast<Term*>(data);
     switch (ev->type) {
     case SDL_QUIT:
