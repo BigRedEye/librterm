@@ -6,9 +6,11 @@
 #include <array>
 #include <vector>
 #include <functional>
+#include <mutex>
 
 #include "SDL2/SDL_events.h"
 #include "event.h"
+#include "key.h"
 
 namespace rterm {
 class EventSystem {
@@ -18,6 +20,7 @@ public:
 
     template<typename F>
     void registerCallback(int eventType, F &&callable) {
+        std::lock_guard<std::mutex> lock(callbacksMutex_);
         callbacks_[eventType].emplace_back(callable);
     }
     bool quitRequested() const;
@@ -25,10 +28,14 @@ public:
     void stopPolling();
     int eventHandler(SDL_Event *ev);
 
+    Key getKey();
+    char_t getChar();
+
 private:
     std::thread eventPumpThread_;
     std::atomic_bool quitRequested_;
     std::array<std::vector<std::function<void(Event *)>>, EventType::COUNT> callbacks_;
+    std::mutex callbacksMutex_;
 };
 }
 

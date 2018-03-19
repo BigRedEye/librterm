@@ -32,6 +32,25 @@ public:
 private:
     int type_;
 };
+
+class QuitEvent : public Event {
+public:
+    explicit QuitEvent(SDL_Event *event = nullptr);
+};
+
+class WindowEvent : public Event {
+public:
+    explicit WindowEvent(SDL_Event *event = nullptr);
+
+    int x() const;
+    int y() const;
+    int windowEventType() const;
+};
+
+class SystemEvent : public Event {
+public:
+    explicit SystemEvent(SDL_Event *event = nullptr);
+};
 }
 
 #endif // RTERM_EVENT_H

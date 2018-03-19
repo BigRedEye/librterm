@@ -299,7 +299,25 @@ public:
     void onKeyDown(F callback);
 
     template<typename F>
+    void onKeyUp(F callback);
+
+    template<typename F>
     void onMouseMove(F callback);
+
+    template<typename F>
+    void onMouseDown(F callback);
+
+    template<typename F>
+    void onMouseUp(F callback);
+    
+    template<typename F>
+    void onMouseWheel(F callback);
+
+    template<typename F>
+    void onWindowResized(F callback);
+
+    template<typename F>
+    void onWindowMoved(F callback);
 
     friend int unusedEventFilter(void *data, SDL_Event *ev);
 

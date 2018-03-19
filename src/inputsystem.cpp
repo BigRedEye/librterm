@@ -15,6 +15,8 @@ InputSystem::InputSystem()
 }
 
 Key InputSystem::getKey(int32_t timeout, std::function<bool(void)> isRunning) const {
+    return Key();
+
     uint32_t endTick = SDL_GetTicks() + static_cast<uint32_t>(timeout);
     auto lock = acquireSDLMutex();
     SDL_StartTextInput();
@@ -55,6 +57,8 @@ Key InputSystem::getKey(int32_t timeout, std::function<bool(void)> isRunning) co
 }
 
 char_t InputSystem::getChar(int32_t timeout, std::function<bool(void)> isRunning) const {
+    return 0;
+
     Key key;
     uint32_t endTick = SDL_GetTicks() + static_cast<uint32_t>(timeout);
     while (isRunning()) {

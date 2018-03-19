@@ -21,6 +21,10 @@ Term::Term()
     : Term(0, 0) {
 }
 
+class KeyEvent : public Event {
+
+};
+
 Term::Term(size_t ncols, size_t nrows)
     : eventSystem_(),
       console_(ncols, nrows),
@@ -56,6 +60,12 @@ Term::Term(size_t ncols, size_t nrows)
         this->close();
         std::cout << "Quit!" << std::endl;
     });
+    eventSystem_.registerCallback(EventType::KeyDown, [this](Event *ev){
+        this->eventSystem_.stopPolling();
+        this->close();
+        std::cout << "Quit!" << std::endl;
+    });
+
     redraw();
 }
 
@@ -217,6 +227,52 @@ Color Term::bgColorAt(size_t x, size_t y) const {
 
 Color Term::fgColorAt(size_t x, size_t y) const {
     return console_.get(x, y).fg();
+}
+
+template<typename F>
+void Term::onKeyDown(F callback) {
+    eventSystem_.registerCallback(EventType::KeyDown, callback);
+}
+
+template<typename F>
+void Term::onKeyUp(F callback) {
+    eventSystem_.registerCallback(EventType::KeyUp, callback);
+}
+
+template<typename F>
+void Term::onMouseMove(F callback) {
+    eventSystem_.registerCallback(EventType::MouseMove, callback);
+}
+
+template<typename F>
+void Term::onMouseDown(F callback) {
+    eventSystem_.registerCallback(EventType::MouseDown, callback);
+}
+
+template<typename F>
+void Term::onMouseUp(F callback) {
+    eventSystem_.registerCallback(EventType::MouseUp, callback);
+}
+
+template<typename F>
+void Term::onMouseWheel(F callback) {
+    eventSystem_.registerCallback(EventType::MouseWheel, callback);
+}
+
+template<typename F>
+void Term::onWindowResized(F callback) {
+    eventSystem_.registerCallback(EventType::Window, [&](SDL_Event * ev){
+        if (ev->window.type == SDL_WINDOWEVENT_MOVED)
+            callback(int{ev->window.data1}, int{ev->window.data2});
+    });
+}
+
+template<typename F>
+void Term::onWindowMoved(F callback) {
+    eventSystem_.registerCallback(EventType::Window, [&](SDL_Event * ev){
+        if (ev->window.type == SDL_WINDOWEVENT_MOVED)
+            callback(int{ev->window.data1}, int{ev->window.data2});
+    });
 }
 
 void Term::setFullscreen(bool fullscr) {
