@@ -1,6 +1,7 @@
 # rterm #
 
 [![Build Status](https://travis-ci.com/BigRedEye/rterm.svg?token=HabA2F1p73cnpyrz3Jdj&branch=master)](https://travis-ci.com/BigRedEye/rterm)
+[![Build status](https://ci.appveyor.com/api/projects/status/ch37wqe58bkt6577?svg=true)](https://ci.appveyor.com/project/BigRedEye/rterm)
 [![GitHub tag](https://img.shields.io/github/tag/BigRedEye/rterm.svg)](https://semver.org)
 [![license](https://img.shields.io/github/license/BigRedEye/rterm.svg)](https://github.com/BigRedEye/rterm/blob/master/LICENSE)
 
