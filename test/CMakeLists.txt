@@ -11,6 +11,9 @@ foreach(abssourcefile ${sources})
     
     string(REPLACE ".cpp" "" exename ${sourcefile})
     add_executable(${exename} ${sourcefile})
+    if (WIN32)
+        target_link_libraries(${exename} -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf)
+    endif (WIN32)
     target_link_libraries(${exename} -lrterm)
 
 endforeach(abssourcefile ${sources})
