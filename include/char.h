@@ -9,6 +9,7 @@
 
 #include <string>
 #include <assert.h>
+#include <cstdarg>
 
 /**
  * @brief Namespace for all rterm functionality
