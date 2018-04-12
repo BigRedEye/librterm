@@ -16,7 +16,11 @@
 #include <chrono>
 #endif // RTERM_DEBUG
 
+#define UNUSED(var) (void)(var);
+
 namespace rterm {
+using namespace events;
+
 Term::Term()
     : Term(0, 0) {
 }
@@ -49,9 +53,9 @@ Term::Term(size_t ncols, size_t nrows)
     }
     eventSystem_.startPolling();
     eventSystem_.registerCallback(EventType::Quit, [this](Event *ev){
+        UNUSED(ev);
         this->eventSystem_.stopPolling();
         this->close();
-        std::cout << "Quit!" << std::endl;
     });
 
     redraw();
@@ -59,6 +63,7 @@ Term::Term(size_t ncols, size_t nrows)
 
 Term::~Term() {
     eventSystem_.stopPolling();
+    eventSystem_.join();
     quitRequested_ = true;
     delete p_font_;
 }
@@ -124,7 +129,8 @@ void Term::setWindowSize(size_t width, size_t height) {
     /* resize window */
     int curw, curh;
     SDL_GetWindowSize(p_win_.get(), &curw, &curh);
-    if (curw != width || curh != height)
+    if (static_cast<size_t>(curw) != width ||
+        static_cast<size_t>(curh) != height)
         SDL_SetWindowSize(p_win_.get(), width, height);
     updateTexture();
     SDL_RenderClear(p_ren_.get());
@@ -175,11 +181,13 @@ void Term::print(size_t x, size_t y, const std::string &fmt, ...) {
 }
 
 Key Term::getKey(int32_t timeout) {
+    UNUSED(timeout);
     auto lock = acquireSDLMutex();
     return Key();//inputSystem_.getKey(timeout, std::bind(&Term::isRunning, this));
 }
 
 char_t Term::getChar(int32_t timeout) {
+    UNUSED(timeout);
     auto lock = acquireSDLMutex();
     return ' ';//inputSystem_.getChar(timeout, std::bind(&Term::isRunning, this));
 }
@@ -356,8 +364,8 @@ void Term::setFont(const std::string &path, size_t w, size_t h) {
 
 void Term::setBgColor(const Color &bg) {
     bgCol_ = bg;
-    for (int i = 0; i < rows(); ++i)
-        for (int j = 0; j < cols(); ++j)
+    for (size_t i = 0; i < rows(); ++i)
+        for (size_t j = 0; j < cols(); ++j)
             console_.set(j, i, Char(console_.get(j, i).c(),
                                     bg,
                                     console_.get(j, i).fg()));
@@ -371,8 +379,8 @@ void Term::setBgColor(const Color &bg, size_t x, size_t y) {
 
 void Term::setFgColor(const Color &fg) {
     fgCol_ = fg;
-    for (int i = 0; i < rows(); ++i)
-        for (int j = 0; j < cols(); ++j)
+    for (size_t i = 0; i < rows(); ++i)
+        for (size_t j = 0; j < cols(); ++j)
             console_.set(j, i, Char(
                 console_.get(j, i).c(),
                 console_.get(j, i).bg(),

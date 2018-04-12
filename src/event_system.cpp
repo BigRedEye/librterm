@@ -11,6 +11,7 @@ EventSystem::EventSystem() :
 
 EventSystem::~EventSystem() {
     stopPolling();
+    join();
 }
 
 bool EventSystem::quitRequested() const {
@@ -35,6 +36,9 @@ void EventSystem::startPolling() {
 
 void EventSystem::stopPolling() {
     quitRequested_ = true;
+}
+
+void EventSystem::join() {
     if (eventPumpThread_.joinable())
         eventPumpThread_.join();
 }
@@ -66,37 +70,37 @@ int EventSystem::eventHandler(SDL_Event *ev) {
             event.reset(new WindowShownEvent(ev));
             break;
         case SDL_WINDOWEVENT_HIDDEN:
-            event.reset(new WindowHiddenEvent(ev);
+            event.reset(new WindowHiddenEvent(ev));
             break;
         case SDL_WINDOWEVENT_RESIZED:
-            event.reset(new WindowResizedEvent(ev);
+            event.reset(new WindowResizedEvent(ev));
             break;
         case SDL_WINDOWEVENT_MOVED:
-            event.reset(new WindowMovedEvent(ev);
+            event.reset(new WindowMovedEvent(ev));
             break;
         default:
             break;
         }
     case SDL_SYSWMEVENT:
-        event.reset(new SystemEvent(ev);
+        event.reset(new SystemEvent(ev));
         break;
     case SDL_KEYDOWN:
         event = getKeyDownEvent(ev);
         break;
     case SDL_KEYUP:
-        event.reset(new KeyUpEvent(ev);
+        event.reset(new KeyUpEvent(ev));
         break;
     case SDL_MOUSEMOTION:
-        event.reset(new MouseMoveEvent(ev);
+        event.reset(new MouseMoveEvent(ev));
         break;
     case SDL_MOUSEBUTTONDOWN:
-        event.reset(new MouseDownEvent(ev);
+        event.reset(new MouseDownEvent(ev));
         break;
     case SDL_MOUSEBUTTONUP:
-        event.reset(new MouseUpEvent(ev);
+        event.reset(new MouseUpEvent(ev));
         break;
     case SDL_MOUSEWHEEL:
-        event.reset(new MouseWheelEvent(ev);
+        event.reset(new MouseWheelEvent(ev));
         break;
     default:
         break;

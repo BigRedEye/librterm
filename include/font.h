@@ -36,19 +36,19 @@ public:
      * @param fg foreground color
      * @param bg background color
      */
-    virtual void render(SDL_Renderer *p_ren, SDL_Rect dst, char_t str, Color fg, Color bg) {}
+    virtual void render(SDL_Renderer *p_ren, SDL_Rect dst, char_t str, Color fg, Color bg) = 0;
 
     /**
      * @brief font width
      * @return width of a single character
      */
-    virtual size_t w() const { return 1; }
+    virtual size_t w() const = 0;
 
     /**
      * @brief font height
      * @return height of a single character
      */
-    virtual size_t h() const { return 1; }
+    virtual size_t h() const = 0;
 };
 }
 

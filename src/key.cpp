@@ -1,14 +1,14 @@
 #include "key.h"
 
 namespace rterm {
-Key::Key(SDL_Keycode code)
+Key::Key(SDL_Keycode code, char_t ch)
     : code_(code),
       mod_(0),
-      unicode_(0) {
+      unicode_(ch) {
 }
 
-Key::Key(KeyCode code)
-    : Key(reinterpret_cast<int&>(code)) {
+Key::Key(KeyCode code, char_t ch)
+    : Key(reinterpret_cast<int&>(code), ch) {
 }
 
 Key::Key(char_t ch)
@@ -17,8 +17,8 @@ Key::Key(char_t ch)
       unicode_(ch) {
 }
 
-Key::Key(SDL_Keysym sym)
-    : Key(sym.sym) {
+Key::Key(SDL_Keysym sym, char_t ch)
+    : Key(sym.sym, ch) {
     addMod(sym.mod);
 }
 

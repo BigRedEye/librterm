@@ -22,7 +22,6 @@
 #include "char.h"
 #include "virtualconsole.h"
 #include "framerate_counter.h"
-#include "inputsystem.h"
 #include "event_system.h"
 
 namespace rterm {
@@ -382,7 +381,6 @@ private:
 
     const Uint8 *keyboardState_; ///< from SDL_GetKeyboardState
 
-    InputSystem inputSystem_; ///< input system
     EventSystem eventSystem_; ///< event system
     /// @endcond
 };

@@ -26,6 +26,7 @@ public:
     bool quitRequested() const;
     void startPolling();
     void stopPolling();
+    void join();
     int eventHandler(SDL_Event *ev);
 
     Key getKey();
@@ -34,7 +35,7 @@ public:
 private:
     std::thread eventPumpThread_;
     std::atomic_bool quitRequested_;
-    std::array<std::vector<std::function<void(Event *)>>, EventType::COUNT> callbacks_;
+    std::array<std::vector<std::function<void(events::Event *)>>, events::EventType::COUNT> callbacks_;
     std::mutex callbacksMutex_;
 };
 }

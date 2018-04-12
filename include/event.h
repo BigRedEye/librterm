@@ -27,7 +27,7 @@ struct EventType {
     };
 };
 
-inline int eventTypeFromSDLEvent(SDL_Event *event);
+inline int eventTypeFromSDLEvent(SDL_Event *event) noexcept;
 
 class Event {
 public:
@@ -63,31 +63,37 @@ private:
 
 class WindowShownEvent : public WindowEvent {
 public:
-    WindowShownEvent(SDL_Event *ev)
-        : WindowEvent(ev) {}
+    explicit WindowShownEvent(SDL_Event *ev = nullptr)
+        : WindowEvent(ev) {
+    }
 };
 
 class WindowHiddenEvent : public WindowEvent {
 public:
-    WindowHiddenEvent(SDL_Event *ev)
-        : WindowEvent(ev) {}
+    explicit WindowHiddenEvent(SDL_Event *ev = nullptr)
+        : WindowEvent(ev) {
+    }
 };
 
 class WindowResizedEvent : public WindowEvent {
 public:
-    WindowResizedEvent(SDL_Event *ev)
-        : WindowEvent(ev) {}
+    explicit WindowResizedEvent(SDL_Event *ev = nullptr)
+        : WindowEvent(ev) {
+    }
 };
 
 class WindowMovedEvent : public WindowEvent {
 public:
-    WindowMovedEvent(SDL_Event *ev)
-        : WindowEvent(ev) {}
+    explicit WindowMovedEvent(SDL_Event *ev = nullptr)
+        : WindowEvent(ev) {
+    }
 };
 
 class SystemEvent : public Event {
 public:
-    explicit SystemEvent(SDL_Event *event = nullptr);
+    explicit SystemEvent(SDL_Event *event = nullptr)
+        : Event(event) {
+    }
 private:
     SDL_Event sysevent_;
 };
@@ -103,22 +109,24 @@ protected:
 
 class KeyDownEvent : public KeyboardEvent {
 public:
-    explicit KeyDownEvent(SDL_Event *event = nullptr, SDL_Event *text = nullptr);
+    explicit KeyDownEvent(SDL_Event *event = nullptr,
+                          SDL_Event *text = nullptr);
 };
 
 class KeyUpEvent : public KeyboardEvent {
 public:
     explicit KeyUpEvent(SDL_Event *event = nullptr)
-        : KeyboardEvent(event) {}
+        : KeyboardEvent(event) {
+    }
 };
 
 class MouseEvent : public Event {
 public:
     explicit MouseEvent(SDL_Event *event = nullptr);
 
-    uint8_t buttons() const;
+    uint32_t buttons() const;
 private:
-    uint8_t buttons_;
+    uint32_t buttons_;
 };
 
 class MouseMoveEvent : public MouseEvent {
@@ -127,28 +135,32 @@ public:
 
     int x() const;
     int y() const;
+    int xrel() const;
+    int yrel() const;
 
 private:
     int x_;
     int y_;
+    int xrel_;
+    int yrel_;
 };
 
 class MouseDownEvent : public MouseEvent {
 public:
     explicit MouseDownEvent(SDL_Event *event = nullptr);
 
-    uint8_t button() const;
+    uint32_t button() const;
 private:
-    uint8_t button_;
+    uint32_t button_;
 };
 
 class MouseUpEvent : public MouseEvent {
 public:
     explicit MouseUpEvent(SDL_Event *event = nullptr);
 
-    uint8_t button() const;
+    uint32_t button() const;
 private:
-    uint8_t button_;
+    uint32_t button_;
 };
 
 class MouseWheelEvent : public Event {

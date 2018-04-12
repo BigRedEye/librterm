@@ -8,7 +8,9 @@ TileFont::TileFont()
 }
 
 TileFont::TileFont(const std::string &path, size_t _w, size_t _h)
-    : w_(_w), h_(_h), Font() {
+    : Font(),
+      w_(_w),
+      h_(_h) {
     auto lock = acquireSDLMutex();
     static bool IMG_WasInit = false;
     if (!IMG_WasInit) {
@@ -54,6 +56,8 @@ SDL_Rect TileFont::getRect(char_t c) const {
 }
 
 void TileFont::render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) {
+    (void)fg;
+    (void)bg;
     if (!p_tilemap_)
         return;
     auto lock = acquireSDLMutex();

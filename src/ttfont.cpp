@@ -51,7 +51,7 @@ void TTFont::render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Colo
         std::string str = UTF8CharToBytes(ch);
         SDL_Ptr<SDL_Surface> p_surf(TTF_RenderUTF8_Blended(p_font_.get(),
                                     str.c_str(),
-                                    SDL_Color{255, 255, 255}));
+                                    SDL_Color{0xff, 0xff, 0xff, 0xff}));
         p_tex = make_SDL_SharedPtr(SDL_CreateTextureFromSurface(p_ren, p_surf.get()));
         cache_.set(ch, p_tex);
     }
