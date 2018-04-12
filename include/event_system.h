@@ -39,15 +39,6 @@ private:
 };
 }
 
-/// @cond INTERNAL
-/**
- * @brief SDL event filter
- * @param data user data
- * @param ev next event
- * @return 1
- */
-int eventFilter(void *data, SDL_Event *ev);
-
 /// @endcond
 
 #endif // RTERM_EVENT_SYSTEM_H

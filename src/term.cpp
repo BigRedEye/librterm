@@ -21,21 +21,14 @@ Term::Term()
     : Term(0, 0) {
 }
 
-class KeyEvent : public Event {
-
-};
-
 Term::Term(size_t ncols, size_t nrows)
-    : eventSystem_(),
-      console_(ncols, nrows),
+    : console_(ncols, nrows),
+      p_font_(new TTFont()),
       quitRequested_(false),
       fgCol_(0, 255, 0),
-      bgCol_(0, 0, 0),
-      p_font_(new TTFont()) {
+      bgCol_(0, 0, 0) {
     {
         auto lock = acquireSDLMutex();
-        SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-        TTF_Init();
         p_win_ = SDL_Ptr<SDL_Window>(
             SDL_CreateWindow("Terminal",
                 SDL_WINDOWPOS_UNDEFINED,
@@ -60,11 +53,6 @@ Term::Term(size_t ncols, size_t nrows)
         this->close();
         std::cout << "Quit!" << std::endl;
     });
-    eventSystem_.registerCallback(EventType::KeyDown, [this](Event *ev){
-        this->eventSystem_.stopPolling();
-        this->close();
-        std::cout << "Quit!" << std::endl;
-    });
 
     redraw();
 }
@@ -73,10 +61,6 @@ Term::~Term() {
     eventSystem_.stopPolling();
     quitRequested_ = true;
     delete p_font_;
-
-    auto lock = acquireSDLMutex();
-    TTF_Quit();
-    SDL_Quit();
 }
 
 size_t Term::cols() const {
@@ -187,18 +171,17 @@ void Term::print(size_t x, size_t y, const std::string &fmt, ...) {
     for (auto c : formatted)
         addChar(c);
     setCursorPosition(prevCursorX, prevCursorY);
-
     va_end(args);
 }
 
 Key Term::getKey(int32_t timeout) {
     auto lock = acquireSDLMutex();
-    return inputSystem_.getKey(timeout, std::bind(&Term::isRunning, this));
+    return Key();//inputSystem_.getKey(timeout, std::bind(&Term::isRunning, this));
 }
 
 char_t Term::getChar(int32_t timeout) {
     auto lock = acquireSDLMutex();
-    return inputSystem_.getChar(timeout, std::bind(&Term::isRunning, this));
+    return ' ';//inputSystem_.getChar(timeout, std::bind(&Term::isRunning, this));
 }
 
 void Term::getMousePosition(size_t &x, size_t &y) {
@@ -261,17 +244,29 @@ void Term::onMouseWheel(F callback) {
 
 template<typename F>
 void Term::onWindowResized(F callback) {
-    eventSystem_.registerCallback(EventType::Window, [&](SDL_Event * ev){
-        if (ev->window.type == SDL_WINDOWEVENT_MOVED)
-            callback(int{ev->window.data1}, int{ev->window.data2});
+    eventSystem_.registerCallback(EventType::WindowResized, [&](SDL_Event * ev){
+        callback(int{ev->window.data1}, int{ev->window.data2});
     });
 }
 
 template<typename F>
 void Term::onWindowMoved(F callback) {
-    eventSystem_.registerCallback(EventType::Window, [&](SDL_Event * ev){
-        if (ev->window.type == SDL_WINDOWEVENT_MOVED)
-            callback(int{ev->window.data1}, int{ev->window.data2});
+    eventSystem_.registerCallback(EventType::WindowMoved, [&](SDL_Event * ev){
+        callback(int{ev->window.data1}, int{ev->window.data2});
+    });
+}
+
+template<typename F>
+void Term::onWindowShown(F callback) {
+    eventSystem_.registerCallback(EventType::WindowShown, [&](SDL_Event * ev){
+        callback();
+    });
+}
+
+template<typename F>
+void Term::onWindowHidden(F callback) {
+    eventSystem_.registerCallback(EventType::WindowShown, [&](SDL_Event * ev){
+        callback();
     });
 }
 

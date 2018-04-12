@@ -14,6 +14,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "sdl_loader.h"
 #include "sdl_ptr.h"
 #include "font.h"
 #include "key.h"
@@ -319,6 +320,12 @@ public:
     template<typename F>
     void onWindowMoved(F callback);
 
+    template<typename F>
+    void onWindowShown(F callback);
+
+    template<typename F>
+    void onWindowHidden(F callback);
+
     friend int unusedEventFilter(void *data, SDL_Event *ev);
 
 private:
@@ -357,15 +364,16 @@ private:
      */
     void renderToScreen();
 
+    SdlLoader loader_; ///< keeps SDL loaded
     VirtualConsole console_; ///< logical console
-    
+
     Font *p_font_; ///< font used in rendering
     SDL_Ptr<SDL_Window> p_win_; ///< pointer to SDL_Window object
     SDL_Ptr<SDL_Renderer> p_ren_; ///< pointer to SDL_Renderer object
     SDL_Ptr<SDL_Texture> p_tex_; ///< pointer to SDL_Texture object
 
     std::atomic_bool quitRequested_; ///< was quit requested by user or system
-    bool wasShift_; ///<
+    bool wasShift_;
 
     Color fgCol_; ///< default foreground color
     Color bgCol_; ///< default background color
@@ -375,7 +383,7 @@ private:
     const Uint8 *keyboardState_; ///< from SDL_GetKeyboardState
 
     InputSystem inputSystem_; ///< input system
-    EventSystem eventSystem_;
+    EventSystem eventSystem_; ///< event system
     /// @endcond
 };
 

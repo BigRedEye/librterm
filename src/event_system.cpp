@@ -11,8 +11,6 @@ EventSystem::EventSystem() :
 
 EventSystem::~EventSystem() {
     stopPolling();
-    if (eventPumpThread_.joinable())
-        eventPumpThread_.join();
 }
 
 bool EventSystem::quitRequested() const {
@@ -20,7 +18,7 @@ bool EventSystem::quitRequested() const {
 }
 
 void EventSystem::startPolling() {
-    // SDL_CALL(SDL_AddEventWatch, eventFilter, this);
+    quitRequested_ = false;
     eventPumpThread_ = std::thread([this](){
         while (!this->quitRequested_) {
             SDL_Event event;
@@ -37,39 +35,77 @@ void EventSystem::startPolling() {
 
 void EventSystem::stopPolling() {
     quitRequested_ = true;
+    if (eventPumpThread_.joinable())
+        eventPumpThread_.join();
 }
 
-int EventSystem::eventHandler(SDL_Event *ev) {
-    Event event(ev);
-    if (ev->type == SDL_TEXTINPUT) {
-        std::string str;
-        if (ev->text.windowID == 123545)
-            str = "pushed";
-        else
-            str = std::to_string(ev->text.windowID);
-        Logger() << "TextInput " << str;
-    }
+std::unique_ptr<events::Event> getKeyDownEvent(SDL_Event *ev) {
+    events::Event *event = nullptr;
     if (ev->type == SDL_KEYDOWN) {
         std::string str;
         SDL_Event e;
         if (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT) > 0)
-            str = " with TextEditing";
-        Logger() << "KeyDown" + str;
+            event = new events::KeyDownEvent(ev, &e);
+        else
+            event = new events::KeyDownEvent(ev);
     }
-    if (ev->type == SDL_TEXTEDITING)
-        Logger() << "TextEditing";
-    if (ev->type == SDL_KEYUP)
-        Logger() << "KeyUp";
+    return std::unique_ptr<events::Event>(event);
+}
 
-    std::lock_guard<std::mutex> lock(callbacksMutex_);
-    for (const auto &callback : callbacks_[event.type()])
-        callback(&event);
+int EventSystem::eventHandler(SDL_Event *ev) {
+    using namespace rterm::events;
+
+    std::unique_ptr<Event> event;
+    switch (ev->type) {
+    case SDL_QUIT:
+        event.reset(new QuitEvent());
+        break;
+    case SDL_WINDOWEVENT:
+        switch (ev->window.event) {
+        case SDL_WINDOWEVENT_SHOWN:
+            event.reset(new WindowShownEvent(ev));
+            break;
+        case SDL_WINDOWEVENT_HIDDEN:
+            event.reset(new WindowHiddenEvent(ev);
+            break;
+        case SDL_WINDOWEVENT_RESIZED:
+            event.reset(new WindowResizedEvent(ev);
+            break;
+        case SDL_WINDOWEVENT_MOVED:
+            event.reset(new WindowMovedEvent(ev);
+            break;
+        default:
+            break;
+        }
+    case SDL_SYSWMEVENT:
+        event.reset(new SystemEvent(ev);
+        break;
+    case SDL_KEYDOWN:
+        event = getKeyDownEvent(ev);
+        break;
+    case SDL_KEYUP:
+        event.reset(new KeyUpEvent(ev);
+        break;
+    case SDL_MOUSEMOTION:
+        event.reset(new MouseMoveEvent(ev);
+        break;
+    case SDL_MOUSEBUTTONDOWN:
+        event.reset(new MouseDownEvent(ev);
+        break;
+    case SDL_MOUSEBUTTONUP:
+        event.reset(new MouseUpEvent(ev);
+        break;
+    case SDL_MOUSEWHEEL:
+        event.reset(new MouseWheelEvent(ev);
+        break;
+    default:
+        break;
+    }
+    if (event) {
+        std::lock_guard<std::mutex> lock(callbacksMutex_);
+        for (auto &&callback : callbacks_[event->type()])
+            callback(event.get());
+    }
     return 1;
 }
-}
-
-int eventFilter(void *data, SDL_Event *ev) {
-    using namespace rterm;
-    EventSystem *ptr = reinterpret_cast<EventSystem*>(data);
-    return ptr->eventHandler(ev);
 }

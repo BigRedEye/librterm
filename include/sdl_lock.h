@@ -2,6 +2,7 @@
 #define RTERM_SDL_LOCK_H
 
 #include <mutex>
+#include <type_traits>
 
 namespace rterm {
 
@@ -16,10 +17,11 @@ inline std::unique_lock<mutex_t> acquireSDLMutex() {
     return std::unique_lock<mutex_t>(getSDLMutex());
 }
 
-#define SDL_CALL(function, ...) \
-    getSDLMutex().lock(); \
-    function(__VA_ARGS__); \
-    getSDLMutex().unlock();
+template<typename F, typename ...Args>
+typename std::result_of<F(Args...)>::type SDL_Call(F&& f, Args&& ...args) {
+    auto lock = acquireSDLMutex();
+    return f(std::forward<Args>(args)...);
+}
 }
 
 #endif // RTERM_SDL_LOCK_H

@@ -27,7 +27,7 @@ int main(int argc, char **argv)
     bool fullscr = false;
     while (terminal.isRunning()) {
         rterm::Key k = terminal.getKey(16);
-        if (k.key() == rterm::KeyCode::F4 && k.mod() & rterm::KeyMod::ALT)
+        if (k.key() == rterm::KeyCode::F4 && (k.mod() & rterm::KeyMod::ALT))
             return 0;
         switch (k.key()) {
         case rterm::KeyCode::F1:

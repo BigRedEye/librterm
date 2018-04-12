@@ -1,14 +1,30 @@
 #include "event.h"
 
 namespace rterm {
-inline int eventTypeFromSDLEvent(SDL_EventType sdltype) {
-    int type = 0;
-    switch (sdltype) {
+inline int eventTypeFromSDLEvent(SDL_Event *event) {
+    int type = EventType::Unknown;
+    switch (event->type) {
     case SDL_QUIT:
         type = EventType::Quit;
         break;
     case SDL_WINDOWEVENT:
-        type = EventType::Window;
+        switch (event->window.event) {
+        case SDL_WINDOWEVENT_HIDDEN:
+            type = EventType::WindowHidden;
+            break;
+        case SDL_WINDOWEVENT_SHOWN:
+            type = EventType::WindowShown;
+            break;
+        case SDL_WINDOWEVENT_MOVED:
+            type = EventType::WindowMoved;
+            break;
+        case SDL_WINDOWEVENT_RESIZED:
+            type = EventType::WindowResized;
+            break;
+        default:
+            type = EventType::Unknown;
+            break;
+        }
         break;
     case SDL_SYSWMEVENT:
         type = EventType::System;
@@ -40,7 +56,7 @@ inline int eventTypeFromSDLEvent(SDL_EventType sdltype) {
 }
 
 Event::Event(SDL_Event *event) :
-    type_(eventTypeFromSDLEvent(static_cast<SDL_EventType>(event->type))) {
+    type_(eventTypeFromSDLEvent(event)) {
 }
 
 int Event::type() const {
