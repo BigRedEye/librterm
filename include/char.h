@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief This file contains some helper functions 
+ * @brief This file contains some helper functions
  * for working with UTF8 characters
  */
 
@@ -9,6 +9,7 @@
 
 #include <string>
 #include <assert.h>
+#include <cstdarg>
 
 /**
  * @brief Namespace for all rterm functionality

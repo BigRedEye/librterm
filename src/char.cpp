@@ -1,11 +1,14 @@
 #include "char.h"
 
+#include <cstdarg>
+#include <cstdio>
 #include <codecvt>
 #include <locale>
 #include <memory>
-#include <cstdarg>
 
 namespace rterm {
+
+using std::va_list;
 
 char_t UTF8BytesToChar(const std::string &str) {
     static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;

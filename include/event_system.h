@@ -7,6 +7,7 @@
 #include <vector>
 #include <functional>
 #include <mutex>
+#include <condition_variable>
 
 #include "SDL2/SDL_events.h"
 #include "event.h"
@@ -15,6 +16,8 @@
 namespace rterm {
 class EventSystem {
 public:
+    using highResClock = std::chrono::high_resolution_clock;
+
     EventSystem();
     ~EventSystem();
 
@@ -31,12 +34,18 @@ public:
 
     Key getKey();
     char_t getChar();
+    Key getKey(const highResClock::time_point &until);
+    char_t getChar(const highResClock::time_point &until);
 
 private:
     std::thread eventPumpThread_;
     std::atomic_bool quitRequested_;
     std::array<std::vector<std::function<void(events::Event *)>>, events::EventType::COUNT> callbacks_;
     std::mutex callbacksMutex_;
+    std::mutex waitMutex_;
+    std::atomic_bool notified_; ///< to avoid spurious wakeups
+    std::condition_variable condition_; ///< for blocking functions (getKey / getChar)
+    Key pendingKey_;
 };
 }
 

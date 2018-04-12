@@ -1,5 +1,7 @@
 #include "event.h"
 
+#include "logger.h"
+
 namespace rterm {
 namespace events {
 inline int eventTypeFromSDLEvent(SDL_Event *event) noexcept {
@@ -23,6 +25,9 @@ inline int eventTypeFromSDLEvent(SDL_Event *event) noexcept {
             break;
         case SDL_WINDOWEVENT_RESIZED:
             type = EventType::WindowResized;
+            break;
+        case SDL_WINDOWEVENT_EXPOSED:
+            type = EventType::WindowExposed;
             break;
         default:
             type = EventType::Unknown;
@@ -102,7 +107,8 @@ const Key& KeyboardEvent::key() const {
     return key_;
 }
 
-KeyDownEvent::KeyDownEvent(SDL_Event *event, SDL_Event *text) {
+KeyDownEvent::KeyDownEvent(SDL_Event *event, SDL_Event *text)
+    : KeyboardEvent(event) {
     char_t unicode = 0;
     if (text)
         unicode = UTF8BytesToChar(text->text.text);

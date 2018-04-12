@@ -20,6 +20,7 @@ bool EventSystem::quitRequested() const {
 
 void EventSystem::startPolling() {
     quitRequested_ = false;
+    notified_ = false;
     eventPumpThread_ = std::thread([this](){
         while (!this->quitRequested_) {
             SDL_Event event;
@@ -31,6 +32,7 @@ void EventSystem::startPolling() {
             }
             std::this_thread::sleep_until(start + std::chrono::milliseconds(1));
         }
+        condition_.notify_all();
     });
 }
 
@@ -60,6 +62,8 @@ int EventSystem::eventHandler(SDL_Event *ev) {
     using namespace rterm::events;
 
     std::unique_ptr<Event> event;
+    if (!ev)
+        return 1;
     switch (ev->type) {
     case SDL_QUIT:
         event.reset(new QuitEvent());
@@ -78,9 +82,13 @@ int EventSystem::eventHandler(SDL_Event *ev) {
         case SDL_WINDOWEVENT_MOVED:
             event.reset(new WindowMovedEvent(ev));
             break;
+        case SDL_WINDOWEVENT_EXPOSED:
+            event.reset(new WindowExposedEvent(ev));
+            break;
         default:
             break;
         }
+        break;
     case SDL_SYSWMEVENT:
         event.reset(new SystemEvent(ev));
         break;
@@ -110,6 +118,54 @@ int EventSystem::eventHandler(SDL_Event *ev) {
         for (auto &&callback : callbacks_[event->type()])
             callback(event.get());
     }
+    if (event && event->type() == EventType::KeyDown) {
+        events::KeyDownEvent *keyev = static_cast<events::KeyDownEvent*>(event.get());
+        pendingKey_ = keyev->key();
+        notified_ = true;
+        condition_.notify_all();
+    }
     return 1;
 }
+
+Key EventSystem::getKey() {
+    std::unique_lock<std::mutex> lock(waitMutex_);
+    notified_ = false;
+    while (!quitRequested_ && !notified_)
+        condition_.wait(lock);
+    if (!notified_)
+        return Key();
+    notified_ = false;
+    Key res = pendingKey_;
+    return res;
+}
+
+char_t EventSystem::getChar() {
+    while (true) {
+        Key key = getKey();
+        if (key.toChar())
+            return key.toChar();
+    }
+}
+
+Key EventSystem::getKey(const highResClock::time_point &until) {
+    std::unique_lock<std::mutex> lock(waitMutex_);
+    notified_ = false;
+    while (!quitRequested_ && !notified_)
+        condition_.wait_until(lock, until);
+    if (!notified_)
+        return Key();
+    notified_ = false;
+    Key res = pendingKey_;
+    return res;
+}
+
+char_t EventSystem::getChar(const highResClock::time_point &until) {
+    while (highResClock::now() < until) {
+        Key key = getKey(until);
+        if (key.toChar())
+            return key.toChar();
+    }
+    return 0;
+}
+
 }

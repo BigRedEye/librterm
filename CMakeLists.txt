@@ -12,6 +12,7 @@ file(GLOB SOURCES
 
 file(GLOB HEADERS
     include/*.h
+    include/*.tpp
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

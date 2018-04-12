@@ -15,6 +15,7 @@ struct EventType {
         WindowHidden,  /**< Window hidden */
         WindowMoved,   /**< Window moved */
         WindowResized, /**< Window resized */
+        WindowExposed, /**< Window needs to be redrawn */
         System,        /**< System specific event */
         KeyDown,       /**< Key pressed */
         KeyUp,         /**< Key released */
@@ -71,6 +72,13 @@ public:
 class WindowHiddenEvent : public WindowEvent {
 public:
     explicit WindowHiddenEvent(SDL_Event *ev = nullptr)
+        : WindowEvent(ev) {
+    }
+};
+
+class WindowExposedEvent : public WindowEvent {
+public:
+    explicit WindowExposedEvent(SDL_Event *ev = nullptr)
         : WindowEvent(ev) {
     }
 };

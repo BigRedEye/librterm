@@ -24,7 +24,7 @@ TTFont& TTFont::operator=(TTFont &&rhs) {
 
 size_t TTFont::w() const {
     if (!p_font_.get())
-        return 2;
+        return 8;
     static int w = -1, h = -1;
     if (w == -1)
         TTF_SizeText(p_font_.get(), "@", &w, &h);
@@ -33,7 +33,7 @@ size_t TTFont::w() const {
 
 size_t TTFont::h() const {
     if (!p_font_.get())
-        return 1;
+        return 8;
 
     static int h = -1;
     if (h == -1)

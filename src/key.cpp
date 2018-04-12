@@ -2,9 +2,9 @@
 
 namespace rterm {
 Key::Key(SDL_Keycode code, char_t ch)
-    : code_(code),
-      mod_(0),
+    : mod_(0),
       unicode_(ch) {
+    setKey(code);
 }
 
 Key::Key(KeyCode code, char_t ch)

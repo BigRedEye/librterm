@@ -51,14 +51,22 @@ Term::Term(size_t ncols, size_t nrows)
         p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
                                       SDL_GetWindowSurface(p_win_.get())->w, SDL_GetWindowSurface(p_win_.get())->h));
     }
+    redraw(true);
     eventSystem_.startPolling();
     eventSystem_.registerCallback(EventType::Quit, [this](Event *ev){
         UNUSED(ev);
         this->eventSystem_.stopPolling();
         this->close();
     });
-
-    redraw();
+    eventSystem_.registerCallback(EventType::WindowExposed, [this](Event *ev){
+        UNUSED(ev);
+        this->redraw(true);
+    });
+    /*eventSystem_.registerCallback(EventType::WindowResized, [this](Event *ev){
+        auto event = static_cast<events::WindowResizedEvent*>(ev);
+        this->setWindowSize(event->x(), event->y());
+        this->redraw(true);
+    });*/
 }
 
 Term::~Term() {
@@ -154,7 +162,6 @@ Term& Term::setIcon(const std::string &path) {
 }
 
 void Term::resize(size_t ncols, size_t nrows) {
-    auto lock = acquireSDLMutex();
     setWindowSize(ncols * p_font_->w(), nrows * p_font_->h());
 }
 
@@ -180,16 +187,12 @@ void Term::print(size_t x, size_t y, const std::string &fmt, ...) {
     va_end(args);
 }
 
-Key Term::getKey(int32_t timeout) {
-    UNUSED(timeout);
-    auto lock = acquireSDLMutex();
-    return Key();//inputSystem_.getKey(timeout, std::bind(&Term::isRunning, this));
+Key Term::getKey() {
+    return eventSystem_.getKey();
 }
 
-char_t Term::getChar(int32_t timeout) {
-    UNUSED(timeout);
-    auto lock = acquireSDLMutex();
-    return ' ';//inputSystem_.getChar(timeout, std::bind(&Term::isRunning, this));
+char_t Term::getChar() {
+    return eventSystem_.getChar();
 }
 
 void Term::getMousePosition(size_t &x, size_t &y) {
@@ -219,65 +222,6 @@ Color Term::bgColorAt(size_t x, size_t y) const {
 Color Term::fgColorAt(size_t x, size_t y) const {
     return console_.get(x, y).fg();
 }
-
-template<typename F>
-void Term::onKeyDown(F callback) {
-    eventSystem_.registerCallback(EventType::KeyDown, callback);
-}
-
-template<typename F>
-void Term::onKeyUp(F callback) {
-    eventSystem_.registerCallback(EventType::KeyUp, callback);
-}
-
-template<typename F>
-void Term::onMouseMove(F callback) {
-    eventSystem_.registerCallback(EventType::MouseMove, callback);
-}
-
-template<typename F>
-void Term::onMouseDown(F callback) {
-    eventSystem_.registerCallback(EventType::MouseDown, callback);
-}
-
-template<typename F>
-void Term::onMouseUp(F callback) {
-    eventSystem_.registerCallback(EventType::MouseUp, callback);
-}
-
-template<typename F>
-void Term::onMouseWheel(F callback) {
-    eventSystem_.registerCallback(EventType::MouseWheel, callback);
-}
-
-template<typename F>
-void Term::onWindowResized(F callback) {
-    eventSystem_.registerCallback(EventType::WindowResized, [&](SDL_Event * ev){
-        callback(int{ev->window.data1}, int{ev->window.data2});
-    });
-}
-
-template<typename F>
-void Term::onWindowMoved(F callback) {
-    eventSystem_.registerCallback(EventType::WindowMoved, [&](SDL_Event * ev){
-        callback(int{ev->window.data1}, int{ev->window.data2});
-    });
-}
-
-template<typename F>
-void Term::onWindowShown(F callback) {
-    eventSystem_.registerCallback(EventType::WindowShown, [&](SDL_Event * ev){
-        callback();
-    });
-}
-
-template<typename F>
-void Term::onWindowHidden(F callback) {
-    eventSystem_.registerCallback(EventType::WindowShown, [&](SDL_Event * ev){
-        callback();
-    });
-}
-
 void Term::setFullscreen(bool fullscr) {
     int ncols, nrows;
     {
@@ -314,6 +258,7 @@ void Term::setFullscreen(bool fullscr) {
         isFullscr = !isFullscr;
     }
     resize(ncols, nrows);
+    redraw(true);
 }
 
 void Term::setResizable(bool resizable) {
@@ -343,11 +288,12 @@ void Term::close() {
 }
 
 void Term::setFont(const std::string &path, size_t sz) {
-    auto lock = acquireSDLMutex();
-    if (p_font_)
-        delete p_font_;
-
-    p_font_ = new TTFont(path, sz);
+    {
+        auto lock = acquireSDLMutex();
+        if (p_font_)
+            delete p_font_;
+        p_font_ = new TTFont(path, sz);
+    }
     setWindowSize(p_font_->w() * cols(), p_font_->h() * rows());
     redraw(true);
 }
@@ -369,6 +315,7 @@ void Term::setBgColor(const Color &bg) {
             console_.set(j, i, Char(console_.get(j, i).c(),
                                     bg,
                                     console_.get(j, i).fg()));
+    redraw();
 }
 
 void Term::setBgColor(const Color &bg, size_t x, size_t y) {
@@ -386,6 +333,7 @@ void Term::setFgColor(const Color &fg) {
                 console_.get(j, i).bg(),
                 fg
             ));
+    redraw();
 }
 
 void Term::setFgColor(const Color &fg, size_t x, size_t y) {
@@ -457,32 +405,5 @@ void Term::redraw(size_t x, size_t y) {
     SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
     p_font_->render(p_ren_.get(), dst, ch.ch_, ch.fg_, ch.bg_);
     SDL_SetRenderTarget(p_ren_.get(), NULL);
-}
-
-int unusedEventFilter(void *data, SDL_Event *ev) {
-    Term *term = reinterpret_cast<Term*>(data);
-    switch (ev->type) {
-    case SDL_QUIT:
-        term->quitRequested_ = true;
-        break;
-    case SDL_WINDOWEVENT:
-        switch (ev->window.event) {
-        case SDL_WINDOWEVENT_RESIZED:
-            term->setWindowSize(ev->window.data1, ev->window.data2);
-            return 0;
-            break;
-        case SDL_WINDOWEVENT_EXPOSED:
-            term->renderToScreen();
-            break;
-        default:
-            break;
-        }
-        break;
-    case SDL_KEYDOWN:
-        break;
-    default:
-        break;
-    }
-    return 1;
 }
 }

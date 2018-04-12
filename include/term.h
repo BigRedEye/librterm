@@ -213,21 +213,19 @@ public:
 
     /**
      * @brief Wait for the next pressed key
-     * @param timeout if the user does not enter anything within timeout milliseconds this function will return Key(rterm::UNKNOWN).
      * @return Key object represents next pressed key
      * @note if during this function call the terminal will be closed it will return Key(rterm::UNKNOWN)
      * @see getChar if you want only printable characters
      */
-    Key getKey(int32_t timeout = -1);
+    Key getKey();
 
     /**
      * @brief Wait for the next printable character
-     * @param timeout if the user does not enter anything within timeout milliseconds this function will return Key(rterm::UNKNOWN).
      * @return Key object represents next pressed printable key
      * @note if during this function call the terminal will be closed it will return Key(rterm::UNKNOWN)
      * @see getKey if you doesn't want only printable characters
      */
-    char_t getChar(int32_t timeout = -1);
+    char_t getChar();
 
     /**
      * @brief Get mouse position in tile
@@ -296,36 +294,34 @@ public:
     Color fgColorAt(size_t x, size_t y) const;
 
     template<typename F>
-    void onKeyDown(F callback);
+    void onKeyDown(F&& callback);
 
     template<typename F>
-    void onKeyUp(F callback);
+    void onKeyUp(F&& callback);
 
     template<typename F>
-    void onMouseMove(F callback);
+    void onMouseMove(F&& callback);
 
     template<typename F>
-    void onMouseDown(F callback);
+    void onMouseDown(F&& callback);
 
     template<typename F>
-    void onMouseUp(F callback);
-    
-    template<typename F>
-    void onMouseWheel(F callback);
+    void onMouseUp(F&& callback);
 
     template<typename F>
-    void onWindowResized(F callback);
+    void onMouseWheel(F&& callback);
 
     template<typename F>
-    void onWindowMoved(F callback);
+    void onWindowResized(F&& callback);
 
     template<typename F>
-    void onWindowShown(F callback);
+    void onWindowMoved(F&& callback);
 
     template<typename F>
-    void onWindowHidden(F callback);
+    void onWindowShown(F&& callback);
 
-    friend int unusedEventFilter(void *data, SDL_Event *ev);
+    template<typename F>
+    void onWindowHidden(F&& callback);
 
 private:
     /// @cond INTERNAL
@@ -397,4 +393,8 @@ int unusedEventFilter(void *data, SDL_Event *ev);
 /// @endcond
 
 }
+
+/* template members implementation */
+#include "term.tpp"
+
 #endif // RTERM_TERM_H
