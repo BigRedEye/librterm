@@ -1,32 +1,38 @@
 os: Visual Studio 2015
 
 install:
+    - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
+    - set INSTALL_PATH=%MINGW%\x86_64-w64-mingw32\
+
     - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.8-mingw.tar.gz
     - 7z x SDL2-devel-2.0.8-mingw.tar.gz
     - 7z x SDL2-devel-2.0.8-mingw.tar
-    - xcopy SDL2-2.0.8\i686-w64-mingw32 C:\MinGW /s/e/y
+    - xcopy SDL2-2.0.8\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
     
     - appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.3-mingw.tar.gz
     - 7z x SDL2_image-devel-2.0.3-mingw.tar.gz
     - 7z x SDL2_image-devel-2.0.3-mingw.tar
-    - xcopy SDL2_image-2.0.3\i686-w64-mingw32 C:\MinGW /s/e/y
+    - xcopy SDL2_image-2.0.3\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
     
     - appveyor DownloadFile https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-2.0.14-mingw.tar.gz
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar.gz
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar
-    - xcopy SDL2_ttf-2.0.14\i686-w64-mingw32 C:\MinGW /s/e/y
+    - xcopy SDL2_ttf-2.0.14\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
 
 build_script:
     - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
-    - set PATH=c:\MinGW\bin;%PATH%
-    - set PATH=c:\MinGW\lib;%PATH%
+    - set PATH=%MINGW%\bin;%MINGW%\lib;%INSTALL_PATH%\bin;%PATH%
+    - g++ -E -x c++ - -v < nul
     - cd %APPVEYOR_BUILD_FOLDER%
     - cmake . -G "MinGW Makefiles"
     - mingw32-make
-    - copy librterm.dll C:\MinGW\bin\
-    - mkdir C:\MinGW\include\rterm
-    - copy include C:\MinGW\include\rterm\
+    - copy librterm.dll %INSTALL_PATH%\bin\
+    - copy librterm.dll.a %INSTALL_PATH%\lib\
+    - mkdir %INSTALL_PATH%\include\rterm
+    - copy include %INSTALL_PATH%\include\rterm\
     - cd test
+    - where librterm.dll
+    - where SDL2.dll
     - cmake . -G "MinGW Makefiles"
     - mingw32-make
     - benchmark.exe

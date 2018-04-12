@@ -24,9 +24,16 @@ if (WIN32)
     target_link_libraries(${PROJECT_NAME} -lmingw32 -lSDL2main)
 endif (WIN32)
 
-target_link_libraries(${PROJECT_NAME} -lSDL2 -lSDL2_ttf -lSDL2_image)
+target_link_libraries(${PROJECT_NAME} -lSDL2 -lSDL2_ttf -lSDL2_image -lpthread)
 
-install(TARGETS ${PROJECT_NAME}
-        LIBRARY DESTINATION lib
-        PUBLIC_HEADER DESTINATION include/rterm
-)
+if (WIN32)
+    install(TARGETS ${PROJECT_NAME}
+            RUNTIME DESTINATION lib
+            PUBLIC_HEADER DESTINATION include/rterm
+    )
+else ()
+    install(TARGETS ${PROJECT_NAME}
+            LIBRARY DESTINATION lib
+            PUBLIC_HEADER DESTINATION include/rterm
+    )
+endif (WIN32)

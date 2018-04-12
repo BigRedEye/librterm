@@ -1,10 +1,10 @@
-#include "char.h"
-
 #include <cstdarg>
 #include <cstdio>
 #include <codecvt>
 #include <locale>
 #include <memory>
+
+#include "char.h"
 
 namespace rterm {
 
