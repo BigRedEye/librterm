@@ -8,9 +8,6 @@
 
 #include <cstddef>
 #include <chrono>
-#include <thread>
-#include <mutex>
-#include <atomic>
 
 #include <SDL2/SDL.h>
 
@@ -65,6 +62,11 @@ public:
      * @return number of rows in terminal
      */
     size_t rows() const;
+
+    /**
+     * @brief Poll events
+     */
+    void poll();
 
     /**
      * @brief Wait for some time
@@ -367,7 +369,7 @@ private:
     SDL_Ptr<SDL_Renderer> p_ren_; ///< pointer to SDL_Renderer object
     SDL_Ptr<SDL_Texture> p_tex_; ///< pointer to SDL_Texture object
 
-    std::atomic_bool quitRequested_; ///< was quit requested by user or system
+    bool quitRequested_; ///< was quit requested by user or system
     bool wasShift_;
 
     Color fgCol_; ///< default foreground color

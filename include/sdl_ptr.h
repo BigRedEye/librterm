@@ -5,8 +5,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "sdl_lock.h"
-
 namespace rterm {
 
 /// @cond INTERNAL
@@ -22,35 +20,35 @@ struct sdl_deleter {
 template<>
 struct sdl_deleter<SDL_Window> {
     void operator()(SDL_Window* _ptr) {
-        SDL_Call(SDL_DestroyWindow, _ptr);
+        SDL_DestroyWindow(_ptr);
     }
 };
 
 template<>
 struct sdl_deleter<SDL_Renderer> {
     void operator()(SDL_Renderer* _ptr) {
-        SDL_Call(SDL_DestroyRenderer, _ptr);
+        SDL_DestroyRenderer(_ptr);
     }
 };
 
 template<>
 struct sdl_deleter<SDL_Surface> {
     void operator()(SDL_Surface* _ptr) {
-        SDL_Call(SDL_FreeSurface, _ptr);
+        SDL_FreeSurface(_ptr);
     }
 };
 
 template<>
 struct sdl_deleter<SDL_Texture> {
     void operator()(SDL_Texture* _ptr) {
-        SDL_Call(SDL_DestroyTexture, _ptr);
+        SDL_DestroyTexture(_ptr);
     }
 };
 
 template<>
 struct sdl_deleter<TTF_Font> {
     void operator()(TTF_Font* _ptr) {
-        SDL_Call(TTF_CloseFont, _ptr);
+        TTF_CloseFont(_ptr);
     }
 };
 

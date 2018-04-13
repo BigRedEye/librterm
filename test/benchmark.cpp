@@ -22,7 +22,6 @@ int main(int argc, char **argv) {
     terminal.setFgColor(rterm::Color(100, 0xff, 100));
     terminal.setFullscreen(false);
     terminal.setResizable(true);
-    terminal.resize(80, 24);
     int flooditers = 500, randomiters = 4000;
     for (int iters = 0; iters < randomiters; ++iters) {
         int i = rand() % terminal.cols(),
@@ -35,11 +34,13 @@ int main(int argc, char **argv) {
                                          0xff,
                                          0xff - std::min(j * 0xff / terminal.cols(), (size_t)0xffull)), i, j);
         terminal.redraw();
+        terminal.poll();
         if (!terminal.isRunning())
             return 0;
     }
     for (int i = 0; i < randomiters; ++i) {
         terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
+        terminal.poll();
         terminal.redraw();
         if (!terminal.isRunning())
             return 0;
@@ -58,6 +59,7 @@ int main(int argc, char **argv) {
                                                  0xff - std::min(j * 180 / terminal.cols() + iters * 127 / 1000, (size_t)0xffull)), i, j);
         }
         terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
+        terminal.poll();
         terminal.redraw();
         if (!terminal.isRunning())
             return 0;
@@ -81,6 +83,7 @@ int main(int argc, char **argv) {
         terminal.setBgColor(bg, i, j);
         terminal.setFgColor(fg, i, j);
         terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
+        terminal.poll();
         terminal.redraw();
     }
     end = std::chrono::high_resolution_clock::now();
@@ -89,12 +92,5 @@ int main(int argc, char **argv) {
 
     terminal.setFgColor(rterm::Color(0, 0xff, 0));
     terminal.setBgColor(rterm::Color(0, 0, 0));
-
-    terminal.delay(1000);
-    for (int i = 0; i < 1000; ++i)
-        terminal.setChar(rand() % terminal.cols(),
-                         rand() % terminal.rows(),
-                         'a' + rand() % ('z' - 'a'));
-    std::cout << "Done" << std::endl;
     return 0;
 }

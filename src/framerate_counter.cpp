@@ -1,5 +1,5 @@
-#include "framerate_counter.h"
 #include <numeric>
+#include "framerate_counter.h"
 
 namespace rterm {
 FrameRateCounter::FrameRateCounter(size_t framesToStore)
