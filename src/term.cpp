@@ -4,6 +4,7 @@
 #include "tilefont.h"
 #include "mouse.h"
 #include "logger.h"
+#include "sdl_lock.h"
 
 #include <iostream>
 #include <functional>
@@ -15,54 +16,64 @@
 #include <chrono>
 #endif // RTERM_DEBUG
 
+#define UNUSED(var) (void)(var);
+
 namespace rterm {
+using namespace events;
+
 Term::Term()
     : Term(0, 0) {
 }
 
 Term::Term(size_t ncols, size_t nrows)
     : console_(ncols, nrows),
+      p_font_(new TTFont()),
       quitRequested_(false),
       fgCol_(0, 255, 0),
-      bgCol_(0, 0, 0),
-      p_font_(new TTFont()) {
-    SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-    TTF_Init();
-    p_win_ = SDL_Ptr<SDL_Window>(SDL_CreateWindow("Terminal", SDL_WINDOWPOS_UNDEFINED,
-                                     SDL_WINDOWPOS_UNDEFINED,
-                                     p_font_->w() * cols(), p_font_->h() * rows(), 0));
-    p_ren_ = SDL_Ptr<SDL_Renderer>(SDL_CreateRenderer(p_win_.get(), -1, 0));
-    
-    SDL_RenderClear(p_ren_.get());
-    SDL_RenderPresent(p_ren_.get());
-    SDL_AddEventWatch(eventFilter, this);
-    
-    SDL_RenderClear(p_ren_.get());
-    SDL_RenderPresent(p_ren_.get());
-    sdlMutex_.lock();
-    sdlMutex_.unlock();
-    p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-                                  SDL_GetWindowSurface(p_win_.get())->w, SDL_GetWindowSurface(p_win_.get())->h));
-    eventPumpThread_ = std::thread([this](){
-        while (!this->quitRequested_) {
-            this->sdlMutex_.lock();
-            SDL_PumpEvents();
-            this->sdlMutex_.unlock();
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        }
+      bgCol_(0, 0, 0) {
+    {
+        auto lock = acquireSDLMutex();
+        p_win_ = SDL_Ptr<SDL_Window>(
+            SDL_CreateWindow("Terminal",
+                SDL_WINDOWPOS_UNDEFINED,
+                SDL_WINDOWPOS_UNDEFINED,
+                p_font_->w() * cols(),
+                p_font_->h() * rows(),
+                0)
+        );
+        p_ren_ = SDL_Ptr<SDL_Renderer>(SDL_CreateRenderer(p_win_.get(), -1, 0));
+
+        SDL_RenderClear(p_ren_.get());
+        SDL_RenderPresent(p_ren_.get());
+
+        SDL_RenderClear(p_ren_.get());
+        SDL_RenderPresent(p_ren_.get());
+        p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
+                                      SDL_GetWindowSurface(p_win_.get())->w, SDL_GetWindowSurface(p_win_.get())->h));
+    }
+    redraw(true);
+    eventSystem_.startPolling();
+    eventSystem_.registerCallback(EventType::Quit, [this](Event *ev){
+        UNUSED(ev);
+        this->eventSystem_.stopPolling();
+        this->close();
     });
-    redraw();
+    eventSystem_.registerCallback(EventType::WindowExposed, [this](Event *ev){
+        UNUSED(ev);
+        this->redraw(true);
+    });
+    /*eventSystem_.registerCallback(EventType::WindowResized, [this](Event *ev){
+        auto event = static_cast<events::WindowResizedEvent*>(ev);
+        this->setWindowSize(event->x(), event->y());
+        this->redraw(true);
+    });*/
 }
 
 Term::~Term() {
+    eventSystem_.stopPolling();
+    eventSystem_.join();
     quitRequested_ = true;
-    if (eventPumpThread_.joinable())
-        eventPumpThread_.join();
-
     delete p_font_;
-
-    TTF_Quit();
-    SDL_Quit();
 }
 
 size_t Term::cols() const {
@@ -78,7 +89,7 @@ bool Term::isRunning() const {
 }
 
 void Term::delay(uint32_t msec) const {
-    SDL_Delay(msec);
+    std::this_thread::sleep_for(std::chrono::milliseconds(msec));
 }
 
 long double Term::fps() const {
@@ -98,7 +109,7 @@ void Term::setCursorPosition(size_t x, size_t y) {
 }
 
 void Term::updateTexture() {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
+    auto lock = acquireSDLMutex();
     SDL_Texture * tmp = p_tex_.get();
 
     int w, h;
@@ -118,31 +129,30 @@ void Term::updateTexture() {
 }
 
 void Term::setWindowSize(size_t width, size_t height) {
-    sdlMutex_.lock();
     size_t ncols = width / p_font_->w(),
            nrows = height / p_font_->h();
     console_.resize(ncols, nrows, bgCol_, fgCol_);
 
+    auto lock = acquireSDLMutex();
     /* resize window */
     int curw, curh;
     SDL_GetWindowSize(p_win_.get(), &curw, &curh);
-    if (curw != width || curh != height)
+    if (static_cast<size_t>(curw) != width ||
+        static_cast<size_t>(curh) != height)
         SDL_SetWindowSize(p_win_.get(), width, height);
-    sdlMutex_.unlock();
     updateTexture();
-
-    sdlMutex_.lock();
     SDL_RenderClear(p_ren_.get());
-    sdlMutex_.unlock();
     redraw(true);
 }
 
 Term& Term::setTitle(const std::string &title) {
+    auto lock = acquireSDLMutex();
     SDL_SetWindowTitle(p_win_.get(), title.c_str());
     return *this;
 }
 
 Term& Term::setIcon(const std::string &path) {
+    auto lock = acquireSDLMutex();
     SDL_Ptr<SDL_Surface> p_icon(IMG_Load(path.c_str()));
     if (!p_icon)
         Logger(Logger::CRITICAL) << IMG_GetError();
@@ -174,22 +184,19 @@ void Term::print(size_t x, size_t y, const std::string &fmt, ...) {
     for (auto c : formatted)
         addChar(c);
     setCursorPosition(prevCursorX, prevCursorY);
-
     va_end(args);
 }
 
-Key Term::getKey(int32_t timeout) {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
-    return inputSystem_.getKey(timeout, std::bind(&Term::isRunning, this));
+Key Term::getKey() {
+    return eventSystem_.getKey();
 }
 
-char_t Term::getChar(int32_t timeout) {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
-    return inputSystem_.getChar(timeout, std::bind(&Term::isRunning, this));
+char_t Term::getChar() {
+    return eventSystem_.getChar();
 }
 
 void Term::getMousePosition(size_t &x, size_t &y) {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
+    auto lock = acquireSDLMutex();
     int mx = 0, my = 0;
     SDL_GetMouseState(&mx, &my);
     x = mx / p_font_->w();
@@ -199,7 +206,7 @@ void Term::getMousePosition(size_t &x, size_t &y) {
 }
 
 int Term::getMouseButtons() {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
+    auto lock = acquireSDLMutex();
     int result = SDL_GetMouseState(NULL, NULL);
     return result;
 }
@@ -215,11 +222,10 @@ Color Term::bgColorAt(size_t x, size_t y) const {
 Color Term::fgColorAt(size_t x, size_t y) const {
     return console_.get(x, y).fg();
 }
-
 void Term::setFullscreen(bool fullscr) {
     int ncols, nrows;
     {
-        std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
+        auto lock = acquireSDLMutex();
         static bool isFullscr = false;
         static SDL_DisplayMode *windowedMode = NULL;
         static int prevCols = 0, prevRows = 0;
@@ -252,11 +258,12 @@ void Term::setFullscreen(bool fullscr) {
         isFullscr = !isFullscr;
     }
     resize(ncols, nrows);
+    redraw(true);
 }
 
 void Term::setResizable(bool resizable) {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
 #if SDL_MAJOR_VERSION >= 2 && SDL_PATCHLEVEL >= 5
+    auto lock = acquireSDLMutex();
     SDL_SetWindowResizable(p_win_.get(), (resizable ? SDL_TRUE : SDL_FALSE));  
 #else
     Logger(Logger::ERROR).printf("SDL version %d.%d.%d doesn't support setWindowResizable, update it to 2.0.5", 
@@ -267,32 +274,32 @@ void Term::setResizable(bool resizable) {
 }
 
 void Term::setMinWindowSize(size_t width, size_t height) {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
+    auto lock = acquireSDLMutex();
     SDL_SetWindowMinimumSize(p_win_.get(), width, height);
 }
 
 void Term::setMaxWindowSize(size_t width, size_t height) {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
+    auto lock = acquireSDLMutex();
     SDL_SetWindowMaximumSize(p_win_.get(), width, height);
 }
 
 void Term::close() {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
     quitRequested_ = true;
 }
 
 void Term::setFont(const std::string &path, size_t sz) {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
-    if (p_font_)
-        delete p_font_;
-
-    p_font_ = new TTFont(path, sz);
+    {
+        auto lock = acquireSDLMutex();
+        if (p_font_)
+            delete p_font_;
+        p_font_ = new TTFont(path, sz);
+    }
     setWindowSize(p_font_->w() * cols(), p_font_->h() * rows());
     redraw(true);
 }
 
 void Term::setFont(const std::string &path, size_t w, size_t h) {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
+    auto lock = acquireSDLMutex();
     if (p_font_)
         delete p_font_;
 
@@ -303,11 +310,12 @@ void Term::setFont(const std::string &path, size_t w, size_t h) {
 
 void Term::setBgColor(const Color &bg) {
     bgCol_ = bg;
-    for (int i = 0; i < rows(); ++i)
-        for (int j = 0; j < cols(); ++j)
+    for (size_t i = 0; i < rows(); ++i)
+        for (size_t j = 0; j < cols(); ++j)
             console_.set(j, i, Char(console_.get(j, i).c(),
                                     bg,
                                     console_.get(j, i).fg()));
+    redraw();
 }
 
 void Term::setBgColor(const Color &bg, size_t x, size_t y) {
@@ -318,21 +326,26 @@ void Term::setBgColor(const Color &bg, size_t x, size_t y) {
 
 void Term::setFgColor(const Color &fg) {
     fgCol_ = fg;
-    for (int i = 0; i < rows(); ++i)
-        for (int j = 0; j < cols(); ++j)
-            console_.set(j, i, Char(console_.get(j, i).c(),
-                                    console_.get(j, i).bg(),
-                                    fg));
+    for (size_t i = 0; i < rows(); ++i)
+        for (size_t j = 0; j < cols(); ++j)
+            console_.set(j, i, Char(
+                console_.get(j, i).c(),
+                console_.get(j, i).bg(),
+                fg
+            ));
+    redraw();
 }
 
 void Term::setFgColor(const Color &fg, size_t x, size_t y) {
-    console_.set(x, y, Char(console_.get(x, y).c(),
-                            console_.get(x, y).bg(), 
-                            fg));
+    console_.set(x, y, Char(
+        console_.get(x, y).c(),
+        console_.get(x, y).bg(),
+        fg
+    ));
 }
 
 void Term::redraw(bool force) {
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
+    auto lock = acquireSDLMutex();
     auto update = console_.getUpdatedChars(force);
     for (auto p : update)
         redraw(p.first, p.second);
@@ -343,7 +356,7 @@ void Term::redraw(bool force) {
 void Term::shift(int dx, int dy) {
     console_.shift(dx, dy);
 
-    std::lock_guard<std::recursive_mutex> lock(sdlMutex_);
+    auto lock = acquireSDLMutex();
     SDL_Ptr<SDL_Texture> prevTexture(p_tex_.release());
     updateTexture();
     SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
@@ -392,34 +405,5 @@ void Term::redraw(size_t x, size_t y) {
     SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
     p_font_->render(p_ren_.get(), dst, ch.ch_, ch.fg_, ch.bg_);
     SDL_SetRenderTarget(p_ren_.get(), NULL);
-}
-
-int eventFilter(void *data, SDL_Event *ev) {
-    Term *term = reinterpret_cast<Term*>(data);
-    switch (ev->type) {
-    case SDL_QUIT:
-        term->quitRequested_ = true;
-        break;
-    case SDL_WINDOWEVENT:
-        switch (ev->window.event) {
-        case SDL_WINDOWEVENT_RESIZED:
-            term->setWindowSize(ev->window.data1, ev->window.data2);
-            return 0;
-            break;
-        case SDL_WINDOWEVENT_EXPOSED:
-            term->renderToScreen();
-            break;
-        default:
-            break;
-        }
-        break;
-    case SDL_KEYDOWN:
-        if (term->onKeyDown_)
-            term->onKeyDown_(Key(ev->key.keysym));
-        break;
-    default:
-        break;
-    }
-    return 1;
 }
 }

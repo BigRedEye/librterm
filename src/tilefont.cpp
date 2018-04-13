@@ -1,4 +1,5 @@
 #include "tilefont.h"
+#include "sdl_lock.h"
 #include <SDL2/SDL_image.h>
 
 namespace rterm {
@@ -7,7 +8,10 @@ TileFont::TileFont()
 }
 
 TileFont::TileFont(const std::string &path, size_t _w, size_t _h)
-    : w_(_w), h_(_h), Font() {
+    : Font(),
+      w_(_w),
+      h_(_h) {
+    auto lock = acquireSDLMutex();
     static bool IMG_WasInit = false;
     if (!IMG_WasInit) {
         IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP);
@@ -52,10 +56,15 @@ SDL_Rect TileFont::getRect(char_t c) const {
 }
 
 void TileFont::render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) {
+    (void)fg;
+    (void)bg;
     if (!p_tilemap_)
         return;
+    auto lock = acquireSDLMutex();
     if (!p_tilemapTexture_.get())
-        p_tilemapTexture_ = SDL_Ptr<SDL_Texture>(SDL_CreateTextureFromSurface(p_ren, p_tilemap_.get()));
+        p_tilemapTexture_ = SDL_Ptr<SDL_Texture>(
+            SDL_CreateTextureFromSurface(p_ren, p_tilemap_.get())
+        );
     SDL_SetRenderDrawColor(p_ren, bg.r(), bg.g(), bg.b(), bg.a());
     SDL_RenderFillRect(p_ren, &dst);
         

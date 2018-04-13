@@ -24,26 +24,26 @@ public:
      * @brief Construct Key from SDL_Keycode
      * @param code SDL_Keycode constant
      */
-    Key(SDL_Keycode code = SDLK_UNKNOWN);
+    explicit Key(SDL_Keycode code = SDLK_UNKNOWN, char_t ch = 0);
 
     /**
      * @brief Construct Key from KeyCode
      * @param code KeyCode constant
      * @see keycode.h for the list of key codes
      */
-    Key(KeyCode code);
+    explicit Key(KeyCode code, char_t ch = 0);
     
     /**
      * @brief Construct Key from unicode character
      * @param ch unicode char
      */
-    Key(char_t ch);
+    explicit Key(char_t ch);
 
     /**
      * @brief Construct Key from SDL_Keysym
      * @param sym SDL_Keysym from SDL events
      */
-    Key(SDL_Keysym sym);
+    explicit Key(SDL_Keysym sym, char_t ch = 0);
 
     /**
      * @brief Get printable unicode char of the Key
@@ -65,8 +65,6 @@ public:
      * @see keycode.h for the list of key modifiers
      */
     int mod() const;
-
-    friend class InputSystem;
 
 private:
 /// @cond INTERNAL

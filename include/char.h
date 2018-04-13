@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief This file contains some helper functions 
+ * @brief This file contains some helper functions
  * for working with UTF8 characters
  */
 

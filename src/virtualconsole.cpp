@@ -117,7 +117,7 @@ void VirtualConsole::shift(int dx, int dy) {
 
     for (size_t j = 0; j < rows(); ++j)
         for (size_t i = 0; i < cols(); ++i)
-            if (j + dy >= 0 && i + dx >= 0) {
+            if (static_cast<int>(j) + dy >= 0 && static_cast<int>(i) + dx >= 0) {
                 tmpData[j][i] = get(i + dx, j + dy);
                 tmpMask[j][i] = getMask(i + dx, j + dy);
             }

@@ -1,4 +1,5 @@
 #include "ttfont.h"
+#include "sdl_lock.h"
 #include <SDL2/SDL_ttf.h>
 
 namespace rterm {
@@ -8,6 +9,7 @@ TTFont::TTFont()
 
 TTFont::TTFont(const std::string &path, size_t sz)
     : TTFont() {
+    auto lock = acquireSDLMutex();
     if (!TTF_WasInit())
         TTF_Init();
     p_font_ = SDL_Ptr<TTF_Font>(TTF_OpenFont(path.c_str(), sz));
@@ -22,7 +24,7 @@ TTFont& TTFont::operator=(TTFont &&rhs) {
 
 size_t TTFont::w() const {
     if (!p_font_.get())
-        return 2;
+        return 8;
     static int w = -1, h = -1;
     if (w == -1)
         TTF_SizeText(p_font_.get(), "@", &w, &h);
@@ -31,7 +33,7 @@ size_t TTFont::w() const {
 
 size_t TTFont::h() const {
     if (!p_font_.get())
-        return 1;
+        return 8;
 
     static int h = -1;
     if (h == -1)
@@ -43,12 +45,13 @@ void TTFont::render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Colo
     if (!p_font_.get())
         return;
 
+    auto lock = acquireSDLMutex();
     SDL_SharedPtr<SDL_Texture> p_tex;
     if (!cache_.get(ch, p_tex)) {
         std::string str = UTF8CharToBytes(ch);
         SDL_Ptr<SDL_Surface> p_surf(TTF_RenderUTF8_Blended(p_font_.get(),
                                     str.c_str(),
-                                    SDL_Color{255, 255, 255}));
+                                    SDL_Color{0xff, 0xff, 0xff, 0xff}));
         p_tex = make_SDL_SharedPtr(SDL_CreateTextureFromSurface(p_ren, p_surf.get()));
         cache_.set(ch, p_tex);
     }
