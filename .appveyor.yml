@@ -7,7 +7,10 @@ artifacts:
 
 deploy:
     - provider: GitHub
+      auth_token:
+          secure: sWX4wYH0ZYhsKcO3KuQfsIg46ToY2A7YsRjmumo2PugdMdEtAWxr/yqMQGIOci9S
       artifact: MinGW-w64
+      prerelease: true
 
 install:
     - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
