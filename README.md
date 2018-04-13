@@ -6,7 +6,27 @@
 [![license](https://img.shields.io/github/license/BigRedEye/rterm.svg)](https://github.com/BigRedEye/rterm/blob/master/LICENSE)
 
 Minimalistic terminal emulator written on C++ and SDL2.
-    
+
+## Minimal example ##
+This piece of code creates an empty `80 x 24` terminal and displays each character pressed by the user.
+```cpp
+#include <rterm/term.h>
+
+int main(int argc, char **argv) {
+    rterm::Term terminal(80, 24);
+    terminal.setFont("DejaVuSansMono.ttf", 18);
+    terminal.onKeyDown([&](const rterm::events::KeyDownEvent &ev) {
+        if (ev.key().toChar())
+            terminal.addChar(ev.key().toChar());
+        terminal.redraw();
+    });
+    while (terminal.isRunning())
+        terminal.poll();
+    return 0;
+}
+
+```
+
 ## Requirements ##
 
 + Compiler with C++11 suppot
@@ -23,7 +43,7 @@ Minimalistic terminal emulator written on C++ and SDL2.
 [cmake](https://cmake.org/).
 
 + Clone this repository
-```
+```sh
 git clone https://github.com/BigRedEye/rterm.git
 cd rterm
 ```
@@ -31,18 +51,18 @@ cd rterm
 ### Linux ###
 
 + Build
-```
+```sh
 cmake .
 make
 ```
 
 + Install the library
-```
+```sh
 sudo make install
 ```
 
 + Build examples:
-```
+```sh
 cd test
 cmake .
 make
@@ -58,6 +78,8 @@ cmake . -G "MinGW Makefiles"
 mingw32-make
 ```
 
++ Alternatively, you can use automatically generated [builds](https://github.com/BigRedEye/rterm/releases).
+
 + Build examples:
 ```
 copy librterm.dll test/librterm.dll
@@ -65,3 +87,4 @@ cd test
 cmake . -G "MinGW Makefiles"
 mingw32-make
 ```
+
