@@ -1,7 +1,9 @@
 os: Visual Studio 2015
 
 artifacts:
-    - 
+    - path: release
+      name: MinGW-w64
+      type: zip
 
 install:
     - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
@@ -39,11 +41,14 @@ build_script:
     - cmake . -G "MinGW Makefiles"
     - mingw32-make
     - benchmark.exe
+    - cd ..
 
 after_build:
     - mkdir release
+    - mkdir release\bin
+    - mkdir release\lib
+    - mkdir release\include
+    - mkdir release\include\rterm
     - copy librterm.dll release\bin\
     - copy librterm.dll.a release\lib\
-    - mkdir release\include\rterm
     - copy include release\include\rterm\
-    - appveyor PushArtifact release 
