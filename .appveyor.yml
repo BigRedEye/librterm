@@ -5,6 +5,10 @@ artifacts:
       name: MinGW-w64
       type: zip
 
+deploy:
+    - provider: GitHub
+      artifact: MinGW-w64
+
 install:
     - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
     - set INSTALL_PATH=%MINGW%\x86_64-w64-mingw32\
