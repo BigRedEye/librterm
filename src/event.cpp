@@ -1,5 +1,4 @@
 #include "event.h"
-
 #include "logger.h"
 
 namespace rterm {

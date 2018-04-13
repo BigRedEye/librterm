@@ -15,8 +15,6 @@ void TTF_Quit() {}
 #endif // RTERM_WITHOUT_TTF
 
 #include "sdl_loader.h"
-#include "sdl_lock.h"
-
 namespace rterm {
 
 int SdlLoader::countOfLoads_ = 0;

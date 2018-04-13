@@ -45,6 +45,10 @@ public:
      */
     explicit Key(SDL_Keysym sym, char_t ch = 0);
 
+    operator bool() const {
+        return code_;
+    }
+
     /**
      * @brief Get printable unicode char of the Key
      * @return printable unicode char

@@ -1,5 +1,4 @@
 #include "ttfont.h"
-#include "sdl_lock.h"
 #include <SDL2/SDL_ttf.h>
 
 namespace rterm {
@@ -9,7 +8,6 @@ TTFont::TTFont()
 
 TTFont::TTFont(const std::string &path, size_t sz)
     : TTFont() {
-    auto lock = acquireSDLMutex();
     if (!TTF_WasInit())
         TTF_Init();
     p_font_ = SDL_Ptr<TTF_Font>(TTF_OpenFont(path.c_str(), sz));
@@ -45,7 +43,6 @@ void TTFont::render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Colo
     if (!p_font_.get())
         return;
 
-    auto lock = acquireSDLMutex();
     SDL_SharedPtr<SDL_Texture> p_tex;
     if (!cache_.get(ch, p_tex)) {
         std::string str = UTF8CharToBytes(ch);

@@ -2,7 +2,7 @@
 #define RTERM_EVENT_H
 
 #include <chrono>
-#include "SDL2/SDL_events.h"
+#include <SDL2/SDL_events.h>
 #include "key.h"
 #include "mouse.h"
 

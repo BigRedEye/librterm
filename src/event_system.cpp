@@ -1,7 +1,7 @@
-#include "event_system.h"
-#include "sdl_lock.h"
-#include "event.h"
+#include <memory>
 
+#include "event_system.h"
+#include "event.h"
 #include "logger.h"
 
 namespace rterm {
@@ -10,39 +10,16 @@ EventSystem::EventSystem() :
 }
 
 EventSystem::~EventSystem() {
-    stopPolling();
-    join();
 }
 
 bool EventSystem::quitRequested() const {
-    return quitRequested_.load();
+    return quitRequested_;
 }
 
-void EventSystem::startPolling() {
-    quitRequested_ = false;
-    notified_ = false;
-    eventPumpThread_ = std::thread([this](){
-        while (!this->quitRequested_) {
-            SDL_Event event;
-            auto start = std::chrono::high_resolution_clock::now();
-            {
-                auto lock = acquireSDLMutex();
-                while (SDL_PollEvent(&event))
-                    eventHandler(&event);
-            }
-            std::this_thread::sleep_until(start + std::chrono::milliseconds(1));
-        }
-        condition_.notify_all();
-    });
-}
-
-void EventSystem::stopPolling() {
-    quitRequested_ = true;
-}
-
-void EventSystem::join() {
-    if (eventPumpThread_.joinable())
-        eventPumpThread_.join();
+void EventSystem::poll() {
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+        eventHandler(&event);
 }
 
 std::unique_ptr<events::Event> getKeyDownEvent(SDL_Event *ev) {
@@ -114,29 +91,21 @@ int EventSystem::eventHandler(SDL_Event *ev) {
         break;
     }
     if (event) {
-        std::lock_guard<std::mutex> lock(callbacksMutex_);
         for (auto &&callback : callbacks_[event->type()])
             callback(event.get());
     }
     if (event && event->type() == EventType::KeyDown) {
         events::KeyDownEvent *keyev = static_cast<events::KeyDownEvent*>(event.get());
         pendingKey_ = keyev->key();
-        notified_ = true;
-        condition_.notify_all();
     }
     return 1;
 }
 
 Key EventSystem::getKey() {
-    std::unique_lock<std::mutex> lock(waitMutex_);
-    notified_ = false;
-    while (!quitRequested_ && !notified_)
-        condition_.wait(lock);
-    if (!notified_)
-        return Key();
-    notified_ = false;
-    Key res = pendingKey_;
-    return res;
+    pendingKey_ = Key();
+    while (!quitRequested_ && !pendingKey_)
+        poll();
+    return pendingKey_;
 }
 
 char_t EventSystem::getChar() {
@@ -144,19 +113,15 @@ char_t EventSystem::getChar() {
         Key key = getKey();
         if (key.toChar())
             return key.toChar();
+        if (quitRequested_)
+            return 0;
     }
 }
 
 Key EventSystem::getKey(const highResClock::time_point &until) {
-    std::unique_lock<std::mutex> lock(waitMutex_);
-    notified_ = false;
-    while (!quitRequested_ && !notified_)
-        condition_.wait_until(lock, until);
-    if (!notified_)
-        return Key();
-    notified_ = false;
-    Key res = pendingKey_;
-    return res;
+    while (!quitRequested_ && !pendingKey_ && highResClock::now() < until)
+        poll();
+    return pendingKey_;
 }
 
 char_t EventSystem::getChar(const highResClock::time_point &until) {
@@ -164,6 +129,8 @@ char_t EventSystem::getChar(const highResClock::time_point &until) {
         Key key = getKey(until);
         if (key.toChar())
             return key.toChar();
+        if (quitRequested_)
+            break;
     }
     return 0;
 }

@@ -8,14 +8,14 @@
 /// @cond INTERNAL
 
 #include <unordered_map>
+#include <vector>
+#include <queue>
 
 #include <SDL2/SDL_ttf.h>
-#include <vector>
 
 #include "font.h"
 #include "sdl_ptr.h"
 #include "char.h"
-#include <queue>
 
 namespace rterm {
 

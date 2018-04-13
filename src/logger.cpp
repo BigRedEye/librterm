@@ -1,11 +1,11 @@
-#include "logger.h"
-#include "char.h"
-
 #include <iostream>
 #include <chrono>
 #include <iomanip>
 #include <string>
 #include <cstdarg>
+
+#include "logger.h"
+#include "char.h"
 
 namespace rterm {
 
