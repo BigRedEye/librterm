@@ -20,13 +20,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${HEADERS}")
 
-if (WIN32)
+if (MINGW)
     target_link_libraries(${PROJECT_NAME} -lmingw32 -lSDL2main)
-endif (WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mwindows")
+endif (MINGW)
 
 target_link_libraries(${PROJECT_NAME} -lSDL2 -lSDL2_ttf -lSDL2_image -lpthread)
 
-if (WIN32)
+if (MINGW)
     install(TARGETS ${PROJECT_NAME}
             RUNTIME DESTINATION lib
             PUBLIC_HEADER DESTINATION include/rterm
@@ -36,4 +37,4 @@ else ()
             LIBRARY DESTINATION lib
             PUBLIC_HEADER DESTINATION include/rterm
     )
-endif (WIN32)
+endif (MINGW)

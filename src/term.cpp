@@ -10,11 +10,6 @@
 
 #include <SDL2/SDL_image.h>
 
-#ifdef RTERM_DEBUG
-#include <iostream>
-#include <chrono>
-#endif // RTERM_DEBUG
-
 #define UNUSED(var) (void)(var);
 
 namespace rterm {
@@ -57,7 +52,7 @@ Term::Term(size_t ncols, size_t nrows)
         this->setWindowSize(event->x(), event->y());
         this->redraw(true);
     });
-
+    SDL_StartTextInput();
     eventSystem_.poll();
 }
 

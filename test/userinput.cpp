@@ -6,7 +6,7 @@
 #define UNUSED(cond) (void)(cond)
 
 int main(int argc, char **argv) {
-    /* on Windows SDL2 redeclares main with custom main function,
+    /* on Windows SDL2 redefines main with custom SDL_main function,
        so we need argc and argv */
     UNUSED(argc);
     UNUSED(argv);

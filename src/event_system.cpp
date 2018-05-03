@@ -25,12 +25,13 @@ void EventSystem::poll() {
 std::unique_ptr<events::Event> getKeyDownEvent(SDL_Event *ev) {
     events::Event *event = nullptr;
     if (ev->type == SDL_KEYDOWN) {
-        std::string str;
+        SDL_PumpEvents();
         SDL_Event e;
-        if (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT) > 0)
+        if (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT) > 0) {
             event = new events::KeyDownEvent(ev, &e);
-        else
+        } else {
             event = new events::KeyDownEvent(ev);
+        }
     }
     return std::unique_ptr<events::Event>(event);
 }
