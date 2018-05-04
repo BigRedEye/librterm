@@ -13,11 +13,6 @@ public:
     ~SdlLoader();
 
 private:
-    template<typename F>
-    void load(F&& f, int flags);
-    template<typename F>
-    void unload(F&& f, int flags);
-
     static int countOfLoads_;
 };
 

@@ -20,24 +20,15 @@ Term::Term()
 }
 
 Term::Term(size_t ncols, size_t nrows)
-    : console_(ncols, nrows),
-      p_font_(new TTFont()),
-      quitRequested_(false),
-      fgCol_(0x00, 0xff, 0x00),
-      bgCol_(0x00, 0x00, 0x00) {
-    p_win_ = SDL_Ptr<SDL_Window>(
-        SDL_CreateWindow("Terminal",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            p_font_->w() * cols(),
-            p_font_->h() * rows(),
-            0)
-    );
-    p_ren_ = SDL_Ptr<SDL_Renderer>(SDL_CreateRenderer(p_win_.get(), -1, 0));
-    SDL_RenderClear(p_ren_.get());
-    SDL_RenderPresent(p_ren_.get());
-    p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-                                  SDL_GetWindowSurface(p_win_.get())->w, SDL_GetWindowSurface(p_win_.get())->h));
+    : console_(ncols, nrows)
+    , p_font_(new TTFont())
+    , window_(400, 400)
+    , quitRequested_(false)
+    , fgCol_(0x00, 0xff, 0x00)
+    , bgCol_(0x00, 0x00, 0x00)
+     {
+    p_tex_ = SdlPtr<SDL_Texture>(SDL_CreateTexture(window_.renderer().lock().get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
+                                  SDL_GetWindowSurface(window_.window().lock().get())->w, SDL_GetWindowSurface(window_.window().lock().get())->h));
     redraw(true);
     eventSystem_.registerCallback(EventType::Quit, [this](Event *ev){
         UNUSED(ev);
@@ -101,19 +92,19 @@ void Term::updateTexture() {
     SDL_Texture * tmp = p_tex_.get();
 
     int w, h;
-    SDL_GetWindowSize(p_win_.get(), &w, &h);
-    p_tex_ = SDL_Ptr<SDL_Texture>(SDL_CreateTexture(p_ren_.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
+    SDL_GetWindowSize(window_.window().lock().get(), &w, &h);
+    p_tex_ = SdlPtr<SDL_Texture>(SDL_CreateTexture(window_.renderer().lock().get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
                                   w - w % p_font_->w(),
                                   h - h % p_font_->h()));
 
-    SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
-    SDL_SetRenderDrawColor(p_ren_.get(), bgCol_.r(), bgCol_.g(), bgCol_.b(), bgCol_.a());
-    SDL_RenderClear(p_ren_.get());
+    SDL_SetRenderTarget(window_.renderer().lock().get(), p_tex_.get());
+    SDL_SetRenderDrawColor(window_.renderer().lock().get(), bgCol_.r(), bgCol_.g(), bgCol_.b(), bgCol_.a());
+    SDL_RenderClear(window_.renderer().lock().get());
     SDL_Rect dstRect{0, 0, 0, 0};
     SDL_QueryTexture(p_tex_.get(), NULL, NULL, &dstRect.w, &dstRect.h);
-    SDL_RenderCopy(p_ren_.get(), tmp, NULL, &dstRect);
+    SDL_RenderCopy(window_.renderer().lock().get(), tmp, NULL, &dstRect);
     SDL_DestroyTexture(tmp);
-    SDL_SetRenderTarget(p_ren_.get(), NULL);
+    SDL_SetRenderTarget(window_.renderer().lock().get(), NULL);
 }
 
 void Term::setWindowSize(size_t width, size_t height) {
@@ -123,26 +114,26 @@ void Term::setWindowSize(size_t width, size_t height) {
 
     /* resize window */
     int curw, curh;
-    SDL_GetWindowSize(p_win_.get(), &curw, &curh);
+    SDL_GetWindowSize(window_.window().lock().get(), &curw, &curh);
     if (static_cast<size_t>(curw) != width ||
         static_cast<size_t>(curh) != height)
-        SDL_SetWindowSize(p_win_.get(), width, height);
+        SDL_SetWindowSize(window_.window().lock().get(), width, height);
     updateTexture();
-    SDL_RenderClear(p_ren_.get());
+    SDL_RenderClear(window_.renderer().lock().get());
     redraw(true);
 }
 
 Term& Term::setTitle(const std::string &title) {
-    SDL_SetWindowTitle(p_win_.get(), title.c_str());
+    SDL_SetWindowTitle(window_.window().lock().get(), title.c_str());
     return *this;
 }
 
 Term& Term::setIcon(const std::string &path) {
-    SDL_Ptr<SDL_Surface> p_icon(IMG_Load(path.c_str()));
+    SdlPtr<SDL_Surface> p_icon(IMG_Load(path.c_str()));
     if (!p_icon)
         Logger(Logger::CRITICAL) << IMG_GetError();
     else
-        SDL_SetWindowIcon(p_win_.get(), p_icon.get());
+        SDL_SetWindowIcon(window_.window().lock().get(), p_icon.get());
     return *this;
 }
 
@@ -214,7 +205,7 @@ void Term::setFullscreen(bool fullscr) {
     if (!isFullscr) {
         if (windowedMode == NULL) {
             windowedMode = new SDL_DisplayMode;
-            SDL_GetWindowDisplayMode(p_win_.get(), windowedMode);
+            SDL_GetWindowDisplayMode(window_.window().lock().get(), windowedMode);
         }
         prevCols = cols(), prevRows = rows();
     }
@@ -222,7 +213,7 @@ void Term::setFullscreen(bool fullscr) {
     if (isFullscr == fullscr)
         return;
 
-    SDL_SetWindowFullscreen(p_win_.get(), (fullscr ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
+    SDL_SetWindowFullscreen(window_.window().lock().get(), (fullscr ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
 
     /* set correct resolution */
     ncols = prevCols, nrows = prevRows;
@@ -234,7 +225,7 @@ void Term::setFullscreen(bool fullscr) {
     }
     else
         mode = *windowedMode;
-    SDL_SetWindowDisplayMode(p_win_.get(), &mode);
+    SDL_SetWindowDisplayMode(window_.window().lock().get(), &mode);
 
     isFullscr = !isFullscr;
     resize(ncols, nrows);
@@ -243,7 +234,7 @@ void Term::setFullscreen(bool fullscr) {
 
 void Term::setResizable(bool resizable) {
 #if SDL_MAJOR_VERSION >= 2 && SDL_PATCHLEVEL >= 5
-    SDL_SetWindowResizable(p_win_.get(), (resizable ? SDL_TRUE : SDL_FALSE));  
+    SDL_SetWindowResizable(window_.window().lock().get(), (resizable ? SDL_TRUE : SDL_FALSE));  
 #else
     UNUSED(resizable);
     Logger(Logger::ERROR).printf("SDL version %d.%d.%d doesn't support setWindowResizable, update it to 2.0.5", 
@@ -254,11 +245,11 @@ void Term::setResizable(bool resizable) {
 }
 
 void Term::setMinWindowSize(size_t width, size_t height) {
-    SDL_SetWindowMinimumSize(p_win_.get(), width, height);
+    SDL_SetWindowMinimumSize(window_.window().lock().get(), width, height);
 }
 
 void Term::setMaxWindowSize(size_t width, size_t height) {
-    SDL_SetWindowMaximumSize(p_win_.get(), width, height);
+    SDL_SetWindowMaximumSize(window_.window().lock().get(), width, height);
 }
 
 void Term::close() {
@@ -329,10 +320,10 @@ void Term::redraw(bool force) {
 void Term::shift(int dx, int dy) {
     console_.shift(dx, dy);
 
-    SDL_Ptr<SDL_Texture> prevTexture(p_tex_.release());
+    SdlPtr<SDL_Texture> prevTexture(p_tex_.release());
     updateTexture();
-    SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
-    SDL_RenderClear(p_ren_.get());
+    SDL_SetRenderTarget(window_.renderer().lock().get(), p_tex_.get());
+    SDL_RenderClear(window_.renderer().lock().get());
     int w = static_cast<int>(cols() * p_font_->w()),
         h = static_cast<int>(rows() * p_font_->h());
     SDL_Rect dstRect{0, 0, 0, 0};
@@ -347,22 +338,22 @@ void Term::shift(int dx, int dy) {
                      dstRect.y - dy * static_cast<int>(p_font_->h()),
                      dstRect.w,
                      dstRect.h};
-    SDL_RenderCopy(p_ren_.get(), prevTexture.get(), &srcRect, &dstRect);
+    SDL_RenderCopy(window_.renderer().lock().get(), prevTexture.get(), &srcRect, &dstRect);
     wasShift_ = true;
-    SDL_SetRenderTarget(p_ren_.get(), NULL);
+    SDL_SetRenderTarget(window_.renderer().lock().get(), NULL);
 }
 
 void Term::renderToScreen() {
     SDL_Rect textureRect{0, 0, 0, 0};
     SDL_Rect windowRect{0, 0, 0, 0};
     SDL_QueryTexture(p_tex_.get(), NULL, NULL, &textureRect.w, &textureRect.h);
-    SDL_GetWindowSize(p_win_.get(), &windowRect.w, &windowRect.h);
+    SDL_GetWindowSize(window_.window().lock().get(), &windowRect.w, &windowRect.h);
     SDL_Rect dstRect{0, 0, std::min(textureRect.w, windowRect.w), 
                            std::min(textureRect.h, windowRect.h)};
-    SDL_RenderClear(p_ren_.get());
-    SDL_RenderCopy(p_ren_.get(), p_tex_.get(), &dstRect, &dstRect);
+    SDL_RenderClear(window_.renderer().lock().get());
+    SDL_RenderCopy(window_.renderer().lock().get(), p_tex_.get(), &dstRect, &dstRect);
 
-    SDL_RenderPresent(p_ren_.get());
+    SDL_RenderPresent(window_.renderer().lock().get());
     
     /* count fps */
     frameRateCounter_.nextFrame(highResClock::now());
@@ -374,8 +365,8 @@ void Term::redraw(size_t x, size_t y) {
                   static_cast<int>(p_font_->w()),
                   static_cast<int>(p_font_->h())};
     Char ch = console_.get(x, y);
-    SDL_SetRenderTarget(p_ren_.get(), p_tex_.get());
-    p_font_->render(p_ren_.get(), dst, ch.ch_, ch.fg_, ch.bg_);
-    SDL_SetRenderTarget(p_ren_.get(), NULL);
+    SDL_SetRenderTarget(window_.renderer().lock().get(), p_tex_.get());
+    p_font_->render(window_.renderer().lock().get(), dst, ch.ch_, ch.fg_, ch.bg_);
+    SDL_SetRenderTarget(window_.renderer().lock().get(), NULL);
 }
 }

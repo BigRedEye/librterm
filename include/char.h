@@ -19,13 +19,13 @@ namespace rterm {
 typedef char32_t char_t;
 
 /**
- * @brief Convert a number of UTF8 bytes to single character
+ * @brief Convert a number of UTF8 bytes to UTF32 character
  * @param[in] str std::string that contains an UTF8 characte represented by bytes
  * @return Converted character
  * @note This function shouldn't be used to convert multiple UTF8 characters
- * @see rterm::UTF8CharToBytes
+ * @see rterm::UTF32ToBytes
  */
-char_t UTF8BytesToChar(const std::string &str);
+char_t BytesToUTF32(const std::string &str);
 
 /**
  * @brief Convert an UTF8 character to a number of bytes
@@ -33,7 +33,7 @@ char_t UTF8BytesToChar(const std::string &str);
  * @return std::string that contains an input character represented by bytes
  * @see rterm::UTF8BytesToChar
  */
-std::string UTF8CharToBytes(char_t c);
+std::string UTF32ToBytes(char_t c);
 
 /**
  * @brief Get printf-like formatted string

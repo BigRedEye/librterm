@@ -38,7 +38,7 @@ public:
      * @brief convert Color to SDL_Color
      * @return SDL_Color represents the same color as this object
      */
-    SDL_Color toSDL_Color() const {
+    SDL_Color toSdlColor() const {
         return SDL_Color{r(), g(), b(), a()};
     }
 
@@ -74,7 +74,6 @@ public:
         return a_;
     }
     
-    
     /**
      * @brief get red component
      * @return red component
@@ -108,10 +107,10 @@ public:
     }
 
 private:
-    uint8_t r_, ///< red channel 
-            g_, ///< green channel
-            b_, ///< blue channel
-            a_; ///< alpha channel
+    uint8_t r_; ///< red channel 
+    uint8_t g_; ///< green channel
+    uint8_t b_; ///< blue channel
+    uint8_t a_; ///< alpha channel
 };
 }
 

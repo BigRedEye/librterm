@@ -110,7 +110,7 @@ KeyDownEvent::KeyDownEvent(SDL_Event *event, SDL_Event *text)
     : KeyboardEvent(event) {
     char_t unicode = 0;
     if (text)
-        unicode = UTF8BytesToChar(text->text.text);
+        unicode = BytesToUTF32(text->text.text);
     if (event)
         key_ = Key(event->key.keysym, unicode);
 }
