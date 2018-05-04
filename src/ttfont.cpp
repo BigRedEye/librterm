@@ -10,7 +10,7 @@ TTFont::TTFont(const std::string &path, size_t sz)
     : TTFont() {
     if (!TTF_WasInit())
         TTF_Init();
-    p_font_ = SDL_Ptr<TTF_Font>(TTF_OpenFont(path.c_str(), sz));
+    p_font_ = SdlPtr<TTF_Font>(TTF_OpenFont(path.c_str(), sz));
     if (!p_font_.get())
         SDL_Log(TTF_GetError());
 }
@@ -43,13 +43,13 @@ void TTFont::render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Colo
     if (!p_font_.get())
         return;
 
-    SDL_SharedPtr<SDL_Texture> p_tex;
+    SdlSharedPtr<SDL_Texture> p_tex;
     if (!cache_.get(ch, p_tex)) {
-        std::string str = UTF8CharToBytes(ch);
-        SDL_Ptr<SDL_Surface> p_surf(TTF_RenderUTF8_Blended(p_font_.get(),
+        std::string str = UTF32ToBytes(ch);
+        SdlPtr<SDL_Surface> p_surf(TTF_RenderUTF8_Blended(p_font_.get(),
                                     str.c_str(),
                                     SDL_Color{0xff, 0xff, 0xff, 0xff}));
-        p_tex = make_SDL_SharedPtr(SDL_CreateTextureFromSurface(p_ren, p_surf.get()));
+        p_tex = makeSdlShared(SDL_CreateTextureFromSurface(p_ren, p_surf.get()));
         cache_.set(ch, p_tex);
     }
 

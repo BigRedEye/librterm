@@ -74,8 +74,8 @@ private:
      */
     SDL_Rect getRect(char_t c) const;
 
-    SDL_Ptr<SDL_Surface> p_tilemap_; ///< tilemap surface
-    SDL_Ptr<SDL_Texture> p_tilemapTexture_; ///< cached tilemap texture
+    SdlPtr<SDL_Surface> p_tilemap_; ///< tilemap surface
+    SdlPtr<SDL_Texture> p_tilemapTexture_; ///< cached tilemap texture
     size_t w_, ///< tile width
            h_; ///< tile height
 };

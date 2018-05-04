@@ -12,6 +12,9 @@ void IMG_Quit() {}
 #else
 int TTF_Init(int) { return 0; }
 void TTF_Quit() {}
+enum {
+    IMG_INIT_PNG = 0  
+};
 #endif // RTERM_WITHOUT_TTF
 
 #include "sdl_loader.h"

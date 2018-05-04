@@ -15,7 +15,7 @@ TileFont::TileFont(const std::string &path, size_t _w, size_t _h)
         IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP);
         IMG_WasInit = true;
     }
-    p_tilemap_ = SDL_Ptr<SDL_Surface>(IMG_Load(path.c_str()));
+    p_tilemap_ = SdlPtr<SDL_Surface>(IMG_Load(path.c_str()));
     if (!p_tilemap_.get()) {
         SDL_Log(IMG_GetError());
     }
@@ -59,7 +59,7 @@ void TileFont::render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Co
     if (!p_tilemap_)
         return;
     if (!p_tilemapTexture_.get())
-        p_tilemapTexture_ = SDL_Ptr<SDL_Texture>(
+        p_tilemapTexture_ = SdlPtr<SDL_Texture>(
             SDL_CreateTextureFromSurface(p_ren, p_tilemap_.get())
         );
     SDL_SetRenderDrawColor(p_ren, bg.r(), bg.g(), bg.b(), bg.a());

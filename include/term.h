@@ -20,6 +20,7 @@
 #include "virtualconsole.h"
 #include "framerate_counter.h"
 #include "event_system.h"
+#include "window.h"
 
 namespace rterm {
 
@@ -339,7 +340,7 @@ private:
      * @brief Get reference to Char at (x, y)
      * @param x position
      * @param y position
-     * @return reference to Char
+     * @return reference to Char at specific position
      */
     Char& get(size_t x, size_t y);
     
@@ -365,12 +366,11 @@ private:
     VirtualConsole console_; ///< logical console
 
     Font *p_font_; ///< font used in rendering
-    SDL_Ptr<SDL_Window> p_win_; ///< pointer to SDL_Window object
-    SDL_Ptr<SDL_Renderer> p_ren_; ///< pointer to SDL_Renderer object
-    SDL_Ptr<SDL_Texture> p_tex_; ///< pointer to SDL_Texture object
+    Window window_; ///< wrapper around SDL_Window
+    SdlPtr<SDL_Texture> p_tex_; ///< pointer to texture used in offscreen rendering
 
     bool quitRequested_; ///< was quit requested by user or system
-    bool wasShift_;
+    bool wasShift_; ///< was screen shifted
 
     Color fgCol_; ///< default foreground color
     Color bgCol_; ///< default background color

@@ -92,9 +92,9 @@ public:
     virtual size_t h() const override;
 
 private:
-    SDL_Ptr<TTF_Font> p_font_; ///< real font
+    SdlPtr<TTF_Font> p_font_; ///< real font
 
-    FastCharUnorderedMap<char_t, SDL_SharedPtr<SDL_Texture>> cache_; ///< cached rendered symbols
+    FastCharUnorderedMap<char_t, SdlSharedPtr<SDL_Texture>> cache_; ///< cached rendered symbols
 };
 
 }
