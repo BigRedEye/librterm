@@ -1,5 +1,4 @@
-#ifndef RTERM_TERM_TPP
-#define RTERM_TERM_TPP
+#pragma once
 
 #include "term.h"
 #include "event.h"
@@ -99,5 +98,3 @@ void Term::onWindowHidden(F&& callback) {
 }
 
 }
-
-#endif // RTERM_TERM_TPP

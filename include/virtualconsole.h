@@ -1,5 +1,4 @@
-#ifndef RTERM_VIRTUAL_CONSOLE_H
-#define RTERM_VIRTUAL_CONSOLE_H
+#pragma once
 
 /// @cond INTERNAL
 
@@ -189,5 +188,3 @@ private:
 }
 
 /// @endcond INTERNAL
-
-#endif // RTERM_VIRTUAL_CONSOLE_H

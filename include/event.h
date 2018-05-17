@@ -1,5 +1,4 @@
-#ifndef RTERM_EVENT_H
-#define RTERM_EVENT_H
+#pragma once
 
 #include <chrono>
 #include <SDL2/SDL_events.h>
@@ -184,5 +183,3 @@ private:
 
 } // namespace events
 } // namespace rterm
-
-#endif // RTERM_EVENT_H

@@ -2,8 +2,7 @@
  * @file
  */
 
-#ifndef RTERM_TILEFONT_H
-#define RTERM_TILEFONT_H
+#pragma once
 
 /// @cond INTERNAL
 
@@ -82,6 +81,3 @@ private:
 }
 
 /// @endcond
-
-#endif // RTERM_TILEFONT_H
-

@@ -3,8 +3,7 @@
   @brief basic rterm functionality
 */
 
-#ifndef RTERM_TERM_H
-#define RTERM_TERM_H
+#pragma once
 
 #include <cstddef>
 #include <chrono>
@@ -398,5 +397,3 @@ int unusedEventFilter(void *data, SDL_Event *ev);
 
 /* template members implementation */
 #include "term.tpp"
-
-#endif // RTERM_TERM_H

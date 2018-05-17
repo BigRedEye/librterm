@@ -2,8 +2,7 @@
  * @file
  */
 
-#ifndef RTERM_TTFONT_H
-#define RTERM_TTFONT_H
+#pragma once
 
 /// @cond INTERNAL
 
@@ -100,6 +99,3 @@ private:
 }
 
 /// @endcond
-
-#endif // RTERM_TTFONT_H
-

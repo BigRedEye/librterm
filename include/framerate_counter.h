@@ -1,5 +1,4 @@
-#ifndef RTERM_FPS_COUNTER_H
-#define RTERM_FPS_COUNTER_H
+#pragma once
 
 #include <chrono>
 #include <queue>
@@ -42,5 +41,3 @@ private:
 
 /// @endcond
 }
-
-#endif // RTERM_FPS_COUNTER_H

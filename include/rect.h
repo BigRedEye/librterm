@@ -1,5 +1,4 @@
-#ifndef RTERM_TEXTURE_H
-#define RTERM_TEXTURE_H
+#pragma once
 
 #include <type_traits>
 #include <array>
@@ -81,5 +80,3 @@ using fRect = Rect<float>;
 using dRect = Rect<double>;
 
 } // namespace rterm
-
-#endif // RTERM_TEXTURE_H

@@ -4,8 +4,7 @@
  * @author BigRedEye
  */
 
-#ifndef RTERM_COLOR_H
-#define RTERM_COLOR_H
+#pragma once
 
 #include <cstdint>
 #include <SDL2/SDL_pixels.h>
@@ -113,6 +112,3 @@ private:
     uint8_t a_; ///< alpha channel
 };
 }
-
-
-#endif // RTERM_COLOR_H

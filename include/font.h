@@ -3,8 +3,7 @@
  * @brief This file contains abstract font clas
  */
 
-#ifndef RTERM_FONT_H
-#define RTERM_FONT_H
+#pragma once
 
 /// @cond INTERNAL
 
@@ -53,5 +52,3 @@ public:
 }
 
 /// @endcond
-
-#endif // RTERM_FONT_H

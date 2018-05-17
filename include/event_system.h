@@ -1,5 +1,4 @@
-#ifndef RTERM_EVENT_SYSTEM_H
-#define RTERM_EVENT_SYSTEM_H
+#pragma once
 
 #include <array>
 #include <vector>
@@ -38,5 +37,3 @@ private:
 }
 
 /// @endcond
-
-#endif // RTERM_EVENT_SYSTEM_H
