@@ -1,5 +1,4 @@
-#ifndef RTERM_WINDOW_H
-#define RTERM_WINDOW_H
+#pragma once
 
 #include "sdl_loader.h"
 #include <memory>
@@ -20,6 +19,3 @@ private:
     SdlLoader loader_;
 };
 }
-
-#endif // RTERM_WINDOW_H
-

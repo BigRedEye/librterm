@@ -3,8 +3,7 @@
  * @brief This file contains key codes and key modifiers constants
  */
 
-#ifndef RTERM_KEYCODE_H
-#define RTERM_KEYCODE_H
+#pragma once
 
 #include <SDL2/SDL_keycode.h>
 
@@ -99,5 +98,3 @@ struct KeyMod {
     };
 };
 }
-
-#endif // RTERM_KEYCODE_H

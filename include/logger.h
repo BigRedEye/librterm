@@ -1,5 +1,4 @@
-#ifndef RTERM_LOGGER_H
-#define RTERM_LOGGER_H 
+#pragma once
 
 #include <iostream>
 
@@ -74,6 +73,4 @@ private:
     bool flush_;
 };
 
-}
-
-#endif // RTERM_LOGGER_H
+} // namespace rterm

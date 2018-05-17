@@ -1,5 +1,4 @@
-#ifndef RTERM_TEXTURE_H
-#define RTERM_TEXTURE_H
+#pragma once
 
 namespace rterm {
 class Texture {
@@ -10,5 +9,3 @@ public:
 };
 
 } // namespace rterm
-
-#endif // RTERM_TEXTURE_H

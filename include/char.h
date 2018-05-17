@@ -4,8 +4,7 @@
  * for working with UTF8 characters
  */
 
-#ifndef RTERM_CHAR_H
-#define RTERM_CHAR_H
+#pragma once
 
 #include <string>
 #include <assert.h>
@@ -50,5 +49,3 @@ std::string format(const std::string &fmt, ...);
  */
 std::string vformat(const std::string &fmt, va_list args);
 }
-
-#endif // RTERM_CHAR_H

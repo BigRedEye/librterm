@@ -1,5 +1,4 @@
-#ifndef RTERM_SDL_LOADER_H
-#define RTERM_SDL_LOADER_H
+#pragma once
 
 namespace rterm {
 
@@ -17,5 +16,3 @@ private:
 };
 
 }
-
-#endif // RTERM_SDL_LOADER_H

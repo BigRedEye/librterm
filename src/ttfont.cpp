@@ -1,4 +1,5 @@
 #include "ttfont.h"
+#include "logger.h"
 #include <SDL2/SDL_ttf.h>
 
 namespace rterm {
@@ -12,7 +13,7 @@ TTFont::TTFont(const std::string &path, size_t sz)
         TTF_Init();
     p_font_ = SdlPtr<TTF_Font>(TTF_OpenFont(path.c_str(), sz));
     if (!p_font_.get())
-        SDL_Log(TTF_GetError());
+        Logger(Logger::ERROR) << TTF_GetError();
 }
 
 TTFont& TTFont::operator=(TTFont &&rhs) {

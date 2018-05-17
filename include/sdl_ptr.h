@@ -1,9 +1,8 @@
-#ifndef RTERM_SDL_PTR_H
-#define RTERM_SDL_PTR_H
+#pragma once
 
-#include <memory>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <memory>
 
 namespace rterm {
 
@@ -52,7 +51,7 @@ struct SdlDeleter<TTF_Font> {
     }
 };
 
-template<typename T>    
+template<typename T>
 using SdlPtr = std::unique_ptr<T, SdlDeleter<T>>;
 
 template<typename T>
@@ -66,5 +65,3 @@ inline SdlSharedPtr<T> makeSdlShared(T* ptr) {
 /// @INTERNAL
 
 }
-
-#endif // RTERM_SDL_PTR_H

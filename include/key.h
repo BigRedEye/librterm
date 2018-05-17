@@ -3,8 +3,7 @@
  * @brief This file contains key representation
  */
 
-#ifndef RTERM_KEY_H
-#define RTERM_KEY_H
+#pragma once
 
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_keyboard.h>
@@ -103,5 +102,3 @@ private:
 /// @endcond
 };
 }
-
-#endif // RTERM_KEY_H

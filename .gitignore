@@ -20,7 +20,11 @@ CTestTestfile.cmake
 *.so
 *.a
 
+build
+
 test/benchmark
 test/userinput
+
+benchmark
 
 doxygen

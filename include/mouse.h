@@ -3,8 +3,7 @@
  * @brief This file contains mouse buttons constants
  */
 
-#ifndef RTERM_MOUSE_H
-#define RTERM_MOUSE_H
+#pragma once
 
 #include <SDL2/SDL_mouse.h>
 
@@ -23,6 +22,4 @@ struct MouseButton {
     };
 };
 
-}
-
-#endif // RTERM_MOUSE_H
+} // namespace rterm

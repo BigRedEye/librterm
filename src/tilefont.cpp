@@ -1,4 +1,5 @@
 #include "tilefont.h"
+#include "logger.h"
 #include <SDL2/SDL_image.h>
 
 namespace rterm {
@@ -17,7 +18,7 @@ TileFont::TileFont(const std::string &path, size_t _w, size_t _h)
     }
     p_tilemap_ = SdlPtr<SDL_Surface>(IMG_Load(path.c_str()));
     if (!p_tilemap_.get()) {
-        SDL_Log(IMG_GetError());
+        Logger(Logger::ERROR) << IMG_GetError();
     }
 }
 
