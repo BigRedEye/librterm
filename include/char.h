@@ -24,7 +24,7 @@ typedef char32_t char_t;
  * @note This function shouldn't be used to convert multiple UTF8 characters
  * @see rterm::UTF32ToBytes
  */
-char_t BytesToUTF32(const std::string &str);
+char_t BytesToUTF32(const std::string& str);
 
 /**
  * @brief Convert an UTF8 character to a number of bytes
@@ -39,7 +39,7 @@ std::string UTF32ToBytes(char_t c);
  * @param fmt printf-style format string
  * @return formatted string
  */
-std::string format(const std::string &fmt, ...);
+std::string format(const std::string& fmt, ...);
 
 /**
  * @brief Get printf-like formatted string
@@ -47,5 +47,5 @@ std::string format(const std::string &fmt, ...);
  * @param args va_list of arguments
  * @return formatted string
  */
-std::string vformat(const std::string &fmt, va_list args);
+std::string vformat(const std::string& fmt, va_list args);
 }

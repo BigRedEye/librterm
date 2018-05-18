@@ -2,12 +2,13 @@
 
 /// @cond INTERNAL
 
+#include "char.h"
+#include "color.h"
+
 #include <cstddef>
 #include <utility>
 #include <vector>
 
-#include "char.h"
-#include "color.h"
 
 namespace rterm {
 class Char;

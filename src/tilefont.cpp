@@ -1,16 +1,19 @@
 #include "tilefont.h"
 #include "logger.h"
+
 #include <SDL2/SDL_image.h>
 
 namespace rterm {
 TileFont::TileFont()
-    : Font() {
+    : Font()
+    {
 }
 
-TileFont::TileFont(const std::string &path, size_t _w, size_t _h)
-    : Font(),
-      w_(_w),
-      h_(_h) {
+TileFont::TileFont(const std::string& path, size_t _w, size_t _h)
+    : Font()
+    , w_(_w)
+    , h_(_h)
+    {
     static bool IMG_WasInit = false;
     if (!IMG_WasInit) {
         IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP);
@@ -22,7 +25,7 @@ TileFont::TileFont(const std::string &path, size_t _w, size_t _h)
     }
 }
 
-TileFont& TileFont::operator=(TileFont &&rhs) {
+TileFont& TileFont::operator=(TileFont&& rhs) {
     p_tilemap_ = std::move(rhs.p_tilemap_);
     p_tilemapTexture_.reset();
     w_ = rhs.w_;
@@ -54,7 +57,7 @@ SDL_Rect TileFont::getRect(char_t c) const {
     return result;
 }
 
-void TileFont::render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) {
+void TileFont::render(SDL_Renderer* p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) {
     (void)fg;
     (void)bg;
     if (!p_tilemap_)

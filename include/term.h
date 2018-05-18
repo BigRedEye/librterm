@@ -5,11 +5,6 @@
 
 #pragma once
 
-#include <cstddef>
-#include <chrono>
-
-#include <SDL2/SDL.h>
-
 #include "sdl_loader.h"
 #include "sdl_ptr.h"
 #include "font.h"
@@ -20,6 +15,13 @@
 #include "framerate_counter.h"
 #include "event_system.h"
 #include "window.h"
+#include "term_format.h"
+
+#include <SDL2/SDL.h>
+
+#include <cstddef>
+#include <chrono>
+
 
 namespace rterm {
 
@@ -40,7 +42,15 @@ public:
      * @param cols columns
      * @param rows rows
      */
-    Term(size_t cols, size_t rows);
+    Term(size_t cols, size_t rows)
+        : Term(TermFormat(cols, rows)) {
+    }
+
+    /*
+     * @brief Constructs terminal with given fomat
+     * @param format
+     */
+    Term(const TermFormat& format);
 
     ~Term();
 
@@ -72,7 +82,7 @@ public:
      * @brief Wait for some time
      * @param msec number of milliseconds to wait
      */
-    void delay(uint32_t msec) const;
+    void delay(uint32_t msec);
 
     /**
      * @brief Get fps
@@ -119,14 +129,14 @@ public:
      * @param title
      * @return reference to this Term object
      */
-    Term& setTitle(const std::string &title);
+    Term& setTitle(const std::string& title);
 
     /**
      * @brief Set window icon
      * @param path path to icon file
      * @return reference to this Term object
      */
-    Term& setIcon(const std::string &path);
+    Term& setIcon(const std::string& path);
 
     /**
      * @brief Set unicode character on certain position
@@ -143,7 +153,7 @@ public:
      * @param path to a .ttf file
      * @param sz size of font
      */
-    void setFont(const std::string &path, size_t sz);
+    void setFont(const std::string& path, size_t sz);
     
     /**
      * @brief Set tiled terminal font
@@ -151,13 +161,13 @@ public:
      * @param w with of a tile in pixels
      * @param h height of a tile in pixels
      */
-    void setFont(const std::string &path, size_t w, size_t h);
+    void setFont(const std::string& path, size_t w, size_t h);
 
     /**
      * @brief Set default background color
      * @param bg background color
      */
-    void setBgColor(const Color &bg);
+    void setBgColor(const Color& bg);
 
     /**
      * @brief Set background color at certain position
@@ -165,13 +175,13 @@ public:
      * @param x position
      * @param y position
      */
-    void setBgColor(const Color &bg, size_t x, size_t y);
+    void setBgColor(const Color& bg, size_t x, size_t y);
     
     /**
      * @brief Set default foreground color
      * @param fg foreground color
      */
-    void setFgColor(const Color &fg);
+    void setFgColor(const Color& fg);
     
     /**
      * @brief Set foreground color at certain position
@@ -179,7 +189,7 @@ public:
      * @param x position
      * @param y position
      */
-    void setFgColor(const Color &fg, size_t x, size_t y);
+    void setFgColor(const Color& fg, size_t x, size_t y);
 
     /**
      * @brief Set terminal window fullscreen
@@ -234,7 +244,7 @@ public:
      * @param[out] x mouse position
      * @param[out] y mouse position
      */
-    void getMousePosition(size_t &x, size_t &y);
+    void getMousePosition(size_t& x, size_t& y);
 
     /**
      * @brief Get pressed mouse buttons
@@ -254,7 +264,7 @@ public:
      * @param y position of the first character
      * @param fmt format
      */
-    void print(size_t x, size_t y, const std::string &fmt, ...);
+    void print(size_t x, size_t y, const std::string& fmt, ...);
 
     /**
      * @brief Draw all changes to screen
@@ -376,7 +386,7 @@ private:
 
     FrameRateCounter frameRateCounter_; ///< framerate counter
 
-    const Uint8 *keyboardState_; ///< from SDL_GetKeyboardState
+    const Uint8* keyboardState_; ///< from SDL_GetKeyboardState
 
     EventSystem eventSystem_; ///< event system
     /// @endcond
@@ -389,7 +399,7 @@ private:
  * @param ev next event
  * @return 1
  */
-int unusedEventFilter(void *data, SDL_Event *ev);
+int unusedEventFilter(void* data, SDL_Event* ev);
 
 /// @endcond
 

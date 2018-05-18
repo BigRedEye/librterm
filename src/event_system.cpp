@@ -1,8 +1,9 @@
-#include <memory>
-
 #include "event_system.h"
 #include "event.h"
 #include "logger.h"
+
+#include <memory>
+
 
 namespace rterm {
 EventSystem::EventSystem() :

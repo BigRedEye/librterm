@@ -1,8 +1,11 @@
 #pragma once
 
 #include "sdl_loader.h"
-#include <memory>
+
 #include <SDL2/SDL.h>
+
+#include <memory>
+
 
 namespace rterm {
 class Window {

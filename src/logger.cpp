@@ -1,11 +1,11 @@
+#include "logger.h"
+#include "char.h"
+
 #include <iostream>
 #include <chrono>
 #include <iomanip>
 #include <string>
 #include <cstdarg>
-
-#include "logger.h"
-#include "char.h"
 
 namespace rterm {
 
@@ -56,7 +56,7 @@ Logger& Logger::setFlush(bool flush) {
     return *this;
 }
 
-Logger& Logger::printf(const std::string &fmt, ...) {
+Logger& Logger::printf(const std::string& fmt, ...) {
     va_list args;
     va_start(args, fmt);
     auto str = vformat(fmt, args);

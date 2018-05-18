@@ -6,15 +6,15 @@
 
 /// @cond INTERNAL
 
-#include <unordered_map>
-#include <vector>
-#include <queue>
-
-#include <SDL2/SDL_ttf.h>
-
 #include "font.h"
 #include "sdl_ptr.h"
 #include "char.h"
+
+#include <SDL2/SDL_ttf.h>
+
+#include <unordered_map>
+#include <vector>
+#include <queue>
 
 namespace rterm {
 
@@ -26,7 +26,7 @@ class FastCharUnorderedMap {
 public:
     FastCharUnorderedMap(_Key maxKey = defaultMaxKey);
 
-    bool get(_Key key, _Val &val);
+    bool get(_Key key, _Val& val);
     void set(_Key key, _Val val);
 private:
     static constexpr _Key defaultMaxKey = _Key(0xffff);
@@ -59,14 +59,14 @@ public:
      * @param path path to .ttf file
      * @param sz point size
      */
-    TTFont(const std::string &path, size_t sz);
+    TTFont(const std::string& path, size_t sz);
 
     /**
      * @brief Move operator=
      * @param rhs rvalue reference to another TileFont
      * @return reference to this object
      */
-    TTFont& operator=(TTFont &&rhs);
+    TTFont& operator=(TTFont&& rhs);
 
     /**
      * @brief Render a string of UTF8 bytes
@@ -76,7 +76,7 @@ public:
      * @param fg foreground color
      * @param bg background color
      */
-    virtual void render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) override;
+    virtual void render(SDL_Renderer* p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) override;
 
     /**
      * @brief Font width
