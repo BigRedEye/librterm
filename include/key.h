@@ -5,10 +5,11 @@
 
 #pragma once
 
-#include <SDL2/SDL_keycode.h>
-#include <SDL2/SDL_keyboard.h>
 #include "char.h"
 #include "keycode.h"
+
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_keyboard.h>
 
 namespace rterm {
 

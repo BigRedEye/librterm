@@ -3,7 +3,7 @@
 
 namespace rterm {
 namespace events {
-inline int eventTypeFromSDLEvent(SDL_Event *event) noexcept {
+inline int eventTypeFromSDLEvent(SDL_Event* event) noexcept {
     int type = EventType::Unknown;
     if (!event)
         return type;
@@ -62,7 +62,7 @@ inline int eventTypeFromSDLEvent(SDL_Event *event) noexcept {
     return type;
 }
 
-Event::Event(SDL_Event *event)
+Event::Event(SDL_Event* event)
     : type_(eventTypeFromSDLEvent(event)) {
 }
 
@@ -78,7 +78,7 @@ const Event::rtclock::time_point& Event::time() const {
     return tp_;
 }
 
-WindowEvent::WindowEvent(SDL_Event *ev)
+WindowEvent::WindowEvent(SDL_Event* ev)
     : Event(ev),
       x_(0),
       y_(0) {
@@ -96,7 +96,7 @@ int WindowEvent::y() const {
     return y_;
 }
 
-KeyboardEvent::KeyboardEvent(SDL_Event *event)
+KeyboardEvent::KeyboardEvent(SDL_Event* event)
     : Event(event) {
     if (event)
         key_ = Key(event->key.keysym.sym);
@@ -106,7 +106,7 @@ const Key& KeyboardEvent::key() const {
     return key_;
 }
 
-KeyDownEvent::KeyDownEvent(SDL_Event *event, SDL_Event *text)
+KeyDownEvent::KeyDownEvent(SDL_Event* event, SDL_Event* text)
     : KeyboardEvent(event) {
     char_t unicode = 0;
     if (text)
@@ -115,7 +115,7 @@ KeyDownEvent::KeyDownEvent(SDL_Event *event, SDL_Event *text)
         key_ = Key(event->key.keysym, unicode);
 }
 
-MouseEvent::MouseEvent(SDL_Event *event)
+MouseEvent::MouseEvent(SDL_Event* event)
     : Event(event),
       buttons_(0) {
     buttons_ = SDL_GetMouseState(nullptr, nullptr);
@@ -125,7 +125,7 @@ uint32_t MouseEvent::buttons() const {
     return buttons_;
 }
 
-MouseMoveEvent::MouseMoveEvent(SDL_Event *event)
+MouseMoveEvent::MouseMoveEvent(SDL_Event* event)
     : MouseEvent(event),
       x_(0),
       y_(0),
@@ -155,7 +155,7 @@ int MouseMoveEvent::yrel() const {
     return y_;
 }
 
-MouseDownEvent::MouseDownEvent(SDL_Event *event)
+MouseDownEvent::MouseDownEvent(SDL_Event* event)
     : MouseEvent(event),
       button_(0) {
     if (event)
@@ -166,7 +166,7 @@ uint32_t MouseDownEvent::button() const {
     return button_;
 }
 
-MouseUpEvent::MouseUpEvent(SDL_Event *event)
+MouseUpEvent::MouseUpEvent(SDL_Event* event)
     : MouseEvent(event),
       button_(0) {
     if (event)
@@ -177,10 +177,10 @@ uint32_t MouseUpEvent::button() const {
     return button_;
 }
 
-MouseWheelEvent::MouseWheelEvent(SDL_Event *event)
-    : Event(event),
-      dx_(0),
-      dy_(0) {
+MouseWheelEvent::MouseWheelEvent(SDL_Event* event)
+    : Event(event)
+    , dx_(0)
+    , dy_(0) {
     if (event) {
         dx_ = event->wheel.x;
         dy_ = event->wheel.y;
@@ -195,5 +195,5 @@ int MouseWheelEvent::dy() const {
     return dy_;
 }
 
-} // events
-} // rterm
+} // namespace events
+} // namespace rterm

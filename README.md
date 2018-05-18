@@ -12,8 +12,8 @@ This piece of code creates an empty `80 x 24` terminal and displays each charact
 ```cpp
 #include <rterm/term.h>
 
-int main(int argc, char **argv) {
-    rterm::Term terminal(80, 24);
+int main(int argc, char** argv) {
+    rterm::Term terminal(rterm::TermFormat(80, 24));
     terminal.setFont("DejaVuSansMono.ttf", 18);
     terminal.onKeyDown([&](const rterm::events::KeyDownEvent &ev) {
         if (ev.key().toChar())
@@ -61,7 +61,7 @@ make
 sudo make install
 ```
 
-+ Build examples:
++ Build examples
 ```sh
 cd test
 cmake .
@@ -72,7 +72,7 @@ make
 
 + Put all SDL2 related .dll's anywhere where Windows can find them.
 
-+ Build:
++ Build
 ```
 cmake . -G "MinGW Makefiles"
 mingw32-make
@@ -80,7 +80,7 @@ mingw32-make
 
 + Alternatively, you can use automatically generated [builds](https://github.com/BigRedEye/rterm/releases).
 
-+ Build examples:
++ Build examples
 ```
 copy librterm.dll test/librterm.dll
 cd test

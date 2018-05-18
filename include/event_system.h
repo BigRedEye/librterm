@@ -1,12 +1,14 @@
 #pragma once
 
+#include "event.h"
+#include "key.h"
+
+#include <SDL2/SDL_events.h>
+
 #include <array>
 #include <vector>
 #include <functional>
 
-#include <SDL2/SDL_events.h>
-#include "event.h"
-#include "key.h"
 
 namespace rterm {
 class EventSystem {
@@ -17,21 +19,21 @@ public:
     ~EventSystem();
 
     template<typename F>
-    void registerCallback(int eventType, F &&callable) {
+    void registerCallback(int eventType, F&& callable) {
         callbacks_[eventType].emplace_back(callable);
     }
     bool quitRequested() const;
     void poll();
-    int eventHandler(SDL_Event *ev);
+    int eventHandler(SDL_Event* ev);
 
     Key getKey();
     char_t getChar();
-    Key getKey(const highResClock::time_point &until);
-    char_t getChar(const highResClock::time_point &until);
+    Key getKey(const highResClock::time_point& until);
+    char_t getChar(const highResClock::time_point& until);
 
 private:
     bool quitRequested_;
-    std::array<std::vector<std::function<void(events::Event *)>>, events::EventType::COUNT> callbacks_;
+    std::array<std::vector<std::function<void(events::Event*)>>, events::EventType::COUNT> callbacks_;
     Key pendingKey_;
 };
 }

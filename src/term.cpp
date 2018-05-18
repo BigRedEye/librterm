@@ -5,12 +5,13 @@
 #include "mouse.h"
 #include "logger.h"
 
-#include <iostream>
-#include <functional>
-
 #include <SDL2/SDL_image.h>
 
-#define UNUSED(var) (void)(var);
+#include <iostream>
+#include <functional>
+#include <thread>
+
+#define UNUSED(var) (void)(var); /* -Wunused */
 
 namespace rterm {
 using namespace events;
@@ -19,26 +20,33 @@ Term::Term()
     : Term(0, 0) {
 }
 
-Term::Term(size_t ncols, size_t nrows)
-    : console_(ncols, nrows)
+Term::Term(const TermFormat& format)
+    : console_(format.w(), format.h())
     , p_font_(new TTFont())
     , window_(400, 400)
     , quitRequested_(false)
     , fgCol_(0x00, 0xff, 0x00)
     , bgCol_(0x00, 0x00, 0x00)
-     {
-    p_tex_ = SdlPtr<SDL_Texture>(SDL_CreateTexture(window_.renderer().lock().get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET,
-                                  SDL_GetWindowSurface(window_.window().lock().get())->w, SDL_GetWindowSurface(window_.window().lock().get())->h));
+    {
+    p_tex_ = SdlPtr<SDL_Texture>(
+        SDL_CreateTexture(window_.renderer().lock().get(),
+            SDL_PIXELFORMAT_RGBA8888,
+            SDL_TEXTUREACCESS_TARGET,
+            SDL_GetWindowSurface(
+            window_.window().lock().get())->w,
+            SDL_GetWindowSurface(window_.window().lock().get())->h
+        )
+    );
     redraw(true);
-    eventSystem_.registerCallback(EventType::Quit, [this](Event *ev){
+    eventSystem_.registerCallback(EventType::Quit, [this](Event* ev){
         UNUSED(ev);
         this->close();
     });
-    eventSystem_.registerCallback(EventType::WindowExposed, [this](Event *ev){
+    eventSystem_.registerCallback(EventType::WindowExposed, [this](Event* ev){
         UNUSED(ev);
         this->redraw(true);
     });
-    eventSystem_.registerCallback(EventType::WindowResized, [this](Event *ev){
+    eventSystem_.registerCallback(EventType::WindowResized, [this](Event* ev){
         auto event = static_cast<events::WindowResizedEvent*>(ev);
         this->setWindowSize(event->x(), event->y());
         this->redraw(true);
@@ -68,8 +76,14 @@ bool Term::isRunning() const {
     return !quitRequested_;
 }
 
-void Term::delay(uint32_t msec) const {
-    SDL_Delay(msec);
+void Term::delay(uint32_t msec) {
+    auto until = std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(msec);
+    while (std::chrono::high_resolution_clock::now() < until) {
+        poll();
+        if (!isRunning())
+            return;
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
+    }
 }
 
 long double Term::fps() const {
@@ -89,7 +103,7 @@ void Term::setCursorPosition(size_t x, size_t y) {
 }
 
 void Term::updateTexture() {
-    SDL_Texture * tmp = p_tex_.get();
+    SDL_Texture* tmp = p_tex_.get();
 
     int w, h;
     SDL_GetWindowSize(window_.window().lock().get(), &w, &h);
@@ -123,12 +137,12 @@ void Term::setWindowSize(size_t width, size_t height) {
     redraw(true);
 }
 
-Term& Term::setTitle(const std::string &title) {
+Term& Term::setTitle(const std::string& title) {
     SDL_SetWindowTitle(window_.window().lock().get(), title.c_str());
     return *this;
 }
 
-Term& Term::setIcon(const std::string &path) {
+Term& Term::setIcon(const std::string& path) {
     SdlPtr<SDL_Surface> p_icon(IMG_Load(path.c_str()));
     if (!p_icon)
         Logger(Logger::CRITICAL) << IMG_GetError();
@@ -149,7 +163,7 @@ void Term::addChar(char_t c) {
     console_.addChar(c);
 }
 
-void Term::print(size_t x, size_t y, const std::string &fmt, ...) {
+void Term::print(size_t x, size_t y, const std::string& fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
@@ -171,7 +185,7 @@ char_t Term::getChar() {
     return eventSystem_.getChar();
 }
 
-void Term::getMousePosition(size_t &x, size_t &y) {
+void Term::getMousePosition(size_t& x, size_t& y) {
     int mx = 0, my = 0;
     SDL_GetMouseState(&mx, &my);
     x = mx / p_font_->w();
@@ -256,7 +270,7 @@ void Term::close() {
     quitRequested_ = true;
 }
 
-void Term::setFont(const std::string &path, size_t sz) {
+void Term::setFont(const std::string& path, size_t sz) {
     if (p_font_)
         delete p_font_;
     p_font_ = new TTFont(path, sz);
@@ -264,7 +278,7 @@ void Term::setFont(const std::string &path, size_t sz) {
     redraw(true);
 }
 
-void Term::setFont(const std::string &path, size_t w, size_t h) {
+void Term::setFont(const std::string& path, size_t w, size_t h) {
     if (p_font_)
         delete p_font_;
 
@@ -273,40 +287,50 @@ void Term::setFont(const std::string &path, size_t w, size_t h) {
     redraw(true);
 }
 
-void Term::setBgColor(const Color &bg) {
+void Term::setBgColor(const Color& bg) {
     bgCol_ = bg;
     for (size_t i = 0; i < rows(); ++i)
-        for (size_t j = 0; j < cols(); ++j)
-            console_.set(j, i, Char(console_.get(j, i).c(),
-                                    bg,
-                                    console_.get(j, i).fg()));
+        for (size_t j = 0; j < cols(); ++j) {
+            Char toSet(
+                console_.get(j, i).c(),
+                bg,
+                console_.get(j, i).fg()
+            );
+            console_.set(j, i, toSet);
+        }
     redraw();
 }
 
-void Term::setBgColor(const Color &bg, size_t x, size_t y) {
-    console_.set(x, y, Char(console_.get(x, y).c(),
-                            bg,
-                            console_.get(x, y).fg()));
+void Term::setBgColor(const Color& bg, size_t x, size_t y) {
+    Char toSet(
+        console_.get(x, y).c(),
+        bg,
+        console_.get(x, y).fg()
+    );
+    console_.set(x, y, toSet);
 }
 
-void Term::setFgColor(const Color &fg) {
+void Term::setFgColor(const Color& fg) {
     fgCol_ = fg;
     for (size_t i = 0; i < rows(); ++i)
-        for (size_t j = 0; j < cols(); ++j)
-            console_.set(j, i, Char(
+        for (size_t j = 0; j < cols(); ++j) {
+            Char toSet(
                 console_.get(j, i).c(),
                 console_.get(j, i).bg(),
                 fg
-            ));
+            );
+            console_.set(j, i, toSet);
+        }
     redraw();
 }
 
-void Term::setFgColor(const Color &fg, size_t x, size_t y) {
-    console_.set(x, y, Char(
+void Term::setFgColor(const Color& fg, size_t x, size_t y) {
+    Char toSet(
         console_.get(x, y).c(),
         console_.get(x, y).bg(),
         fg
-    ));
+    );
+    console_.set(x, y, toSet);
 }
 
 void Term::redraw(bool force) {
@@ -338,7 +362,12 @@ void Term::shift(int dx, int dy) {
                      dstRect.y - dy * static_cast<int>(p_font_->h()),
                      dstRect.w,
                      dstRect.h};
-    SDL_RenderCopy(window_.renderer().lock().get(), prevTexture.get(), &srcRect, &dstRect);
+    SDL_RenderCopy(
+        window_.renderer().lock().get(),
+        prevTexture.get(),
+        &srcRect,
+        &dstRect
+    );
     wasShift_ = true;
     SDL_SetRenderTarget(window_.renderer().lock().get(), NULL);
 }
@@ -348,8 +377,12 @@ void Term::renderToScreen() {
     SDL_Rect windowRect{0, 0, 0, 0};
     SDL_QueryTexture(p_tex_.get(), NULL, NULL, &textureRect.w, &textureRect.h);
     SDL_GetWindowSize(window_.window().lock().get(), &windowRect.w, &windowRect.h);
-    SDL_Rect dstRect{0, 0, std::min(textureRect.w, windowRect.w), 
-                           std::min(textureRect.h, windowRect.h)};
+    SDL_Rect dstRect{
+        0,
+        0,
+        std::min(textureRect.w, windowRect.w),
+        std::min(textureRect.h, windowRect.h)
+    };
     SDL_RenderClear(window_.renderer().lock().get());
     SDL_RenderCopy(window_.renderer().lock().get(), p_tex_.get(), &dstRect, &dstRect);
 

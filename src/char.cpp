@@ -1,16 +1,16 @@
+#include "char.h"
+
 #include <cstdarg>
 #include <cstdio>
 #include <codecvt>
 #include <locale>
 #include <memory>
 
-#include "char.h"
-
 namespace rterm {
 
 using std::va_list;
 
-char_t BytesToUTF32(const std::string &str) {
+char_t BytesToUTF32(const std::string& str) {
     static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
     std::u32string result = convert.from_bytes(str);
     return static_cast<char_t>(result[0]);
@@ -21,11 +21,11 @@ std::string UTF32ToBytes(char_t c) {
     return convert.to_bytes(c);
 }
 
-std::string format(const std::string &fmt) {
+std::string format(const std::string& fmt) {
     return fmt;
 }
 
-std::string format(const std::string &fmt, ...) {
+std::string format(const std::string& fmt, ...) {
     va_list args;
     va_start(args, fmt);
     auto str = vformat(fmt, args);
@@ -33,7 +33,7 @@ std::string format(const std::string &fmt, ...) {
     return str;
 }
 
-std::string vformat(const std::string &fmt, va_list args) {
+std::string vformat(const std::string& fmt, va_list args) {
     va_list argsCopy;
     va_copy(argsCopy, args);
 

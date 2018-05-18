@@ -6,8 +6,10 @@
 
 #pragma once
 
-#include <cstdint>
 #include <SDL2/SDL_pixels.h>
+
+#include <cstdint>
+
 
 namespace rterm {
 
@@ -25,13 +27,15 @@ public:
      * @param _b blue channel
      * @param _a alpha channel
      */
-    explicit Color(uint8_t _r = 0,
-                   uint8_t _g = 0,
-                   uint8_t _b = 0,
-                   uint8_t _a = 0);
+    explicit Color(
+        uint8_t _r = 0,
+        uint8_t _g = 0,
+        uint8_t _b = 0,
+        uint8_t _a = 0
+    );
 
-    bool operator==(const Color &other) const;
-    bool operator!=(const Color &other) const;
+    bool operator==(const Color& other) const;
+    bool operator!=(const Color& other) const;
 
     /**
      * @brief convert Color to SDL_Color

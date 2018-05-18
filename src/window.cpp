@@ -3,7 +3,7 @@
 
 namespace rterm {
 Window::Window(int w, int h) {
-    SDL_Window *win = SDL_CreateWindow(
+    SDL_Window* win = SDL_CreateWindow(
         "rterm",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
@@ -12,7 +12,7 @@ Window::Window(int w, int h) {
         0//SDL_WINDOW_OPENGL
     );
     window_ = makeSdlShared(win);
-    SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+    SDL_Renderer* ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
     if (!ren)
         ren = SDL_CreateRenderer(win, -1, 0);
     renderer_ = makeSdlShared(ren);

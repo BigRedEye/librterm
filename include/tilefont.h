@@ -34,14 +34,14 @@ public:
      * @param _w width of a tile in pixels
      * @param _h height of a tile in pixels
      */
-    TileFont(const std::string &path, size_t _w, size_t _h);
+    TileFont(const std::string& path, size_t _w, size_t _h);
 
     /**
      * @brief Move operator=
      * @param rhs rvalue reference to another TileFont
      * @return reference to this object
      */
-    TileFont& operator=(TileFont &&rhs);
+    TileFont& operator=(TileFont&& rhs);
 
     /**
      * @brief render a string of UTF8 bytes
@@ -51,7 +51,7 @@ public:
      * @param fg foreground color
      * @param bg background color
      */
-    virtual void render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) override;
+    virtual void render(SDL_Renderer* p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) override;
 
     /**
      * @brief Font width

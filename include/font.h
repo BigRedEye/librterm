@@ -7,13 +7,14 @@
 
 /// @cond INTERNAL
 
-#include <cstddef>
-#include <string>
+#include "color.h"
+#include "char.h"
 
 #include <SDL2/SDL.h>
 
-#include "color.h"
-#include "char.h"
+#include <cstddef>
+#include <string>
+
 
 namespace rterm {
 
@@ -35,7 +36,7 @@ public:
      * @param fg foreground color
      * @param bg background color
      */
-    virtual void render(SDL_Renderer *p_ren, SDL_Rect dst, char_t str, Color fg, Color bg) = 0;
+    virtual void render(SDL_Renderer* p_ren, SDL_Rect dst, char_t str, Color fg, Color bg) = 0;
 
     /**
      * @brief font width

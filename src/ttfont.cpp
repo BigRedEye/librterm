@@ -7,7 +7,7 @@ TTFont::TTFont()
     : Font() {
 }
 
-TTFont::TTFont(const std::string &path, size_t sz)
+TTFont::TTFont(const std::string& path, size_t sz)
     : TTFont() {
     if (!TTF_WasInit())
         TTF_Init();
@@ -16,7 +16,7 @@ TTFont::TTFont(const std::string &path, size_t sz)
         Logger(Logger::ERROR) << TTF_GetError();
 }
 
-TTFont& TTFont::operator=(TTFont &&rhs) {
+TTFont& TTFont::operator=(TTFont&& rhs) {
     p_font_ = std::move(rhs.p_font_);
     return *this;
 }
@@ -40,7 +40,7 @@ size_t TTFont::h() const {
     return h;
 }
 
-void TTFont::render(SDL_Renderer *p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) {
+void TTFont::render(SDL_Renderer* p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) {
     if (!p_font_.get())
         return;
 

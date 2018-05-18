@@ -1,3 +1,5 @@
+#include "sdl_loader.h"
+
 #include <SDL2/SDL.h>
 
 #ifndef RTERM_WITHOUT_IMG
@@ -17,7 +19,6 @@ enum {
 };
 #endif // RTERM_WITHOUT_TTF
 
-#include "sdl_loader.h"
 namespace rterm {
 
 int SdlLoader::countOfLoads_ = 0;
@@ -40,4 +41,4 @@ SdlLoader::~SdlLoader() {
     }
 }
 
-}
+} // namespace rterm

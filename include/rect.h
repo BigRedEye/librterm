@@ -4,10 +4,11 @@
 #include <array>
 
 namespace rterm {
+
 template<typename T, size_t Dim>
 class Vector {
 public:
-    explicit Vector(const std::initializer_list<T> &initList)
+    explicit Vector(const std::initializer_list<T>& initList)
         : data_(initList) {
     }
 
