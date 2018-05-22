@@ -48,6 +48,8 @@ build_script:
     - cd test
     - where librterm.dll
     - where SDL2.dll
+    - cmake . -G "MinGW Makefiles"
+    - mingw32-make
     - benchmark.exe
     - cd ..
 
