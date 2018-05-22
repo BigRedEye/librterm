@@ -6,6 +6,7 @@
 #include <locale>
 #include <memory>
 
+
 namespace rterm {
 
 using std::va_list;
@@ -47,4 +48,5 @@ std::string vformat(const std::string& fmt, va_list args) {
     va_end(argsCopy);
     return std::string(buf.get());
 }
-}
+
+} // namespace rterm

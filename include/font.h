@@ -5,7 +5,9 @@
 
 #pragma once
 
+
 /// @cond INTERNAL
+
 
 #include "color.h"
 #include "char.h"
@@ -50,6 +52,7 @@ public:
      */
     virtual size_t h() const = 0;
 };
-}
+
+} // namespace rterm
 
 /// @endcond

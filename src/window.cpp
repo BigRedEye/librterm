@@ -1,7 +1,9 @@
-#include "window.h"
 #include "sdl_ptr.h"
+#include "window.h"
+
 
 namespace rterm {
+
 Window::Window(int w, int h) {
     SDL_Window* win = SDL_CreateWindow(
         "rterm",
@@ -32,4 +34,5 @@ std::weak_ptr<SDL_Window> Window::window() {
 std::weak_ptr<SDL_Renderer> Window::renderer() {
     return std::weak_ptr<SDL_Renderer>(renderer_);
 }
-}
+
+} // namespace rterm

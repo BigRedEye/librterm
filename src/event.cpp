@@ -1,8 +1,11 @@
 #include "event.h"
 #include "logger.h"
 
+
 namespace rterm {
+
 namespace events {
+
 inline int eventTypeFromSDLEvent(SDL_Event* event) noexcept {
     int type = EventType::Unknown;
     if (!event) {
@@ -210,4 +213,5 @@ int MouseWheelEvent::dy() const {
 }
 
 } // namespace events
+
 } // namespace rterm

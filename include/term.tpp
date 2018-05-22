@@ -1,7 +1,9 @@
 #pragma once
 
+
 #include "term.h"
 #include "event.h"
+
 
 namespace rterm {
 
@@ -97,4 +99,4 @@ void Term::onWindowHidden(F&& callback) {
     });
 }
 
-}
+} // namespace rterm

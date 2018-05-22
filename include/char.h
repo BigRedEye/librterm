@@ -4,11 +4,14 @@
  * for working with UTF8 characters
  */
 
+ 
 #pragma once
 
-#include <string>
+
 #include <assert.h>
 #include <cstdarg>
+#include <string>
+
 
 /**
  * @brief Namespace for all rterm functionality
@@ -48,4 +51,5 @@ std::string format(const std::string& fmt, ...);
  * @return formatted string
  */
 std::string vformat(const std::string& fmt, va_list args);
-}
+
+} // namespace rterm

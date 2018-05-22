@@ -1,9 +1,11 @@
 #pragma once
 
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
 #include <memory>
+
 
 namespace rterm {
 
@@ -65,4 +67,4 @@ inline SdlSharedPtr<T> makeSdlShared(T* ptr) {
 
 /// @INTERNAL
 
-}
+} // namespace rterm

@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "key.h"
 #include "mouse.h"
 
@@ -9,7 +10,9 @@
 
 
 namespace rterm {
+
 namespace events {
+
 struct EventType {
     enum {
         Quit = 0,      /**< User-requested quit */
@@ -185,4 +188,5 @@ private:
 };
 
 } // namespace events
+
 } // namespace rterm

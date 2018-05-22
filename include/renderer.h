@@ -1,6 +1,8 @@
 #pragma once
 
+
 #include "sdl_ptr.h"
+
 
 namespace rterm {
 

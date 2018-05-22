@@ -5,7 +5,9 @@
 
 #pragma once
 
+
 #include <SDL2/SDL_keycode.h>
+
 
 namespace rterm {
 
@@ -97,4 +99,5 @@ struct KeyMod {
         CAPS  = 1 << 5, ///< CapsLock
     };
 };
-}
+
+} // namespace rterm

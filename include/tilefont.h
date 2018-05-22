@@ -4,11 +4,14 @@
 
 #pragma once
 
+
 /// @cond INTERNAL
 
+
+#include "char.h"
 #include "font.h"
 #include "sdl_ptr.h"
-#include "char.h"
+
 
 namespace rterm {
 
@@ -78,6 +81,8 @@ private:
     size_t w_, ///< tile width
            h_; ///< tile height
 };
-}
+
+} // namespace rterm
+
 
 /// @endcond

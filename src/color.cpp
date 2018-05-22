@@ -1,6 +1,8 @@
 #include "color.h"
 
+
 namespace rterm {
+
 Color::Color(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a)
     : r_(_r)
     , g_(_g)
@@ -19,4 +21,5 @@ bool Color::operator==(const Color& other) const {
 bool Color::operator!=(const Color& other) const {
     return !(*this == other);
 }
-}
+
+} // namespace rterm

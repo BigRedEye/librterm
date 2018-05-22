@@ -1,8 +1,11 @@
 #pragma once
 
+
 #include "rect.h"
 
+
 namespace rterm {
+
 class Texture {
 public:
     virtual ~Texture() = default;

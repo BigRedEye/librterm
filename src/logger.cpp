@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 
+
 namespace rterm {
 
 Logger::Logger(Logger::MessagePriority priority)

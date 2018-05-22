@@ -1,6 +1,8 @@
 #include "key.h"
 
+
 namespace rterm {
+
 Key::Key(SDL_Keycode code, char_t ch)
     : mod_(0)
     , unicode_(ch)

@@ -1,16 +1,18 @@
 #pragma once
 
+
 #include "event.h"
 #include "key.h"
 
 #include <SDL2/SDL_events.h>
 
 #include <array>
-#include <vector>
 #include <functional>
+#include <vector>
 
 
 namespace rterm {
+    
 class EventSystem {
 public:
     using highResClock = std::chrono::high_resolution_clock;
@@ -36,6 +38,7 @@ private:
     std::array<std::vector<std::function<void(events::Event*)>>, events::EventType::COUNT> callbacks_;
     Key pendingKey_;
 };
-}
+
+} // namespace rterm
 
 /// @endcond

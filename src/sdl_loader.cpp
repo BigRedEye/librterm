@@ -29,6 +29,7 @@ enum {
 
 #endif // RTERM_WITHOUT_TTF
 
+
 namespace rterm {
 
 int SdlLoader::countOfLoads_ = 0;
