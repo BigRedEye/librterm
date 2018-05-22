@@ -8,13 +8,48 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wpedantic")
 
 file(
     GLOB SOURCES
-    src/*.cpp
+    src/char.cpp
+    src/color.cpp
+    src/event.cpp
+    src/event_system.cpp
+    src/framerate_counter.cpp
+    src/gl_renderer.cpp
+    src/key.cpp
+    src/logger.cpp
+    src/sdl_loader.cpp
+    src/sdl_renderer.cpp
+    src/term.cpp
+    src/texture.cpp
+    src/tilefont.cpp
+    src/ttfont.cpp
+    src/virtualconsole.cpp
+    src/window.cpp
 )
 
 file(
     GLOB HEADERS
-    include/*.h
-    include/*.tpp
+    include/char.h
+    include/color.h
+    include/event.h
+    include/event_system.h
+    include/font.h
+    include/framerate_counter.h
+    include/key.h
+    include/keycode.h
+    include/logger.h
+    include/mouse.h
+    include/rect.h
+    include/renderer.h
+    include/sdl_loader.h
+    include/sdl_ptr.h
+    include/term.h
+    include/term_format.h
+    include/texture.h
+    include/tilefont.h
+    include/ttfont.h
+    include/virtualconsole.h
+    include/window.h
+    include/term.tpp
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
