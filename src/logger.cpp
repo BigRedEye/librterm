@@ -1,18 +1,19 @@
-#include "logger.h"
 #include "char.h"
+#include "logger.h"
 
-#include <iostream>
 #include <chrono>
-#include <iomanip>
-#include <string>
 #include <cstdarg>
+#include <iomanip>
+#include <iostream>
+#include <string>
 
 namespace rterm {
 
 Logger::Logger(Logger::MessagePriority priority)
-    : prior_(priority),
-      delim_(0),
-      flush_(true) {
+    : prior_(priority)
+    , delim_(0)
+    , flush_(true)
+{
     *this << "[ ";
 
     switch (priority) {
@@ -40,10 +41,11 @@ Logger::Logger(Logger::MessagePriority priority)
 }
 
 Logger::~Logger() {
-    if (flush_ || prior_ >= ERROR)
+    if (flush_ || prior_ >= ERROR) {
         std::cout << std::endl;
-    else
+    } else {
         *this << '\n';
+    }
 }
 
 Logger& Logger::setDelimer(char delim) {
@@ -61,8 +63,8 @@ Logger& Logger::printf(const std::string& fmt, ...) {
     va_start(args, fmt);
     auto str = vformat(fmt, args);
     va_end(args);
-    operator <<(str);
+    operator<<(str);
     return *this;
 }
 
-}
+} // namespace rterm

@@ -2,23 +2,27 @@
 
 namespace rterm {
 Key::Key(SDL_Keycode code, char_t ch)
-    : mod_(0),
-      unicode_(ch) {
+    : mod_(0)
+    , unicode_(ch)
+{
     setKey(code);
 }
 
 Key::Key(KeyCode code, char_t ch)
-    : Key(reinterpret_cast<int&>(code), ch) {
+    : Key(reinterpret_cast<int&>(code), ch)
+{
 }
 
 Key::Key(char_t ch)
-    : code_(0),
-      mod_(0),
-      unicode_(ch) {
+    : code_(0)
+    , mod_(0)
+    , unicode_(ch)
+{
 }
 
 Key::Key(SDL_Keysym sym, char_t ch)
-    : Key(sym.sym, ch) {
+    : Key(sym.sym, ch)
+{
     addMod(sym.mod);
 }
 
@@ -57,10 +61,10 @@ Key& Key::setChar(char_t c) {
     return *this;
 }
 
-Key& Key::addMod(Uint16 mod) {    
+Key& Key::addMod(Uint16 mod) {
     Uint16 mask = 1;
-    for (int i = 0; i < 16; ++i, mask <<= 1)
-        if (mod & mask)
+    for (int i = 0; i < 16; ++i, mask <<= 1) {
+        if (mod & mask) {
             switch (mask) {
             case KMOD_LSHIFT:
             case KMOD_RSHIFT:
@@ -84,6 +88,9 @@ Key& Key::addMod(Uint16 mod) {
             default:
                 break;
             }
+        }
+    }
     return *this;
 }
-}
+
+} // namespace rterm

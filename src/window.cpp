@@ -12,9 +12,14 @@ Window::Window(int w, int h) {
         0//SDL_WINDOW_OPENGL
     );
     window_ = makeSdlShared(win);
-    SDL_Renderer* ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
-    if (!ren)
+    SDL_Renderer* ren = SDL_CreateRenderer(
+        win,
+        -1,
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE
+    );
+    if (!ren) {
         ren = SDL_CreateRenderer(win, -1, 0);
+    }
     renderer_ = makeSdlShared(ren);
     SDL_RenderClear(renderer_.get());
     SDL_RenderPresent(renderer_.get());
