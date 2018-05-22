@@ -8,48 +8,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wpedantic")
 
 file(
     GLOB SOURCES
-    src/char.cpp
-    src/color.cpp
-    src/event.cpp
-    src/event_system.cpp
-    src/framerate_counter.cpp
-    src/gl_renderer.cpp
-    src/key.cpp
-    src/logger.cpp
-    src/sdl_loader.cpp
-    src/sdl_renderer.cpp
-    src/term.cpp
-    src/texture.cpp
-    src/tilefont.cpp
-    src/ttfont.cpp
-    src/virtualconsole.cpp
-    src/window.cpp
+    src/*.cpp
 )
 
 file(
     GLOB HEADERS
-    include/char.h
-    include/color.h
-    include/event.h
-    include/event_system.h
-    include/font.h
-    include/framerate_counter.h
-    include/key.h
-    include/keycode.h
-    include/logger.h
-    include/mouse.h
-    include/rect.h
-    include/renderer.h
-    include/sdl_loader.h
-    include/sdl_ptr.h
-    include/term.h
-    include/term_format.h
-    include/texture.h
-    include/tilefont.h
-    include/ttfont.h
-    include/virtualconsole.h
-    include/window.h
-    include/term.tpp
+    include/*.h
+    include/*.tpp
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -75,21 +40,3 @@ else ()
             PUBLIC_HEADER DESTINATION include/rterm
     )
 endif (MINGW)
-
-add_subdirectory(test)
-
-add_custom_command(
-    TARGET rterm POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_SOURCE_DIR}/fonts/ttf/DejaVuSansMono.ttf
-            ${CMAKE_CURRENT_BINARY_DIR}/test/DejaVuSansMono.ttf
-)
-
-if (WIN32)
-    add_custom_command(
-        TARGET rterm POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_SOURCE_DIR}/librterm.dll
-                ${CMAKE_CURRENT_BINARY_DIR}/test/librterm.dll
-    )
-endif (WIN32)

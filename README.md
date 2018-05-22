@@ -52,9 +52,7 @@ cd rterm
 
 + Build
 ```sh
-mkdir build
-cd build
-cmake ..
+cmake .
 make
 ```
 
@@ -63,11 +61,11 @@ make
 sudo make install
 ```
 
-+ Run examples
++ Build examples
 ```sh
 cd test
-./benchmark
-./userinput
+cmake .
+make
 ```
 
 ### Windows (MinGW) ###
@@ -76,18 +74,17 @@ cd test
 
 + Build
 ```
-mkdir build
-cd build
-cmake .. -G "MinGW Makefiles"
+cmake . -G "MinGW Makefiles"
 mingw32-make
 ```
 
 + Alternatively, you can use automatically generated [builds](https://github.com/BigRedEye/rterm/releases).
 
-+ Run examples
++ Build examples
 ```
+copy librterm.dll test/librterm.dll
 cd test
-benchmark.exe
-userinput.exe
+cmake . -G "MinGW Makefiles"
+mingw32-make
 ```
 

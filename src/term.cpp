@@ -136,7 +136,7 @@ void Term::updateTexture() {
 }
 
 void Term::setWindowSize(size_t width, size_t height) {
-    size_t ncols = width / p_font_->w();
+    size_t ncols = width / p_font_->w()
     size_t nrows = height / p_font_->h();
     console_.resize(ncols, nrows, bgCol_, fgCol_);
 
@@ -159,7 +159,7 @@ Term& Term::setTitle(const std::string& title) {
 
 Term& Term::setIcon(const std::string& path) {
     SdlPtr<SDL_Surface> pIcon(IMG_Load(path.c_str()));
-    if (!pIcon) {
+    if (!p_icon) {
         Logger(Logger::CRITICAL) << IMG_GetError();
     } else {
         SDL_SetWindowIcon(window_.window().lock().get(), pIcon.get());

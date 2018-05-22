@@ -1,8 +1,8 @@
 #include <rterm/term.h>
 
-int main(int /* argc */, char ** /* argv */) {
+int main(int argc, char **argv) {
     rterm::Term terminal(80, 24);
-    terminal.setFont("./DejaVuSansMono.ttf", 18);
+    terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", 18);
     terminal.setFgColor(rterm::Color(0x00, 0xff, 0x00));
     terminal.onKeyDown([&](const rterm::events::KeyDownEvent &ev) {
         if (ev.key().toChar())

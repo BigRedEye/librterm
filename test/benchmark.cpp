@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     int fontSize = 18;
     terminal.setTitle("rterm demo")
             .setIcon("terminal.ico");
-    terminal.setFont("./DejaVuSansMono.ttf", fontSize);
+    terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", fontSize);
     terminal.setFgColor(rterm::Color(100, 0xff, 100));
     terminal.setFullscreen(false);
     terminal.setResizable(true);
