@@ -18,6 +18,6 @@ foreach(abssourcefile ${sources})
     if (MINGW)
         target_link_libraries(${exename} -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf)
     endif (MINGW)
-    target_link_libraries(${exename} -lrterm)
+    target_link_libraries(${exename} rterm)
 
 endforeach(abssourcefile ${sources})
