@@ -337,7 +337,9 @@ public:
 
 private:
     /// @cond INTERNAL
-    
+
+    void setupCallbacks();
+
     /**
      * @brief Redraw specific character
      * @param x position
@@ -370,13 +372,14 @@ private:
      * @brief Render texture to screen
      */
     void renderToScreen();
+    
 
     SdlLoader loader_; ///< keeps SDL loaded
     VirtualConsole console_; ///< logical console
 
-    Font *p_font_; ///< font used in rendering
+    Font *pFont_; ///< font used in rendering
     Window window_; ///< wrapper around SDL_Window
-    SdlPtr<SDL_Texture> p_tex_; ///< pointer to texture used in offscreen rendering
+    SdlPtr<SDL_Texture> pTex_; ///< pointer to texture used in offscreen rendering
 
     bool quitRequested_; ///< was quit requested by user or system
     bool wasShift_; ///< was screen shifted
