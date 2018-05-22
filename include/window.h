@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "sdl_loader.h"
 
 #include <SDL2/SDL.h>
@@ -8,6 +9,7 @@
 
 
 namespace rterm {
+
 class Window {
 public:
     Window();
@@ -21,4 +23,5 @@ private:
     std::shared_ptr<SDL_Renderer> renderer_;
     SdlLoader loader_;
 };
-}
+
+} // namespace rterm

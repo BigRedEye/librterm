@@ -5,11 +5,13 @@
 
 #pragma once
 
+
 #include "char.h"
 #include "keycode.h"
 
-#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_keycode.h>
+
 
 namespace rterm {
 
@@ -102,4 +104,5 @@ private:
     
 /// @endcond
 };
-}
+
+} // namespace rterm

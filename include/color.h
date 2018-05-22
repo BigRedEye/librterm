@@ -4,7 +4,9 @@
  * @author BigRedEye
  */
 
+ 
 #pragma once
+
 
 #include <SDL2/SDL_pixels.h>
 
@@ -115,4 +117,5 @@ private:
     uint8_t b_; ///< blue channel
     uint8_t a_; ///< alpha channel
 };
-}
+
+} // namespace rterm

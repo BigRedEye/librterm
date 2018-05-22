@@ -5,22 +5,23 @@
 
 #pragma once
 
+
+#include "char.h"
+#include "color.h"
+#include "event_system.h"
+#include "font.h"
+#include "framerate_counter.h"
+#include "key.h"
 #include "sdl_loader.h"
 #include "sdl_ptr.h"
-#include "font.h"
-#include "key.h"
-#include "color.h"
-#include "char.h"
-#include "virtualconsole.h"
-#include "framerate_counter.h"
-#include "event_system.h"
-#include "window.h"
 #include "term_format.h"
+#include "virtualconsole.h"
+#include "window.h"
 
 #include <SDL2/SDL.h>
 
-#include <cstddef>
 #include <chrono>
+#include <cstddef>
 
 
 namespace rterm {
@@ -406,7 +407,8 @@ int unusedEventFilter(void* data, SDL_Event* ev);
 
 /// @endcond
 
-}
+} // namespace rterm
+
 
 /* template members implementation */
 #include "term.tpp"

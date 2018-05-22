@@ -2,7 +2,9 @@
 
 #include <numeric>
 
+
 namespace rterm {
+
 FrameRateCounter::FrameRateCounter(size_t framesToStore)
     : framesToStore_(framesToStore)
 {
@@ -24,4 +26,4 @@ long double FrameRateCounter::getFps() const {
     return static_cast<long double>(timePts_.size() - 1) / deltaTime.count();
 }
 
-}
+} // namespace rterm

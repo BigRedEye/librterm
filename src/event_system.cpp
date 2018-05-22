@@ -6,6 +6,7 @@
 
 
 namespace rterm {
+
 EventSystem::EventSystem()
     : quitRequested_(false)
 {
@@ -147,4 +148,4 @@ char_t EventSystem::getChar(const highResClock::time_point& until) {
     return 0;
 }
 
-}
+} // namespace rterm

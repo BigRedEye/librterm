@@ -1,6 +1,8 @@
 #pragma once
 
+
 /// @cond INTERNAL
+
 
 #include "char.h"
 #include "color.h"
@@ -11,6 +13,7 @@
 
 
 namespace rterm {
+
 class Char;
 
 /**
@@ -134,7 +137,11 @@ public:
      * @param fg foreground color
      */
     Char(char_t ch = 0, Color bg = Color(0, 0, 0), Color fg = Color(255, 255, 255))
-        : ch_(ch), bg_(bg), fg_(fg) {}
+        : ch_(ch)
+        , bg_(bg)
+        , fg_(fg)
+    {
+    }
 
     /**
      * @brief eq operator
@@ -144,14 +151,14 @@ public:
      * this->bg() == other.bg() && 
      * this->fg() == other.fg() @endcode
      */
-    bool operator==(const Char &other) const;
+    bool operator==(const Char& other) const;
 
     /**
      * @brief neq operator
      * @param other
      * @return @code !(*this == other) @endcode
      */
-    bool operator!=(const Char &other) const;
+    bool operator!=(const Char& other) const;
 
     /**
      * @brief Get UTF8 character
@@ -182,10 +189,11 @@ public:
 
 private:
     char_t ch_; ///< real UTF8 char
-    Color bg_, ///< background color
-          fg_; ///< foreground color
+    Color bg_; ///< background color
+    Color fg_; ///< foreground color
 };
 
-}
+} // namespace rterm
+
 
 /// @endcond INTERNAL

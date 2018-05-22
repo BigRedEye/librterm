@@ -4,17 +4,20 @@
 
 #pragma once
 
+
 /// @cond INTERNAL
 
+
+#include "char.h"
 #include "font.h"
 #include "sdl_ptr.h"
-#include "char.h"
 
 #include <SDL2/SDL_ttf.h>
 
+#include <queue>
 #include <unordered_map>
 #include <vector>
-#include <queue>
+
 
 namespace rterm {
 
@@ -96,6 +99,6 @@ private:
     FastCharUnorderedMap<char_t, SdlSharedPtr<SDL_Texture>> cache_; ///< cached rendered symbols
 };
 
-}
+} // namespace rterm
 
 /// @endcond

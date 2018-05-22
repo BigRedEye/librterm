@@ -1,7 +1,9 @@
 #pragma once
 
+
 #include <chrono>
 #include <queue>
+
 
 namespace rterm {
 
@@ -40,4 +42,5 @@ private:
 };
 
 /// @endcond
-}
+
+} // namespace rterm

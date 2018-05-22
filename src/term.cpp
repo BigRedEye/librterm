@@ -13,6 +13,7 @@
 
 #define UNUSED(var) (void)(var); /* -Wunused */
 
+
 namespace rterm {
 using namespace events;
 
@@ -443,4 +444,5 @@ void Term::redraw(size_t x, size_t y) {
     pFont_->render(window_.renderer().lock().get(), dst, ch.ch_, ch.fg_, ch.bg_);
     SDL_SetRenderTarget(window_.renderer().lock().get(), NULL);
 }
-}
+
+} // namespace rterm

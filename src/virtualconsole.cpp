@@ -1,6 +1,8 @@
 #include "virtualconsole.h"
 
+
 namespace rterm {
+
 VirtualConsole::VirtualConsole()
     : VirtualConsole(0, 0)
 {

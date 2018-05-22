@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace rterm {
 
 /**
@@ -15,4 +16,4 @@ private:
     static int countOfLoads_;
 };
 
-}
+} // namespace rterm

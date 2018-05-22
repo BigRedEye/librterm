@@ -1,7 +1,8 @@
-#include "tilefont.h"
 #include "logger.h"
+#include "tilefont.h"
 
 #include <SDL2/SDL_image.h>
+
 
 namespace rterm {
 TileFont::TileFont()
@@ -75,4 +76,5 @@ void TileFont::render(SDL_Renderer* p_ren, SDL_Rect dst, char_t ch, Color fg, Co
     SDL_Rect src = getRect(ch);
     SDL_RenderCopy(p_ren, p_tilemapTexture_.get(), &src, &dst);
 }
-}
+
+} // namespace rterm

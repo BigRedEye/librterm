@@ -1,7 +1,9 @@
 #pragma once
 
-#include <type_traits>
+
 #include <array>
+#include <type_traits>
+
 
 namespace rterm {
 
@@ -9,7 +11,8 @@ template<typename T, size_t Dim>
 class Vector {
 public:
     explicit Vector(const std::initializer_list<T>& initList)
-        : data_(initList) {
+        : data_(initList)
+    {
     }
 
     template<typename ...Args>
@@ -31,12 +34,14 @@ template<typename T>
 class Rect {
 public:
     explicit Rect(T x = T(), T y = T(), T w = T(), T h = T())
-        : Rect({x, y}, {w, h}) {
+        : Rect({x, y}, {w, h})
+    {
     }
     
     explicit Rect(Vector<T, 2> pos, Vector<T, 2> size)
         : pos_(pos)
-        , size_(size) {
+        , size_(size)
+    {
     }
 
     inline T& x() {

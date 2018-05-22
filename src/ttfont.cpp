@@ -3,7 +3,9 @@
 
 #include <SDL2/SDL_ttf.h>
 
+
 namespace rterm {
+
 TTFont::TTFont()
     : Font()
 {
@@ -125,4 +127,5 @@ void FastCharUnorderedMap<_Key,
         mappedKeys_.insert(std::make_pair(key, val));
     }
 }
-}
+
+} // namespace rterm
