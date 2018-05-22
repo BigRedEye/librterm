@@ -5,8 +5,9 @@ namespace rterm {
 namespace events {
 inline int eventTypeFromSDLEvent(SDL_Event* event) noexcept {
     int type = EventType::Unknown;
-    if (!event)
+    if (!event) {
         return type;
+    }
     switch (event->type) {
     case SDL_QUIT:
         type = EventType::Quit;
@@ -63,7 +64,8 @@ inline int eventTypeFromSDLEvent(SDL_Event* event) noexcept {
 }
 
 Event::Event(SDL_Event* event)
-    : type_(eventTypeFromSDLEvent(event)) {
+    : type_(eventTypeFromSDLEvent(event))
+{
 }
 
 Event::Event(int etype)
@@ -79,9 +81,10 @@ const Event::rtclock::time_point& Event::time() const {
 }
 
 WindowEvent::WindowEvent(SDL_Event* ev)
-    : Event(ev),
-      x_(0),
-      y_(0) {
+    : Event(ev)
+    , x_(0)
+    , y_(0)
+{
     if (ev) {
         x_ = ev->window.data1;
         y_ = ev->window.data2;
@@ -97,9 +100,11 @@ int WindowEvent::y() const {
 }
 
 KeyboardEvent::KeyboardEvent(SDL_Event* event)
-    : Event(event) {
-    if (event)
+    : Event(event)
+{
+    if (event) {
         key_ = Key(event->key.keysym.sym);
+    }
 }
 
 const Key& KeyboardEvent::key() const {
@@ -107,17 +112,21 @@ const Key& KeyboardEvent::key() const {
 }
 
 KeyDownEvent::KeyDownEvent(SDL_Event* event, SDL_Event* text)
-    : KeyboardEvent(event) {
+    : KeyboardEvent(event)
+{
     char_t unicode = 0;
-    if (text)
+    if (text) {
         unicode = BytesToUTF32(text->text.text);
-    if (event)
+    }
+    if (event) {
         key_ = Key(event->key.keysym, unicode);
+    }
 }
 
 MouseEvent::MouseEvent(SDL_Event* event)
-    : Event(event),
-      buttons_(0) {
+    : Event(event)
+    , buttons_(0)
+{
     buttons_ = SDL_GetMouseState(nullptr, nullptr);
 }
 
@@ -126,11 +135,12 @@ uint32_t MouseEvent::buttons() const {
 }
 
 MouseMoveEvent::MouseMoveEvent(SDL_Event* event)
-    : MouseEvent(event),
-      x_(0),
-      y_(0),
-      xrel_(0),
-      yrel_(0) {
+    : MouseEvent(event)
+    , x_(0)
+    , y_(0)
+    , xrel_(0)
+    , yrel_(0)
+{
     if (event) {
         x_ = event->motion.x;
         y_ = event->motion.y;
@@ -156,10 +166,11 @@ int MouseMoveEvent::yrel() const {
 }
 
 MouseDownEvent::MouseDownEvent(SDL_Event* event)
-    : MouseEvent(event),
-      button_(0) {
-    if (event)
+    : MouseEvent(event)
+    , button_(0) {
+    if (event) {
         button_ = SDL_BUTTON(event->button.button);
+    }
 }
 
 uint32_t MouseDownEvent::button() const {
@@ -167,10 +178,12 @@ uint32_t MouseDownEvent::button() const {
 }
 
 MouseUpEvent::MouseUpEvent(SDL_Event* event)
-    : MouseEvent(event),
-      button_(0) {
-    if (event)
+    : MouseEvent(event)
+    , button_(0)
+{
+    if (event) {
         button_ = SDL_BUTTON(event->button.button);
+    }
 }
 
 uint32_t MouseUpEvent::button() const {
@@ -180,7 +193,8 @@ uint32_t MouseUpEvent::button() const {
 MouseWheelEvent::MouseWheelEvent(SDL_Event* event)
     : Event(event)
     , dx_(0)
-    , dy_(0) {
+    , dy_(0)
+{
     if (event) {
         dx_ = event->wheel.x;
         dy_ = event->wheel.y;

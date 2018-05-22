@@ -1,13 +1,14 @@
-#include "event_system.h"
 #include "event.h"
+#include "event_system.h"
 #include "logger.h"
 
 #include <memory>
 
 
 namespace rterm {
-EventSystem::EventSystem() :
-    quitRequested_(false) {
+EventSystem::EventSystem()
+    : quitRequested_(false)
+{
 }
 
 EventSystem::~EventSystem() {
@@ -19,12 +20,13 @@ bool EventSystem::quitRequested() const {
 
 void EventSystem::poll() {
     SDL_Event event;
-    while (SDL_PollEvent(&event))
+    while (SDL_PollEvent(&event)) {
         eventHandler(&event);
+    }
 }
 
-std::unique_ptr<events::Event> getKeyDownEvent(SDL_Event *ev) {
-    events::Event *event = nullptr;
+std::unique_ptr<events::Event> getKeyDownEvent(SDL_Event* ev) {
+    events::Event* event = nullptr;
     if (ev->type == SDL_KEYDOWN) {
         SDL_PumpEvents();
         SDL_Event e;
@@ -37,12 +39,13 @@ std::unique_ptr<events::Event> getKeyDownEvent(SDL_Event *ev) {
     return std::unique_ptr<events::Event>(event);
 }
 
-int EventSystem::eventHandler(SDL_Event *ev) {
+int EventSystem::eventHandler(SDL_Event* ev) {
     using namespace rterm::events;
 
     std::unique_ptr<Event> event;
-    if (!ev)
+    if (!ev) {
         return 1;
+    }
     switch (ev->type) {
     case SDL_QUIT:
         event.reset(new QuitEvent());
@@ -93,8 +96,9 @@ int EventSystem::eventHandler(SDL_Event *ev) {
         break;
     }
     if (event) {
-        for (auto &&callback : callbacks_[event->type()])
+        for (auto &&callback : callbacks_[event->type()]) {
             callback(event.get());
+        }
     }
     if (event && event->type() == EventType::KeyDown) {
         events::KeyDownEvent *keyev = static_cast<events::KeyDownEvent*>(event.get());
@@ -105,34 +109,40 @@ int EventSystem::eventHandler(SDL_Event *ev) {
 
 Key EventSystem::getKey() {
     pendingKey_ = Key();
-    while (!quitRequested_ && !pendingKey_)
+    while (!quitRequested_ && !pendingKey_) {
         poll();
+    }
     return pendingKey_;
 }
 
 char_t EventSystem::getChar() {
     while (true) {
         Key key = getKey();
-        if (key.toChar())
+        if (key.toChar()) {
             return key.toChar();
-        if (quitRequested_)
+        }
+        if (quitRequested_) {
             return 0;
+        }
     }
 }
 
-Key EventSystem::getKey(const highResClock::time_point &until) {
-    while (!quitRequested_ && !pendingKey_ && highResClock::now() < until)
+Key EventSystem::getKey(const highResClock::time_point& until) {
+    while (!quitRequested_ && !pendingKey_ && highResClock::now() < until) {
         poll();
+    }
     return pendingKey_;
 }
 
-char_t EventSystem::getChar(const highResClock::time_point &until) {
+char_t EventSystem::getChar(const highResClock::time_point& until) {
     while (highResClock::now() < until) {
         Key key = getKey(until);
-        if (key.toChar())
+        if (key.toChar()) {
             return key.toChar();
-        if (quitRequested_)
+        }
+        if (quitRequested_) {
             break;
+        }
     }
     return 0;
 }

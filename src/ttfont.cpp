@@ -1,19 +1,23 @@
-#include "ttfont.h"
 #include "logger.h"
+#include "ttfont.h"
+
 #include <SDL2/SDL_ttf.h>
 
 namespace rterm {
 TTFont::TTFont()
-    : Font() {
+    : Font()
+{
 }
 
 TTFont::TTFont(const std::string& path, size_t sz)
     : TTFont() {
-    if (!TTF_WasInit())
+    if (!TTF_WasInit()) {
         TTF_Init();
+    }
     p_font_ = SdlPtr<TTF_Font>(TTF_OpenFont(path.c_str(), sz));
-    if (!p_font_.get())
+    if (!p_font_.get()) {
         Logger(Logger::ERROR) << TTF_GetError();
+    }
 }
 
 TTFont& TTFont::operator=(TTFont&& rhs) {
@@ -22,34 +26,41 @@ TTFont& TTFont::operator=(TTFont&& rhs) {
 }
 
 size_t TTFont::w() const {
-    if (!p_font_.get())
+    if (!p_font_.get()) {
         return 8;
+    }
     static int w = -1, h = -1;
-    if (w == -1)
+    if (w == -1) {
         TTF_SizeText(p_font_.get(), "@", &w, &h);
+    }
     return w;
 }
 
 size_t TTFont::h() const {
-    if (!p_font_.get())
+    if (!p_font_.get()) {
         return 8;
+    }
 
     static int h = -1;
-    if (h == -1)
+    if (h == -1) {
         h = TTF_FontHeight(p_font_.get());
+    }
     return h;
 }
 
 void TTFont::render(SDL_Renderer* p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) {
-    if (!p_font_.get())
+    if (!p_font_.get()) {
         return;
+    }
 
     SdlSharedPtr<SDL_Texture> p_tex;
     if (!cache_.get(ch, p_tex)) {
         std::string str = UTF32ToBytes(ch);
-        SdlPtr<SDL_Surface> p_surf(TTF_RenderUTF8_Blended(p_font_.get(),
-                                    str.c_str(),
-                                    SDL_Color{0xff, 0xff, 0xff, 0xff}));
+        SdlPtr<SDL_Surface> p_surf(
+            TTF_RenderUTF8_Blended(p_font_.get(),
+            str.c_str(),
+            SDL_Color{0xff, 0xff, 0xff, 0xff})
+        );
         p_tex = makeSdlShared(SDL_CreateTextureFromSurface(p_ren, p_surf.get()));
         cache_.set(ch, p_tex);
     }
@@ -73,8 +84,9 @@ FastCharUnorderedMap<_Key,
                      _Val,
                      _SparceContainer,
                      _DenseContainer>::FastCharUnorderedMap(_Key maxKey)
-    : maxKey_(maxKey),
-      smallKeys_(maxKey, std::make_pair(_Val(), false)) {
+    : maxKey_(maxKey)
+    , smallKeys_(maxKey, std::make_pair(_Val(), false))
+{
 }
 
 template<typename _Key,
@@ -84,14 +96,15 @@ template<typename _Key,
 bool FastCharUnorderedMap<_Key,
                           _Val,
                           _SparceContainer,
-                          _DenseContainer>::get(_Key key, _Val &val) {
+                          _DenseContainer>::get(_Key key, _Val& val) {
     if (key <= maxKey_) {
         val = smallKeys_[key].first;
         return smallKeys_[key].second;
     } else {
         auto foundIt = mappedKeys_.find(key);
-        if (foundIt == mappedKeys_.end())
+        if (foundIt == mappedKeys_.end()) {
             return false;
+        }
         val = foundIt->second;
         return true;
     }
