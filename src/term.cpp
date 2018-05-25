@@ -4,6 +4,7 @@
 #include "term.h"
 #include "tilefont.h"
 #include "ttfont.h"
+#include "hardware_texture.h"
 
 #include <SDL2/SDL_image.h>
 
