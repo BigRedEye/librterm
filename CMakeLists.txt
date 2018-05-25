@@ -13,11 +13,13 @@ file(
     src/event.cpp
     src/event_system.cpp
     src/framerate_counter.cpp
+    src/hardware_texture.cpp
     src/gl_renderer.cpp
     src/key.cpp
     src/logger.cpp
     src/sdl_loader.cpp
     src/sdl_renderer.cpp
+    src/software_texture.cpp
     src/term.cpp
     src/texture.cpp
     src/tilefont.cpp
@@ -28,12 +30,14 @@ file(
 
 file(
     GLOB HEADERS
+    include/api.h
     include/char.h
     include/color.h
     include/event.h
     include/event_system.h
     include/font.h
     include/framerate_counter.h
+    include/hardware_texture.h
     include/key.h
     include/keycode.h
     include/logger.h
@@ -42,6 +46,7 @@ file(
     include/renderer.h
     include/sdl_loader.h
     include/sdl_ptr.h
+    include/software_texture.h
     include/term.h
     include/term_format.h
     include/texture.h

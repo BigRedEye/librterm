@@ -19,6 +19,10 @@ public:
     std::weak_ptr<SDL_Renderer> renderer();
 
 private:
+    void initOpenGL();
+    void initSDL();
+
+private:
     std::shared_ptr<SDL_Window> window_;
     std::shared_ptr<SDL_Renderer> renderer_;
     SdlLoader loader_;
