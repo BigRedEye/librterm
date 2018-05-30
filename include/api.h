@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace rterm {
 
 struct Api {
