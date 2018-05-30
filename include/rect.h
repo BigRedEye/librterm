@@ -1,6 +1,8 @@
 #pragma once
 
 
+#include "SDL2/SDL_rect.h"
+
 #include <array>
 #include <type_traits>
 
@@ -10,9 +12,11 @@ namespace rterm {
 template<typename T, size_t Dim>
 class Vector {
 public:
-    explicit Vector(const std::initializer_list<T>& initList)
-        : data_(initList)
-    {
+    Vector(std::initializer_list<T>& initList) {
+        auto it = data_.begin();
+        for (T&& t : initList) {
+            *it++ = std::move(t);
+        }
     }
 
     template<typename ...Args>
@@ -38,7 +42,7 @@ public:
     {
     }
     
-    explicit Rect(Vector<T, 2> pos, Vector<T, 2> size)
+    Rect(Vector<T, 2> pos, Vector<T, 2> size)
         : pos_(pos)
         , size_(size)
     {
@@ -74,6 +78,10 @@ public:
     
     inline const T& h() const {
         return size_[1];
+    }
+
+    inline SDL_Rect toSdl() const {
+        return SDL_Rect{x(), y(), w(), h()};
     }
 
 private:

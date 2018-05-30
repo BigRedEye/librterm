@@ -44,6 +44,8 @@ file(
     include/mouse.h
     include/rect.h
     include/renderer.h
+    include/gl_renderer.h
+    include/sdl_renderer.h
     include/sdl_loader.h
     include/sdl_ptr.h
     include/software_texture.h
@@ -55,6 +57,9 @@ file(
     include/virtualconsole.h
     include/window.h
     include/term.tpp
+    include/glyph_cache.h
+    include/texture_view.h
+    include/screen_view.h
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
