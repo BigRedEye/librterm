@@ -21,6 +21,8 @@ CTestTestfile.cmake
 *.a
 
 build
+debug
+release
 
 test/benchmark
 test/userinput

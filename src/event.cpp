@@ -117,12 +117,12 @@ const Key& KeyboardEvent::key() const {
 KeyDownEvent::KeyDownEvent(SDL_Event* event, SDL_Event* text)
     : KeyboardEvent(event)
 {
-    char_t unicode = 0;
+    char_t u32 = 0;
     if (text) {
-        unicode = BytesToUTF32(text->text.text);
+        u32 = Utf8ToUtf32(text->text.text)[0];
     }
     if (event) {
-        key_ = Key(event->key.keysym, unicode);
+        key_ = Key(event->key.keysym, u32);
     }
 }
 

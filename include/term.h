@@ -9,14 +9,13 @@
 #include "char.h"
 #include "color.h"
 #include "event_system.h"
-#include "font.h"
 #include "framerate_counter.h"
 #include "key.h"
-#include "sdl_loader.h"
 #include "sdl_ptr.h"
 #include "term_format.h"
 #include "virtualconsole.h"
 #include "window.h"
+#include "glyph_cache.h"
 
 #include <SDL2/SDL.h>
 
@@ -276,13 +275,6 @@ public:
     void redraw(bool force = false);
 
     /**
-     * @brief Effectively move console data
-     * @param dx horizontal component
-     * @param dy vertical component 
-     */
-    void shift(int dx, int dy);
-
-    /**
      * @brief Get char at specific position
      * @param x position
      * @param y position
@@ -305,6 +297,8 @@ public:
      * @return foreground color at (x, y)
      */
     Color fgColorAt(size_t x, size_t y) const;
+
+    std::string getError() const;
 
     template<typename F>
     void onKeyDown(F&& callback);
@@ -365,22 +359,16 @@ private:
     Char get(size_t x, size_t y) const;
 
     /**
-     * @brief Update terminal texture after window resizing
-     */
-    void updateTexture();
-
-    /**
      * @brief Render texture to screen
      */
     void renderToScreen();
-    
 
+private:
     SdlLoader loader_; ///< keeps SDL loaded
     VirtualConsole console_; ///< logical console
 
-    Font *pFont_; ///< font used in rendering
     Window window_; ///< wrapper around SDL_Window
-    SdlPtr<SDL_Texture> pTex_; ///< pointer to texture used in offscreen rendering
+    GlyphCache glyphCache_; ///< glyph renderer
 
     bool quitRequested_; ///< was quit requested by user or system
     bool wasShift_; ///< was screen shifted
@@ -389,8 +377,6 @@ private:
     Color bgCol_; ///< default background color
 
     FrameRateCounter frameRateCounter_; ///< framerate counter
-
-    const Uint8* keyboardState_; ///< from SDL_GetKeyboardState
 
     EventSystem eventSystem_; ///< event system
     /// @endcond

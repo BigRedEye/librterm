@@ -122,8 +122,10 @@ protected:
 
 class KeyDownEvent : public KeyboardEvent {
 public:
-    explicit KeyDownEvent(SDL_Event* event = nullptr,
-                          SDL_Event* text = nullptr);
+    explicit KeyDownEvent(
+        SDL_Event* event = nullptr,
+        SDL_Event* text = nullptr
+    );
 };
 
 class KeyUpEvent : public KeyboardEvent {

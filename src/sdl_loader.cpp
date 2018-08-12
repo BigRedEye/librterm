@@ -1,3 +1,4 @@
+#include "error.h"
 #include "sdl_loader.h"
 
 #include <SDL2/SDL.h>
@@ -36,9 +37,15 @@ int SdlLoader::countOfLoads_ = 0;
 
 SdlLoader::SdlLoader() {
     if (countOfLoads_ == 0) {
-        SDL_Init(SDL_INIT_EVERYTHING);
-        TTF_Init();
-        IMG_Init(IMG_INIT_PNG);
+        if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+            throw Exception();
+        }
+        if (TTF_Init() < 0) {
+            throw Exception();
+        }
+        if (IMG_Init(IMG_INIT_PNG) == 0) {
+            throw Exception();
+        }
     }
     ++countOfLoads_;
 }

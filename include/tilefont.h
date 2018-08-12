@@ -46,15 +46,7 @@ public:
      */
     TileFont& operator=(TileFont&& rhs);
 
-    /**
-     * @brief render a string of UTF8 bytes
-     * @param p_ren renderer for current render target
-     * @param dst rect on renderer target where the string should be rendered
-     * @param str string that should be rendered
-     * @param fg foreground color
-     * @param bg background color
-     */
-    virtual void render(SDL_Renderer* p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) override;
+    virtual SoftwareTexture render(char_t ch) override;
 
     /**
      * @brief Font width
@@ -76,8 +68,8 @@ private:
      */
     SDL_Rect getRect(char_t c) const;
 
-    SdlPtr<SDL_Surface> p_tilemap_; ///< tilemap surface
-    SdlPtr<SDL_Texture> p_tilemapTexture_; ///< cached tilemap texture
+    SdlHolder<SDL_Surface> p_tilemap_; ///< tilemap surface
+    SdlHolder<SDL_Texture> p_tilemapTexture_; ///< cached tilemap texture
     size_t w_, ///< tile width
            h_; ///< tile height
 };

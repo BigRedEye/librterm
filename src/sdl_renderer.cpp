@@ -14,8 +14,8 @@ void SdlRenderer::flush() const {
 }
 
 void SdlRenderer::draw(const TextureView<Api::SDL>& src, const ScreenView& dst) {
-    SDL_Rect srcrect = src.rect().toSdl();
-    SDL_Rect dstrect = dst.rect().toSdl();
+    SDL_Rect srcrect = src.rect().sdl();
+    SDL_Rect dstrect = dst.rect().sdl();
     SDL_RenderCopy(get(), src.texture().lock()->ptr(), &srcrect, &dstrect);
 }
 

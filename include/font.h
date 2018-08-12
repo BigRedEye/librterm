@@ -12,7 +12,7 @@
 #include "color.h"
 #include "char.h"
 
-#include <SDL2/SDL.h>
+#include "software_texture.h"
 
 #include <cstddef>
 #include <string>
@@ -23,22 +23,19 @@ namespace rterm {
 /**
  * @brief The Font class
  *
- * Abstract font class that contains font data and can render string with SDL_Renderer
+ * Abstract font rasterizer
  */
-class Font
-{
+class Font {
 public:
     virtual ~Font() = default;
 
     /**
-     * @brief render a string of UTF8 bytes
-     * @param p_ren renderer for current render target
-     * @param dst rect on renderer target where the string should be rendered
-     * @param str string that should be rendered
-     * @param fg foreground color
-     * @param bg background color
+     * @brief generate SoftwareTexture for character
+     * @param ch utf-32 character
+     * @return generated SoftwareTexture
+     * @note this function doesn't provide any caching
      */
-    virtual void render(SDL_Renderer* p_ren, SDL_Rect dst, char_t str, Color fg, Color bg) = 0;
+    virtual SoftwareTexture render(char_t ch) = 0;
 
     /**
      * @brief font width

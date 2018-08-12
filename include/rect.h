@@ -1,8 +1,9 @@
 #pragma once
 
 
-#include "SDL2/SDL_rect.h"
+#include <SDL2/SDL_rect.h>
 
+#include <algorithm>
 #include <array>
 #include <type_traits>
 
@@ -12,15 +13,45 @@ namespace rterm {
 template<typename T, size_t Dim>
 class Vector {
 public:
-    Vector(std::initializer_list<T>& initList) {
-        auto it = data_.begin();
-        for (T&& t : initList) {
-            *it++ = std::move(t);
-        }
+    Vector() {
+        std::fill(data_.begin(), data_.end(), T{});
     }
 
-    template<typename ...Args>
-    Vector(Args... args);
+    Vector(const std::initializer_list<T>& initList) {
+        std::copy(initList.begin(), initList.end(), data_.begin());
+    }
+
+    template<typename U>
+    Vector(const Vector<U, Dim>& other) {
+        operator=(other);
+    }
+
+    template<typename U>
+    Vector(Vector<U, Dim>&& other) {
+        operator=(std::move(other));
+    }
+
+    template<typename U>
+    Vector& operator=(const Vector<U, Dim>& other) {
+        std::copy(other.data_.begin(), other.data_.end(), data_.begin());
+        return *this;
+    }
+
+    template<typename U>
+    Vector& operator=(Vector<U, Dim>&& other) {
+        std::move(other.data_.begin(), other.data_.end(), data_.begin());
+        return *this;
+    }
+
+    template<typename U>
+    bool operator==(const Vector<U, Dim>& other) const {
+        return data_ == other.data_;
+    }
+
+    template<typename U>
+    bool operator!=(const Vector<U, Dim>& other) const {
+        return !operator==(other);
+    }
 
     inline T& operator[](size_t i) {
         return data_[i];
@@ -28,6 +59,14 @@ public:
 
     inline const T& operator[](size_t i) const {
         return data_[i];
+    }
+
+    inline operator bool() const {
+        bool res = false;
+        for (auto&& t : data_) {
+            res = res || t;
+        }
+        return res;
     }
 
 private:
@@ -46,6 +85,16 @@ public:
         : pos_(pos)
         , size_(size)
     {
+    }
+
+    template<typename U>
+    bool operator==(const Rect<U>& other) const {
+        return pos_ == other.pos_ && size_ == other.size_;
+    }
+
+    template<typename U>
+    bool operator!=(const Rect<U>& other) const {
+        return !operator==(other);
     }
 
     inline T& x() {
@@ -80,7 +129,7 @@ public:
         return size_[1];
     }
 
-    inline SDL_Rect toSdl() const {
+    inline SDL_Rect sdl() const {
         return SDL_Rect{x(), y(), w(), h()};
     }
 

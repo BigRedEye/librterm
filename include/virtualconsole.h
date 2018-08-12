@@ -98,13 +98,6 @@ public:
      * @param c character
      */
     void addChar(char_t c);
-    
-    /**
-     * @brief Effectively move console data
-     * @param dx horizontal component
-     * @param dy vertical component 
-     */
-    void shift(int dx, int dy);
 
     /**
      * @brief Get updated positions since last getUpdatedChars call

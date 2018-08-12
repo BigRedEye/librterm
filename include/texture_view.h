@@ -11,8 +11,13 @@ namespace rterm {
 template<Api::Type api>
 class TextureView {
 public:
+    TextureView(const HardwareTexture<api>& src)
+        : texture_(src.base())
+        , rect_({0, 0}, texture_.size()) {
+    }
+
     TextureView(const HardwareTexture<api>& src, const iRect& rect)
-        : texture_(src.get())
+        : texture_(src.base())
         , rect_(rect) {
     }
 
@@ -20,16 +25,12 @@ public:
         return rect_;
     }
 
-    inline iRect& rect() {
-        return rect_;
-    }
-
-    const std::weak_ptr<HardwareTextureBase<api>>& texture() const {
-        return texture_;
+    typename HardwareTextureBase<api>::RawTextureRef texture() const {
+        return texture_.get();
     }
 
 private:
-    std::weak_ptr<HardwareTextureBase<api>> texture_;
+    HardwareTextureBase<api> texture_;
     iRect rect_;
 };
 

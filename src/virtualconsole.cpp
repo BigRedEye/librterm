@@ -134,22 +134,6 @@ void VirtualConsole::addChar(char_t c) {
     cursorY_ = (cursorY_ + 2 * rows()) % rows();
 }
 
-void VirtualConsole::shift(int dx, int dy) {
-    std::vector<std::vector<Char>> tmpData(rows(), std::vector<Char>(cols()));
-    std::vector<std::vector<char>> tmpMask(rows(), std::vector<char>(cols()));
-
-    for (size_t j = 0; j < rows(); ++j) {
-        for (size_t i = 0; i < cols(); ++i) {
-            if (static_cast<int>(j) + dy >= 0 && static_cast<int>(i) + dx >= 0) {
-                tmpData[j][i] = get(i + dx, j + dy);
-                tmpMask[j][i] = getMask(i + dx, j + dy);
-            }
-        }
-    }
-    data_.swap(tmpData);
-    mask_.swap(tmpMask);
-}
-
 std::vector<std::pair<size_t, size_t>> VirtualConsole::getUpdatedChars(bool force) {
     std::vector<std::pair<size_t, size_t>> result;
     for (size_t j = 0; j < rows(); ++j) {

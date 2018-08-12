@@ -47,7 +47,6 @@ int main(int argc, char **argv) {
     }
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
     for (int iters = 0; iters < flooditers; ++iters) {
-        terminal.shift(1, 0);
         for (int i = 0; i < int(terminal.cols()); ++i)
             for (int j = 0; j < int(terminal.rows()); ++j) {
                 terminal.setChar(i, j, 'a' + (i + j + iters) % ('z' - 'a'));

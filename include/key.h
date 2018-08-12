@@ -47,7 +47,7 @@ public:
      */
     explicit Key(SDL_Keysym sym, char_t ch = 0);
 
-    operator bool() const {
+    inline operator bool() const {
         return code_;
     }
 

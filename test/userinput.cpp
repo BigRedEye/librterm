@@ -22,15 +22,18 @@ int main(int argc, char **argv) {
     /* set callback for keypress */
     terminal.onKeyDown([&](rterm::events::KeyDownEvent ev) {
         /* if key has visual representation... */
-        if (ev.key().toChar())
+        if (ev.key().toChar()) {
             /* add character to terminal */
             terminal.addChar(ev.key().toChar());
-        /* and draw everything on screen */
-        terminal.redraw();
+            /* and draw everything on screen */
+            terminal.redraw();
+        }
     });
     /* while terminal is not closed... */
-    while (terminal.isRunning())
+    while (terminal.isRunning()) {
         /* poll events */
         terminal.poll();
+        terminal.redraw();
+    }
     return 0;
 }
