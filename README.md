@@ -12,17 +12,24 @@ This piece of code creates an empty `80 x 24` terminal and displays each charact
 ```cpp
 #include <rterm/term.h>
 
-int main(int argc, char** argv) {
-    rterm::Term terminal(rterm::TermFormat(80, 24));
-    terminal.setFont("DejaVuSansMono.ttf", 18);
-    terminal.onKeyDown([&](const rterm::events::KeyDownEvent &ev) {
-        if (ev.key().toChar())
-            terminal.addChar(ev.key().toChar());
-        terminal.redraw();
-    });
-    while (terminal.isRunning())
-        terminal.poll();
-    return 0;
+int main(int argc, const char* argv[]) {
+    try {
+        rterm::Term terminal(rterm::TermFormat(80, 24));
+        terminal.setFont("DejaVuSansMono.ttf", 18);
+        terminal.onKeyDown([&](const rterm::events::KeyDownEvent &ev) {
+            if (ev.key().toChar()) {
+                terminal.addChar(ev.key().toChar());
+            }
+            terminal.redraw();
+        });
+        while (terminal.isRunning()) {
+            terminal.poll();
+        }
+        return 0;
+    } catch (const rterm::Exception& e)
+        std::cerr << e.what() << std::endl;
+        return 1;
+    }
 }
 
 ```
