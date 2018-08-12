@@ -228,7 +228,7 @@ void Term::setFullscreen(bool fullscr) {
 }
 
 void Term::setResizable(bool resizable) {
-#if SDL_MAJOR_VERSION >= 2 && SDL_PATCHLEVEL >= 5
+#if SDL_VERSION_ATLEAST(2, 0, 5)
     SDL_SetWindowResizable(window_.get(), (resizable ? SDL_TRUE : SDL_FALSE));
 #else
     UNUSED(resizable);
