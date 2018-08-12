@@ -9,10 +9,13 @@ namespace rterm {
 
 EventSystem::EventSystem()
     : quitRequested_(false)
+    , callbacks_(events::EventType::COUNT)
 {
+    SDL_StartTextInput();
 }
 
 EventSystem::~EventSystem() {
+    SDL_StopTextInput();
 }
 
 bool EventSystem::quitRequested() const {
@@ -97,7 +100,7 @@ int EventSystem::eventHandler(SDL_Event* ev) {
         break;
     }
     if (event) {
-        for (auto &&callback : callbacks_[event->type()]) {
+        for (auto&& callback : callbacks_[event->type()]) {
             callback(event.get());
         }
     }

@@ -11,6 +11,16 @@ namespace rterm {
 
 class ScreenView {
 public:
+    ScreenView()
+        : rect_(0, 0, 0, 0)
+    {
+    }
+
+    ScreenView(Vector<int, 2> size)
+        : rect_(0, 0, size[0], size[1])
+    {
+    }
+
     ScreenView(const iRect& rect)
         : rect_(rect)
     {

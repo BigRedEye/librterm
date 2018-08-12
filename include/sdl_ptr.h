@@ -55,7 +55,7 @@ struct SdlDeleter<TTF_Font> {
 };
 
 template<typename T>
-using SdlPtr = std::unique_ptr<T, SdlDeleter<T>>;
+using SdlHolder = std::unique_ptr<T, SdlDeleter<T>>;
 
 template<typename T>
 using SdlSharedPtr = std::shared_ptr<T>;

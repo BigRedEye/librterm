@@ -11,7 +11,7 @@ Key::Key(SDL_Keycode code, char_t ch)
 }
 
 Key::Key(KeyCode code, char_t ch)
-    : Key(reinterpret_cast<int&>(code), ch)
+    : Key(static_cast<int>(code), ch)
 {
 }
 

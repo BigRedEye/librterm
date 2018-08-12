@@ -1,24 +1,29 @@
 cmake_minimum_required(VERSION 3.5)
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
 project(rterm)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wpedantic")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb -fno-omit-frame-pointer -fsanitize=address")
+set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -ggdb -fno-omit-frame-pointer -fsanitize=address")
 
 file(
     GLOB SOURCES
     src/char.cpp
     src/color.cpp
+    src/error.cpp
     src/event.cpp
     src/event_system.cpp
     src/framerate_counter.cpp
-    src/hardware_texture.cpp
-    src/gl_renderer.cpp
+    src/glyph_cache.cpp
     src/key.cpp
     src/logger.cpp
     src/sdl_loader.cpp
-    src/sdl_renderer.cpp
     src/software_texture.cpp
     src/term.cpp
     src/texture.cpp
@@ -33,6 +38,7 @@ file(
     include/api.h
     include/char.h
     include/color.h
+    include/error.h
     include/event.h
     include/event_system.h
     include/font.h
@@ -44,8 +50,10 @@ file(
     include/mouse.h
     include/rect.h
     include/renderer.h
-    include/gl_renderer.h
-    include/sdl_renderer.h
+    include/gl_hardware_texture.tpp
+    include/gl_renderer.tpp
+    include/sdl_hardware_texture.tpp
+    include/sdl_renderer.tpp
     include/sdl_loader.h
     include/sdl_ptr.h
     include/software_texture.h

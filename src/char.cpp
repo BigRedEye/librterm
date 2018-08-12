@@ -11,15 +11,14 @@ namespace rterm {
 
 using std::va_list;
 
-char_t BytesToUTF32(const std::string& str) {
+std::u32string Utf8ToUtf32(const std::string& str) {
     static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
-    std::u32string result = convert.from_bytes(str);
-    return static_cast<char_t>(result[0]);
+    return convert.from_bytes(str);
 }
 
-std::string UTF32ToBytes(char_t c) {
+std::string Utf32ToUtf8(const std::u32string& str) {
     static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
-    return convert.to_bytes(c);
+    return convert.to_bytes(str);
 }
 
 std::string format(const std::string& fmt) {

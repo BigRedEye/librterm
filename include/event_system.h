@@ -6,7 +6,6 @@
 
 #include <SDL2/SDL_events.h>
 
-#include <array>
 #include <functional>
 #include <vector>
 
@@ -21,9 +20,10 @@ public:
     ~EventSystem();
 
     template<typename F>
-    void registerCallback(int eventType, F&& callable) {
+    inline void registerCallback(int eventType, F&& callable) {
         callbacks_[eventType].emplace_back(callable);
     }
+
     bool quitRequested() const;
     void poll();
     int eventHandler(SDL_Event* ev);
@@ -35,7 +35,7 @@ public:
 
 private:
     bool quitRequested_;
-    std::array<std::vector<std::function<void(events::Event*)>>, events::EventType::COUNT> callbacks_;
+    std::vector<std::vector<std::function<void(events::Event*)>>> callbacks_;
     Key pendingKey_;
 };
 

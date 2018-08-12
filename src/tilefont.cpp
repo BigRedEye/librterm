@@ -20,7 +20,7 @@ TileFont::TileFont(const std::string& path, size_t _w, size_t _h)
         IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP);
         IMG_WasInit = true;
     }
-    p_tilemap_ = SdlPtr<SDL_Surface>(IMG_Load(path.c_str()));
+    p_tilemap_ = SdlHolder<SDL_Surface>(IMG_Load(path.c_str()));
     if (!p_tilemap_.get()) {
         Logger(Logger::ERROR) << IMG_GetError();
     }
@@ -59,14 +59,14 @@ SDL_Rect TileFont::getRect(char_t c) const {
     return result;
 }
 
-void TileFont::render(SDL_Renderer* p_ren, SDL_Rect dst, char_t ch, Color fg, Color bg) {
-    (void)fg;
-    (void)bg;
+SoftwareTexture TileFont::render(char_t) {
+    return {};
+    /*
     if (!p_tilemap_) {
         return;
     }
     if (!p_tilemapTexture_.get()) {
-        p_tilemapTexture_ = SdlPtr<SDL_Texture>(
+        p_tilemapTexture_ = SdlHolder<SDL_Texture>(
             SDL_CreateTextureFromSurface(p_ren, p_tilemap_.get())
         );
     }
@@ -75,6 +75,7 @@ void TileFont::render(SDL_Renderer* p_ren, SDL_Rect dst, char_t ch, Color fg, Co
 
     SDL_Rect src = getRect(ch);
     SDL_RenderCopy(p_ren, p_tilemapTexture_.get(), &src, &dst);
+    */
 }
 
 } // namespace rterm
