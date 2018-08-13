@@ -2,6 +2,7 @@
 #include <rterm/logger.h>
 #include <rterm/mouse.h>
 #include <rterm/term.h>
+#include <rterm/error.h>
 
 #define UNUSED(cond) (void)(cond)
 
