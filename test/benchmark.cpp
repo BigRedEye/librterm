@@ -32,12 +32,20 @@ int main(int argc, char** argv) {
             for (int i = 0; i < int(terminal.cols()); ++i)
                 for (int j = 0; j < int(terminal.rows()); ++j) {
                     terminal.setChar(i, j, 'a' + (i + j + iters) % ('z' - 'a'));
-                    terminal.setBgColor(rterm::Color(std::min(i * 180 / terminal.cols() + iters * 127 / 1000, (size_t)0xffull),
-                                                     0,
-                                                     std::min(j * 180 / terminal.cols() + iters * 127 / 1000, (size_t)0xffull)), i, j);
-                    terminal.setFgColor(rterm::Color(0xff - std::min(i * 180 / terminal.cols() + iters * 127 / 1000, (size_t)0xffull),
-                                                     0xff,
-                                                     0xff - std::min(j * 180 / terminal.cols() + iters * 127 / 1000, (size_t)0xffull)), i, j);
+                    terminal.setBgColor(
+                        rterm::Color(
+                            std::min<unsigned>(i * 180 / terminal.cols() + iters * 127 / 1000, 0xff),
+                            0,
+                            std::min<unsigned>(j * 180 / terminal.cols() + iters * 127 / 1000, 0xff)
+                        ), i, j
+                    );
+                    terminal.setFgColor(
+                        rterm::Color(
+                            0xff - std::min<unsigned>(i * 180 / terminal.cols() + iters * 127 / 1000, 0xff),
+                            0xff,
+                            0xff - std::min<unsigned>(j * 180 / terminal.cols() + iters * 127 / 1000, 0xff)
+                        ), i, j
+                    );
             }
             terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
             terminal.poll();
@@ -55,15 +63,19 @@ int main(int argc, char** argv) {
         start = end;
 
         for (int iters = 0; iters < randomiters; ++iters) {
-            int i = rand() % terminal.cols(),
-                j = rand() % terminal.rows();
+            int i = rand() % terminal.cols();
+            int j = rand() % terminal.rows();
             terminal.setChar(i, j, 'a' + rand() % ('z' - 'a'));
-            rterm::Color bg(std::min(i * 0xff / terminal.cols(), (size_t)0xffull),
-                            0,
-                            std::min(j * 0xff / terminal.cols(), (size_t)0xffull));
-            rterm::Color fg(0xff - std::min(i * 0xff / terminal.cols(), (size_t)0xffull),
-                            0xff,
-                            0xff - std::min(j * 0xff / terminal.cols(), (size_t)0xffull));
+            rterm::Color bg(
+                std::min<int>(i * 0xff / terminal.cols(), 0xff),
+                0,
+                std::min<int>(j * 0xff / terminal.cols(), 0xff)
+            );
+            rterm::Color fg(
+                0xff - std::min<int>(i * 0xff / terminal.cols(), 0xff),
+                0xff,
+                0xff - std::min<int>(j * 0xff / terminal.cols(), 0xff)
+            );
             terminal.setBgColor(bg, i, j);
             terminal.setFgColor(fg, i, j);
             terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
@@ -77,7 +89,7 @@ int main(int argc, char** argv) {
         deltaTime = end - start;
         rterm::Logger().printf("Random time usage: %f s", deltaTime.count());
     } catch (const rterm::Exception& e) {
-        rterm::Logger(rterm::Logger::CRITICAL) << "Cought an exception: " << e.what();
+        rterm::Logger(rterm::Logger::CRITICAL) << "Caught an exception: " << e.what();
     }
     return 0;
 }
