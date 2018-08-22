@@ -104,8 +104,7 @@ i32 EventSystem::eventHandler(SDL_Event* ev) {
         }
     }
     if (event && event->type() == EventType::KeyDown) {
-        events::KeyDownEvent* keyev =
-            static_cast<events::KeyDownEvent*>(event.get());
+        events::KeyDownEvent* keyev = static_cast<events::KeyDownEvent*>(event.get());
         pendingKey_ = keyev->key();
     }
     return 1;

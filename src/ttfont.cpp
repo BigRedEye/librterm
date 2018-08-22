@@ -52,24 +52,11 @@ SoftwareTexture TTFont::render(char_t ch) {
     }
 
     std::string str = Utf32ToUtf8({ch});
-    SDL_Surface* res = TTF_RenderUTF8_Blended(
-        p_font_.get(), str.data(), SDL_Color{0xff, 0xff, 0xff, 0xff});
+    SDL_Surface* res = TTF_RenderUTF8_Blended(p_font_.get(), str.data(), SDL_Color{0xff, 0xff, 0xff, 0xff});
     if (!res) {
         throw BadFont();
     }
     return SoftwareTexture(res);
-
-    /*
-        SDL_SetRenderDrawColor(p_ren, bg.r(), bg.g(), bg.b(), bg.a());
-        SDL_RenderFillRect(p_ren, &dst);
-        int h, w;
-        SDL_QueryTexture(p_tex.get(), NULL, NULL, &w, &h);
-        dst.h = h, dst.w = w;
-
-        SDL_SetTextureColorMod(p_tex.get(), fg.r(), fg.g(), fg.b());
-        SDL_RenderCopy(p_ren, p_tex.get(), NULL, &dst);
-        SDL_SetTextureColorMod(p_tex.get(), 0xff, 0xff, 0xff);
-    */
 }
 
 } // namespace rterm

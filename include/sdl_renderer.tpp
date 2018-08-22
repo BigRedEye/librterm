@@ -35,12 +35,8 @@ public:
 
     /* copy 8 bytes */
     HardwareTexture<Api::SDL> createTexture(Vector<int, 2> size) {
-        SDL_Texture* raw = SDL_CreateTexture(
-            get(),
-            SDL_PIXELFORMAT_RGBA8888,
-            SDL_TEXTUREACCESS_TARGET,
-            size[0],
-            size[1]);
+        SDL_Texture* raw =
+            SDL_CreateTexture(get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, size[0], size[1]);
         if (!raw) {
             throw BadTexture();
         }
@@ -48,8 +44,7 @@ public:
     }
 
     HardwareTexture<Api::SDL> createTexture(const TextureView<Api::SDL>& src) {
-        HardwareTexture<Api::SDL> empty =
-            createTexture(src.rect().w(), src.rect().h());
+        HardwareTexture<Api::SDL> empty = createTexture(src.rect().w(), src.rect().h());
         setTarget(empty);
         render(src, empty.size());
         clearTarget();
@@ -92,13 +87,14 @@ public:
         }
     }
 
-    void render(
-        const TextureView<Api::SDL>& src,
-        const ScreenView& dst,
-        const Color& bg,
-        const Color& fg) {
-        fill(bg, dst);
-        setTextureColorMod(src, fg);
+    void clear() {
+        if (SDL_RenderClear(get()) == -1) {
+            throw BadRenderer();
+        }
+    }
+
+    void render(const TextureView<Api::SDL>& src, const ScreenView& dst, const Color& mod) {
+        setTextureColorMod(src, mod);
         render(src, dst);
     }
 
@@ -111,17 +107,13 @@ public:
     }
 
     void setColor(const Color& color) {
-        if (SDL_SetRenderDrawColor(
-                get(), color.r(), color.g(), color.b(), color.a()) < 0) {
+        if (SDL_SetRenderDrawColor(get(), color.r(), color.g(), color.b(), color.a()) < 0) {
             throw BadRenderer();
         }
     }
 
-    void setTextureColorMod(
-        const TextureView<Api::SDL>& src,
-        const Color& color) {
-        if (SDL_SetTextureColorMod(
-                src.texture(), color.r(), color.g(), color.b()) < 0) {
+    void setTextureColorMod(const TextureView<Api::SDL>& src, const Color& color) {
+        if (SDL_SetTextureColorMod(src.texture(), color.r(), color.g(), color.b()) < 0) {
             throw BadTexture();
         }
     }

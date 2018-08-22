@@ -33,8 +33,7 @@ SoftwareTexture::SoftwareTexture(SDL_Surface* surface)
 
 SoftwareTexture::SoftwareTexture(int w, int h) {
 #if SDL_VERSION_ATLEAST(2, 0, 5)
-    SDL_Surface* raw =
-        SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, SDL_PIXELFORMAT_RGBA32);
+    SDL_Surface* raw = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, SDL_PIXELFORMAT_RGBA32);
 #else
     Uint32 rmask, gmask, bmask, amask;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -48,8 +47,7 @@ SoftwareTexture::SoftwareTexture(int w, int h) {
     bmask = 0x00ff0000;
     amask = 0xff000000;
 #endif
-    SDL_Surface* raw =
-        SDL_CreateRGBSurface(0, w, h, 32, rmask, gmask, bmask, amask);
+    SDL_Surface* raw = SDL_CreateRGBSurface(0, w, h, 32, rmask, gmask, bmask, amask);
 #endif
     if (!raw) {
         throw BadTexture();

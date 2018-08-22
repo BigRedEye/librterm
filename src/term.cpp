@@ -55,8 +55,7 @@ bool Term::isRunning() const {
 }
 
 void Term::delay(uint32_t msec) {
-    auto until = std::chrono::high_resolution_clock::now() +
-                 std::chrono::milliseconds(msec);
+    auto until = std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(msec);
     while (std::chrono::high_resolution_clock::now() < until) {
         poll();
         if (!isRunning()) {
@@ -100,7 +99,7 @@ Term& Term::setTitle(const std::string& title) {
 Term& Term::setIcon(const std::string& path) {
     SoftwareTexture pIcon(IMG_Load(path.c_str()));
     if (!pIcon) {
-        Logger(Logger::CRITICAL) << IMG_GetError();
+        throw Exception();
     } else {
         window_.setIcon(pIcon);
         SDL_SetWindowIcon(window_.get(), pIcon.get());
@@ -199,8 +198,7 @@ void Term::setFullscreen(bool fullscr) {
         return;
     }
 
-    SDL_SetWindowFullscreen(
-        window_.get(), (fullscr ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
+    SDL_SetWindowFullscreen(window_.get(), (fullscr ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
 
     /* set correct resolution */
     ncols = prevCols, nrows = prevRows;

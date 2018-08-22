@@ -9,8 +9,7 @@ Window::Window(int w, int h) {
     if (Api::api == Api::GL) {
         flags |= SDL_WINDOW_OPENGL;
     }
-    SDL_Window* win = SDL_CreateWindow(
-        "rterm", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flags);
+    SDL_Window* win = SDL_CreateWindow("rterm", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flags);
     if (!win) {
         throw Exception();
     }
@@ -57,8 +56,7 @@ Vector<int, 2> Window::size() const {
 }
 
 void Window::initSDL() {
-    SDL_Renderer* ren = SDL_CreateRenderer(
-        get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+    SDL_Renderer* ren = SDL_CreateRenderer(get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
     if (!ren) {
         ren = SDL_CreateRenderer(window_.get(), -1, 0);
     }

@@ -135,8 +135,7 @@ std::vector<std::pair<ui32, ui32>> VirtualConsole::getUpdatedChars(bool force) {
 }
 
 bool Char::operator==(const Char& other) const {
-    return this->c() == other.c() && this->bg() == other.bg() &&
-           this->fg() == other.fg();
+    return this->c() == other.c() && this->bg() == other.bg() && this->fg() == other.fg();
 }
 
 bool Char::operator!=(const Char& other) const {

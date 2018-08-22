@@ -1,4 +1,5 @@
 #include "tilefont.h"
+#include "error.h"
 #include "logger.h"
 
 #include <SDL2/SDL_image.h>
@@ -19,7 +20,7 @@ TileFont::TileFont(const std::string& path, ui32 _w, ui32 _h)
     }
     p_tilemap_ = SdlHolder<SDL_Surface>(IMG_Load(path.c_str()));
     if (!p_tilemap_.get()) {
-        Logger(Logger::ERROR) << IMG_GetError();
+        throw BadFont();
     }
 }
 

@@ -16,8 +16,7 @@ void FrameRateCounter::nextFrame(highResClock::time_point pt) {
 }
 
 long double FrameRateCounter::getFps() const {
-    std::chrono::duration<long double, std::ratio<1>> deltaTime =
-        timePts_.back() - timePts_.front();
+    std::chrono::duration<long double, std::ratio<1>> deltaTime = timePts_.back() - timePts_.front();
     if (deltaTime.count() < 1e-8) {
         return std::numeric_limits<long double>::infinity();
     }
