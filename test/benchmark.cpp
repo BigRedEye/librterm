@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
         terminal.setFullscreen(false);
         terminal.setResizable(true);
         int flooditers = 5000;
-        int randomiters = 4000;
+        int randomiters = 40000;
         int frames = 0;
         std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
         for (int iters = 0; iters < flooditers; ++iters) {

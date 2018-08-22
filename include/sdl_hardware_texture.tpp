@@ -44,6 +44,9 @@ public:
     }
 
     Vector<int, 2> size() const {
+        if (!holder_) {
+            return {0, 0};
+        }
         if (!holder_->cachedSize_) {
             int w = 0;
             int h = 0;
@@ -61,6 +64,10 @@ public:
 
     int h() const {
         return size()[1];
+    }
+
+    void enableBlending() {
+        SDL_SetTextureBlendMode(get(), SDL_BLENDMODE_BLEND);
     }
 
 private:
@@ -127,6 +134,10 @@ public:
 
     Vector<i32, 2> size() const {
         return base_.size();
+    }
+
+    void enableBlending() {
+        base_.enableBlending();
     }
 
 private:

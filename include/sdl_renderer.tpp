@@ -59,7 +59,15 @@ public:
         return HardwareTexture<Api::SDL>(raw);
     }
 
-    void resizeBuffer(Vector<int, 2> size) {
+    Vector<i32, 2> maxTextureSize() {
+        if (!info_) {
+            info_ = std::make_unique<SDL_RendererInfo>();
+            SDL_GetRendererInfo(get(), info_.get());
+        }
+        return {info_->max_texture_width, info_->max_texture_height};
+    }
+
+    void resizeBuffer(Vector<i32, 2> size) {
         if (!buffered_) {
             return;
         }
@@ -75,22 +83,31 @@ public:
     }
 
     void flush() {
-        SDL_RenderPresent(get());
+        present();
         if (buffered_) {
             clearBufferTarget();
-            SDL_RenderClear(get());
-            if (SDL_RenderCopy(get(), buffer_.get(), nullptr, nullptr)) {
-                throw BadRenderer();
-            }
-            SDL_RenderPresent(get());
+            clear();
+            render(buffer_, ScreenView());
+            present();
             setBufferTarget();
         }
+    }
+
+    void present() {
+        SDL_RenderPresent(get());
     }
 
     void clear() {
         if (SDL_RenderClear(get()) == -1) {
             throw BadRenderer();
         }
+    }
+
+    void clear(const TextureView<Api::SDL>& view) {
+        setTarget(view);
+        clear();
+        present();
+        setBufferTarget();
     }
 
     void render(const TextureView<Api::SDL>& src, const ScreenView& dst, const Color& mod) {
@@ -101,7 +118,12 @@ public:
     void render(const TextureView<Api::SDL>& src, const ScreenView& dst) {
         SDL_Rect dstRect = dst.rect().sdl();
         SDL_Rect srcRect = src.rect().sdl();
-        if (SDL_RenderCopy(get(), src.texture(), &srcRect, &dstRect) < 0) {
+        SDL_Rect* dstPtr = &dstRect;
+        SDL_Rect* srcPtr = &srcRect;
+        if (dst.empty()) {
+            dstPtr = nullptr;
+        }
+        if (SDL_RenderCopy(get(), src.texture(), srcPtr, dstPtr) < 0) {
             throw BadRenderer();
         }
     }
@@ -146,6 +168,13 @@ public:
         }
     }
 
+    void copyTextureToTexture(const TextureView<Api::SDL>& src, const TextureView<Api::SDL>& dst) {
+        setTarget(dst);
+        render(src, dst.rect());
+        present();
+        setBufferTarget();
+    }
+
 private:
     void setBufferTarget() {
         if (buffered_) {
@@ -175,6 +204,7 @@ private:
     bool buffered_;
     SdlHolder<SDL_Renderer> renderer_;
     HardwareTexture<Api::SDL> buffer_;
+    std::unique_ptr<SDL_RendererInfo> info_;
 };
 
 } // namespace rterm

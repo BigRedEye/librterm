@@ -25,7 +25,7 @@ Term::Term()
 Term::Term(const TermFormat& format)
     : console_(format.w(), format.h())
     , window_(400, 400)
-    , glyphCache_(window_.renderer(), new TTFont)
+    , glyphCache_(window_.renderer(), std::make_unique<TTFont>())
     , quitRequested_(false)
     , fgCol_(0x00, 0xff, 0x00)
     , bgCol_(0x00, 0x00, 0x00) {

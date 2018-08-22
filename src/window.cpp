@@ -56,9 +56,9 @@ Vector<int, 2> Window::size() const {
 }
 
 void Window::initSDL() {
-    SDL_Renderer* ren = SDL_CreateRenderer(get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+    SDL_Renderer* ren = SDL_CreateRenderer(get(), -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
     if (!ren) {
-        ren = SDL_CreateRenderer(window_.get(), -1, 0);
+        ren = SDL_CreateRenderer(window_.get(), -1, SDL_RENDERER_PRESENTVSYNC);
     }
     if (!ren) {
         throw Exception();

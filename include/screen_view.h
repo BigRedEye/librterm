@@ -36,6 +36,10 @@ public:
         return rect_;
     }
 
+    bool empty() const {
+        return rect().w() == 0 || rect().h() == 0;
+    }
+
 private:
     iRect rect_;
 };

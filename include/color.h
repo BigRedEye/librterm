@@ -28,7 +28,7 @@ public:
      * @param _b blue channel
      * @param _a alpha channel
      */
-    explicit Color(ui8 _r = 0, ui8 _g = 0, ui8 _b = 0, ui8 _a = 0);
+    Color(ui8 _r = 0, ui8 _g = 0, ui8 _b = 0, ui8 _a = 0);
 
     bool operator==(const Color& other) const;
     bool operator!=(const Color& other) const;

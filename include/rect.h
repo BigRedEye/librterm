@@ -14,7 +14,7 @@ template<typename T, size_t Dim>
 class Vector {
 public:
     Vector() {
-        std::fill(data_.begin(), data_.end(), T{});
+        data_.fill(0);
     }
 
     Vector(const std::initializer_list<T>& initList) {
@@ -39,7 +39,7 @@ public:
 
     template<typename U>
     Vector& operator=(Vector<U, Dim>&& other) {
-        std::move(other.data_.begin(), other.data_.end(), data_.begin());
+        data_.swap(other.data_);
         return *this;
     }
 

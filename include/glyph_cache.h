@@ -16,8 +16,8 @@ class GlyphCache {
 public:
     template<typename T>
     GlyphCache(Renderer<Api::api>& renderer, T&& font)
-        : font_(std::forward<T>(font))
-        , renderer_(renderer) {
+        : renderer_(renderer) {
+        reset(std::forward<T>(font));
     }
 
     void setFont(const std::string& path, ui32 sz);
@@ -33,6 +33,7 @@ private:
     void reset(T&& t) {
         cache_.clear();
         font_ = std::forward<T>(t);
+        addAtlas();
     }
 
 private:
@@ -89,12 +90,18 @@ private:
     struct Cache {
         std::vector<HardwareTexture<Api::api>> textures;
         GlyphMapping<CacheHit> mapping;
+        Vector<i32, 2> nextEmpty_;
 
         void clear() {
             textures.clear();
             mapping.clear();
+            nextEmpty_ = {0, 0};
         }
     };
+
+private:
+    void addAtlas();
+    void writeGlyph(const SoftwareTexture& texture);
 
     Cache cache_;
     std::unique_ptr<Font> font_;
