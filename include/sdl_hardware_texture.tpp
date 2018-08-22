@@ -125,7 +125,7 @@ public:
         return base_.h();
     }
 
-    Vector<int, 2> size() const {
+    Vector<i32, 2> size() const {
         return base_.size();
     }
 

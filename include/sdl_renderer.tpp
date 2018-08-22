@@ -16,8 +16,8 @@ public:
         , renderer_(renderer) {
         if (renderer_) {
             if (buffered_) {
-                int w;
-                int h;
+                i32 w;
+                i32 h;
                 SDL_GetRendererOutputSize(get(), &w, &h);
                 resizeBuffer({w, h});
             }

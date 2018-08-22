@@ -4,7 +4,7 @@
 
 namespace rterm {
 
-FrameRateCounter::FrameRateCounter(size_t framesToStore)
+FrameRateCounter::FrameRateCounter(ui32 framesToStore)
     : framesToStore_(framesToStore) {
 }
 

@@ -38,13 +38,13 @@ public:
      * @brief font width
      * @return width of a single character
      */
-    virtual size_t w() const = 0;
+    virtual ui32 w() const = 0;
 
     /**
      * @brief font height
      * @return height of a single character
      */
-    virtual size_t h() const = 0;
+    virtual ui32 h() const = 0;
 };
 
 } // namespace rterm

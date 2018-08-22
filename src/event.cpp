@@ -5,8 +5,8 @@ namespace rterm {
 
 namespace events {
 
-inline int eventTypeFromSDLEvent(SDL_Event* event) noexcept {
-    int type = EventType::Unknown;
+inline i32 eventTypeFromSDLEvent(SDL_Event* event) noexcept {
+    i32 type = EventType::Unknown;
     if (!event) {
         return type;
     }
@@ -69,11 +69,11 @@ Event::Event(SDL_Event* event)
     : type_(eventTypeFromSDLEvent(event)) {
 }
 
-Event::Event(int etype)
+Event::Event(i32 etype)
     : type_(etype) {
 }
 
-int Event::type() const {
+i32 Event::type() const {
     return type_;
 }
 
@@ -91,11 +91,11 @@ WindowEvent::WindowEvent(SDL_Event* ev)
     }
 }
 
-int WindowEvent::x() const {
+i32 WindowEvent::x() const {
     return x_;
 }
 
-int WindowEvent::y() const {
+i32 WindowEvent::y() const {
     return y_;
 }
 
@@ -145,19 +145,19 @@ MouseMoveEvent::MouseMoveEvent(SDL_Event* event)
     }
 }
 
-int MouseMoveEvent::x() const {
+i32 MouseMoveEvent::x() const {
     return x_;
 }
 
-int MouseMoveEvent::y() const {
+i32 MouseMoveEvent::y() const {
     return y_;
 }
 
-int MouseMoveEvent::xrel() const {
+i32 MouseMoveEvent::xrel() const {
     return x_;
 }
 
-int MouseMoveEvent::yrel() const {
+i32 MouseMoveEvent::yrel() const {
     return y_;
 }
 
@@ -195,11 +195,11 @@ MouseWheelEvent::MouseWheelEvent(SDL_Event* event)
     }
 }
 
-int MouseWheelEvent::dx() const {
+i32 MouseWheelEvent::dx() const {
     return dx_;
 }
 
-int MouseWheelEvent::dy() const {
+i32 MouseWheelEvent::dy() const {
     return dy_;
 }
 

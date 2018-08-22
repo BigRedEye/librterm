@@ -2,33 +2,31 @@
 
 namespace rterm {
 
+const Char VirtualConsole::space_{' '};
+
 VirtualConsole::VirtualConsole()
     : VirtualConsole(0, 0) {
 }
 
-VirtualConsole::VirtualConsole(size_t ncols, size_t nrows)
+VirtualConsole::VirtualConsole(ui32 ncols, ui32 nrows)
     : cursorX_(0)
     , cursorY_(0) {
     data_.assign(nrows, std::vector<Char>(ncols, ' '));
     mask_.assign(nrows, std::vector<char>(ncols, false));
 }
 
-size_t VirtualConsole::cols() const {
+ui32 VirtualConsole::cols() const {
     if (data_.empty()) {
         return 0;
     }
     return data_[0].size();
 }
 
-size_t VirtualConsole::rows() const {
+ui32 VirtualConsole::rows() const {
     return data_.size();
 }
 
-void VirtualConsole::resize(
-    size_t ncols,
-    size_t nrows,
-    Color bgColor,
-    Color fgColor) {
+void VirtualConsole::resize(ui32 ncols, ui32 nrows, Color bgColor, Color fgColor) {
     Char defaultChar(' ', bgColor, fgColor);
     data_.resize(nrows, std::vector<Char>(ncols, defaultChar));
     mask_.resize(nrows, std::vector<char>(ncols, true));
@@ -44,21 +42,21 @@ void VirtualConsole::resize(
     cursorY_ = std::min(cursorY_, nrows);
 }
 
-Char VirtualConsole::get(size_t x, size_t y) const {
+const Char& VirtualConsole::get(ui32 x, ui32 y) const {
     if (x < cols() && y < rows()) {
         return data_[y][x];
     }
-    return Char(' ');
+    return space_;
 }
 
-bool VirtualConsole::getMask(size_t x, size_t y) const {
+bool VirtualConsole::getMask(ui32 x, ui32 y) const {
     if (x < cols() && y < rows()) {
         return mask_[y][x];
     }
     return false;
 }
 
-void VirtualConsole::set(size_t x, size_t y, Char c) {
+void VirtualConsole::set(ui32 x, ui32 y, const Char& c) {
     if (c == data_[y][x]) {
         return;
     }
@@ -67,15 +65,15 @@ void VirtualConsole::set(size_t x, size_t y, Char c) {
     mask_[y][x] = true;
 }
 
-size_t VirtualConsole::cursorX() const {
+ui32 VirtualConsole::cursorX() const {
     return cursorX_;
 }
 
-size_t VirtualConsole::cursorY() const {
+ui32 VirtualConsole::cursorY() const {
     return cursorY_;
 }
 
-void VirtualConsole::setCursorPosition(size_t x, size_t y) {
+void VirtualConsole::setCursorPosition(ui32 x, ui32 y) {
     assert(x <= cols());
     assert(y <= rows());
 
@@ -83,7 +81,7 @@ void VirtualConsole::setCursorPosition(size_t x, size_t y) {
     cursorY_ = y;
 }
 
-void VirtualConsole::addChar(char_t c) {
+void VirtualConsole::addChar(ui32 c) {
     if (cols() * rows() <= 0) {
         return;
     }
@@ -101,12 +99,7 @@ void VirtualConsole::addChar(char_t c) {
         } else {
             --cursorX_;
         }
-        set(cursorX_,
-            cursorY_,
-            Char(
-                ' ',
-                data_[cursorY_][cursorX_].bg(),
-                data_[cursorY_][cursorX_].fg()));
+        set(cursorX_, cursorY_, Char(' ', data_[cursorY_][cursorX_].bg(), data_[cursorY_][cursorX_].fg()));
         break;
     case '\t':
         for (int i = 0; i < 4; ++i) {
@@ -114,12 +107,7 @@ void VirtualConsole::addChar(char_t c) {
         }
         break;
     default:
-        set(cursorX_,
-            cursorY_,
-            Char(
-                c,
-                data_[cursorY_][cursorX_].bg(),
-                data_[cursorY_][cursorX_].fg()));
+        set(cursorX_, cursorY_, Char(c, data_[cursorY_][cursorX_].bg(), data_[cursorY_][cursorX_].fg()));
         ++cursorX_;
         if (cursorX_ >= cols()) {
             cursorX_ = 0;
@@ -133,11 +121,10 @@ void VirtualConsole::addChar(char_t c) {
     cursorY_ = (cursorY_ + 2 * rows()) % rows();
 }
 
-std::vector<std::pair<size_t, size_t>> VirtualConsole::getUpdatedChars(
-    bool force) {
-    std::vector<std::pair<size_t, size_t>> result;
-    for (size_t j = 0; j < rows(); ++j) {
-        for (size_t i = 0; i < cols(); ++i) {
+std::vector<std::pair<ui32, ui32>> VirtualConsole::getUpdatedChars(bool force) {
+    std::vector<std::pair<ui32, ui32>> result;
+    for (ui32 j = 0; j < rows(); ++j) {
+        for (ui32 i = 0; i < cols(); ++i) {
             if (mask_[j][i] || force) {
                 mask_[j][i] = false;
                 result.push_back(std::make_pair(i, j));

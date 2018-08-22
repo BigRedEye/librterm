@@ -8,7 +8,7 @@ TileFont::TileFont()
     : Font() {
 }
 
-TileFont::TileFont(const std::string& path, size_t _w, size_t _h)
+TileFont::TileFont(const std::string& path, ui32 _w, ui32 _h)
     : Font()
     , w_(_w)
     , h_(_h) {
@@ -32,11 +32,11 @@ TileFont& TileFont::operator=(TileFont&& rhs) {
     return *this;
 }
 
-size_t TileFont::w() const {
+ui32 TileFont::w() const {
     return w_;
 }
 
-size_t TileFont::h() const {
+ui32 TileFont::h() const {
     return h_;
 }
 

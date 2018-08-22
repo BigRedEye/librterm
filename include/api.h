@@ -1,9 +1,11 @@
 #pragma once
 
+#include "util.h"
+
 namespace rterm {
 
 struct Api {
-    enum Type : unsigned char {
+    enum Type : ui8 {
         GL = 0,
         SDL = 1,
     };

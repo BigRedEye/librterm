@@ -58,9 +58,9 @@ Key& Key::setChar(char_t c) {
     return *this;
 }
 
-Key& Key::addMod(Uint16 mod) {
-    Uint16 mask = 1;
-    for (int i = 0; i < 16; ++i, mask <<= 1) {
+Key& Key::addMod(ui32 mod) {
+    ui32 mask = 1;
+    for (int i = 0; i < 32; ++i, mask <<= 1) {
         if (mod & mask) {
             switch (mask) {
             case KMOD_LSHIFT:

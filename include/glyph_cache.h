@@ -4,6 +4,7 @@
 #include "font.h"
 #include "renderer.h"
 #include "texture_view.h"
+#include "util.h"
 
 #include <memory>
 #include <unordered_map>
@@ -19,11 +20,11 @@ public:
         , renderer_(renderer) {
     }
 
-    void setFont(const std::string& path, size_t sz);
-    void setFont(const std::string& path, size_t w, size_t h);
+    void setFont(const std::string& path, ui32 sz);
+    void setFont(const std::string& path, ui32 w, ui32 h);
 
-    int w();
-    int h();
+    i32 w();
+    i32 h();
 
     TextureView<Api::api> getGlyph(char_t ch);
 

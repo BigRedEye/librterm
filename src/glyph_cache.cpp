@@ -4,19 +4,19 @@
 
 namespace rterm {
 
-void GlyphCache::setFont(const std::string &path, size_t sz) {
+void GlyphCache::setFont(const std::string &path, ui32 sz) {
     reset(std::make_unique<TTFont>(path, sz));
 }
 
-void GlyphCache::setFont(const std::string &path, size_t w, size_t h) {
+void GlyphCache::setFont(const std::string &path, ui32 w, ui32 h) {
     reset(std::make_unique<TileFont>(path, w, h));
 }
 
-int GlyphCache::w() {
+i32 GlyphCache::w() {
     return font_->w();
 }
 
-int GlyphCache::h() {
+i32 GlyphCache::h() {
     return font_->h();
 }
 

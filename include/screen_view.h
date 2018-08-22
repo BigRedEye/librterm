@@ -12,7 +12,7 @@ public:
         : rect_(0, 0, 0, 0) {
     }
 
-    ScreenView(Vector<int, 2> size)
+    ScreenView(Vector<i32, 2> size)
         : rect_(0, 0, size[0], size[1]) {
     }
 
@@ -24,7 +24,7 @@ public:
         : ScreenView(iRect{rect.x, rect.y, rect.w, rect.h}) {
     }
 
-    ScreenView(int x, int y, int w, int h)
+    ScreenView(i32 x, i32 y, i32 w, i32 h)
         : ScreenView(iRect{x, y, w, h}) {
     }
 

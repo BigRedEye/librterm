@@ -10,14 +10,11 @@ TTFont::TTFont()
     : Font() {
 }
 
-TTFont::TTFont(const std::string& path, size_t sz)
+TTFont::TTFont(const std::string& path, ui32 sz)
     : TTFont() {
-    if (!TTF_WasInit()) {
-        TTF_Init();
-    }
-    p_font_ = SdlHolder<TTF_Font>(TTF_OpenFont(path.c_str(), sz));
+    p_font_ = SdlHolder<TTF_Font>(TTF_OpenFont(path.c_str(), static_cast<i32>(sz)));
     if (!p_font_.get()) {
-        Logger(Logger::ERROR) << TTF_GetError();
+        throw BadFont();
     }
 }
 
@@ -26,7 +23,7 @@ TTFont& TTFont::operator=(TTFont&& rhs) {
     return *this;
 }
 
-size_t TTFont::w() const {
+ui32 TTFont::w() const {
     if (!p_font_.get()) {
         return 8;
     }
@@ -37,7 +34,7 @@ size_t TTFont::w() const {
     return w;
 }
 
-size_t TTFont::h() const {
+ui32 TTFont::h() const {
     if (!p_font_.get()) {
         return 8;
     }

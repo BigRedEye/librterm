@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "util.h"
+
 #include <assert.h>
 #include <cstdarg>
 #include <string>
@@ -15,7 +17,6 @@
  * @see https://github.com/BigRedEye/rterm
  */
 namespace rterm {
-typedef char32_t char_t;
 
 std::u32string Utf8ToUtf32(const std::string& str);
 

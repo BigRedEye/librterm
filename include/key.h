@@ -95,10 +95,11 @@ private:
      * @return reference to this object
      * @see keycode.h for the list of key modifiers
      */
-    Key& addMod(Uint16 mod);
+    Key& addMod(ui32 mod);
 
+private:
     SDL_Keycode code_; ///< real code value
-    int mod_;          ///< OR'ed KeyMod constants
+    ui32 mod_;         ///< OR'ed KeyMod constants
     char_t unicode_;   ///< unicode char
 
     /// @endcond

@@ -343,7 +343,11 @@ private:
      * @param x position
      * @param y position
      */
-    void redraw(size_t x, size_t y);
+    void redrawGlyph(size_t x, size_t y);
+
+    void redrawBackground(const std::vector<std::pair<ui32, ui32>>& updates);
+
+    void redrawForeground(const std::vector<std::pair<ui32, ui32>>& updates);
 
     /**
      * @brief Get reference to Char at (x, y)

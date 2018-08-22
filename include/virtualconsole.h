@@ -11,126 +11,20 @@
 
 namespace rterm {
 
-class Char;
-
-/**
- * @brief The VirtualConsole class
- *
- * This class represents virtual console as 2d-array of characters
- */
-class VirtualConsole {
-public:
-    /**
-     * @brief Create empty VirtualConsole
-     */
-    VirtualConsole();
-
-    /**
-     * @brief Create VirtualConsole of fixed size
-     * @param ncols number of columns
-     * @param nrows number of rows
-     */
-    VirtualConsole(size_t ncols, size_t nrows);
-
-    /**
-     * @brief Resize VirtualConsole
-     * @param ncols new number of columns
-     * @param nrows new number of rows
-     * @param bgColor default background color
-     * @param fgColor default foreground color
-     */
-    void resize(size_t ncols, size_t nrows, Color bgColor, Color fgColor);
-
-    /**
-     * @brief Gen number of columns
-     * @return number of columns
-     */
-    size_t cols() const;
-
-    /**
-     * @brief Gen number of rows
-     * @return number of rows
-     */
-    size_t rows() const;
-
-    /**
-     * @brief Get char at specific position
-     * @param x position
-     * @param y position
-     * @return Char at (x, y)
-     * @warning this function doesn't provide bounds checking
-     */
-    Char get(size_t x, size_t y) const;
-
-    /**
-     * @brief Set Char at specific position
-     * @param x position
-     * @param y position
-     * @param c character
-     * @warning this function doesn't provide bounds checking
-     */
-    void set(size_t x, size_t y, Char c);
-
-    /**
-     * @brief Cursor X position
-     * @return Cursor X position
-     */
-    size_t cursorX() const;
-
-    /**
-     * @brief Cursor Y position
-     * @return Cursor Y position
-     */
-    size_t cursorY() const;
-
-    /**
-     * @brief Set cursor position
-     * @param x new x position
-     * @param y new y position
-     */
-    void setCursorPosition(size_t x, size_t y);
-
-    /**
-     * @brief Add char at cursor position and move cursor forward
-     * @param c character
-     */
-    void addChar(char_t c);
-
-    /**
-     * @brief Get updated positions since last getUpdatedChars call
-     * @param force if true, returns whole console
-     * @return std::vector of updated positions, where positions are
-     * std::pair<size_t, size_t>(x, y)
-     */
-    std::vector<std::pair<size_t, size_t>> getUpdatedChars(bool force = false);
-
-private:
-    bool getMask(size_t x, size_t y) const;
-
-    std::vector<std::vector<Char>> data_; ///< array of characters
-    std::vector<std::vector<char>>
-        mask_;       ///< mask_[i][j] = true, if character at (j, i) was uptated
-    size_t cursorX_, ///< cursor position
-        cursorY_;    ///< cursor position
-};
-
 /**
  * @brief The Char class
  *
- * This class contains UTF8 character and back- and fore- ground colors
+ * This class contains UTF32 character and back- and fore- ground colors
  */
 class Char {
 public:
     /**
      * @brief Constructs Char objects
-     * @param ch UTF8 character
+     * @param ch UTF32 character
      * @param bg background color
      * @param fg foreground color
      */
-    Char(
-        char_t ch = 0,
-        Color bg = Color(0, 0, 0),
-        Color fg = Color(255, 255, 255))
+    Char(char_t ch = 0, Color bg = Color::Black, Color fg = Color::White)
         : ch_(ch)
         , bg_(bg)
         , fg_(fg) {
@@ -184,6 +78,110 @@ private:
     char_t ch_; ///< real UTF8 char
     Color bg_;  ///< background color
     Color fg_;  ///< foreground color
+};
+
+/**
+ * @brief The VirtualConsole class
+ *
+ * This class represents virtual console as 2d-array of characters
+ */
+class VirtualConsole {
+public:
+    /**
+     * @brief Create empty VirtualConsole
+     */
+    VirtualConsole();
+
+    /**
+     * @brief Create VirtualConsole of fixed size
+     * @param ncols number of columns
+     * @param nrows number of rows
+     */
+    VirtualConsole(ui32 ncols, ui32 nrows);
+
+    /**
+     * @brief Resize VirtualConsole
+     * @param ncols new number of columns
+     * @param nrows new number of rows
+     * @param bgColor default background color
+     * @param fgColor default foreground color
+     */
+    void resize(ui32 ncols, ui32 nrows, Color bgColor, Color fgColor);
+
+    /**
+     * @brief Gen number of columns
+     * @return number of columns
+     */
+    ui32 cols() const;
+
+    /**
+     * @brief Gen number of rows
+     * @return number of rows
+     */
+    ui32 rows() const;
+
+    /**
+     * @brief Get char at specific position
+     * @param x position
+     * @param y position
+     * @return Char at (x, y)
+     * @warning this function doesn't provide bounds checking
+     */
+    const Char& get(ui32 x, ui32 y) const;
+
+    /**
+     * @brief Set Char at specific position
+     * @param x position
+     * @param y position
+     * @param c character
+     * @warning this function doesn't provide bounds checking
+     */
+    void set(ui32 x, ui32 y, const Char& c);
+
+    /**
+     * @brief Cursor X position
+     * @return Cursor X position
+     */
+    ui32 cursorX() const;
+
+    /**
+     * @brief Cursor Y position
+     * @return Cursor Y position
+     */
+    ui32 cursorY() const;
+
+    /**
+     * @brief Set cursor position
+     * @param x new x position
+     * @param y new y position
+     */
+    void setCursorPosition(ui32 x, ui32 y);
+
+    /**
+     * @brief Add char at cursor position and move cursor forward
+     * @param c character
+     */
+    void addChar(ui32 c);
+
+    /**
+     * @brief Get updated positions since last getUpdatedChars call
+     * @param force if true, returns whole console
+     * @return std::vector of updated positions, where positions are
+     * std::pair<size_t, size_t>(x, y)
+     */
+    std::vector<std::pair<ui32, ui32>> getUpdatedChars(bool force = false);
+
+private:
+    bool getMask(ui32 x, ui32 y) const;
+
+private:
+    static const Char space_;
+
+    std::vector<std::vector<Char>> data_; ///< array of characters
+    std::vector<std::vector<char>> mask_;
+    ///< mask_[i][j] = true, if character at (j, i) was uptated
+    ui32 cursorX_; ///< cursor position
+    ui32 cursorY_; ///< cursor position
 };
 
 } // namespace rterm

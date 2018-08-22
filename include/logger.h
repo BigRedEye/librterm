@@ -50,8 +50,9 @@ public:
     template<typename T>
     inline Logger& operator<<(const T& msg) {
         std::cout << msg;
-        if (delim_)
+        if (delim_) {
             std::cout << delim_;
+        }
         return *this;
     }
 

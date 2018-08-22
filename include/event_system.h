@@ -2,6 +2,7 @@
 
 #include "event.h"
 #include "key.h"
+#include "util.h"
 
 #include <SDL2/SDL_events.h>
 
@@ -18,13 +19,13 @@ public:
     ~EventSystem();
 
     template<typename F>
-    inline void registerCallback(int eventType, F&& callable) {
+    inline void registerCallback(i32 eventType, F&& callable) {
         callbacks_[eventType].emplace_back(callable);
     }
 
     bool quitRequested() const;
     void poll();
-    int eventHandler(SDL_Event* ev);
+    i32 eventHandler(SDL_Event* ev);
 
     Key getKey();
     char_t getChar();

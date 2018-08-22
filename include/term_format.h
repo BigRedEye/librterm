@@ -1,27 +1,27 @@
 #pragma once
 
-#include <stdint.h>
+#include "util.h"
 
 namespace rterm {
 
 class TermFormat {
 public:
-    TermFormat(size_t w, size_t h)
+    TermFormat(std::size_t w, std::size_t h)
         : w_(w)
         , h_(h) {
     }
 
-    inline size_t w() const {
+    inline std::size_t w() const {
         return w_;
     }
 
-    inline size_t h() const {
+    inline std::size_t h() const {
         return h_;
     }
 
 private:
-    size_t w_;
-    size_t h_;
+    std::size_t w_;
+    std::size_t h_;
 };
 
 } // namespace rterm

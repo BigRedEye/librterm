@@ -42,7 +42,7 @@ std::unique_ptr<events::Event> getKeyDownEvent(SDL_Event* ev) {
     return std::unique_ptr<events::Event>(event);
 }
 
-int EventSystem::eventHandler(SDL_Event* ev) {
+i32 EventSystem::eventHandler(SDL_Event* ev) {
     using namespace rterm::events;
 
     std::unique_ptr<Event> event;

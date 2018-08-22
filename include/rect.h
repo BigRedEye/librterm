@@ -1,5 +1,7 @@
 #pragma once
 
+#include "util.h"
+
 #include <SDL2/SDL_rect.h>
 
 #include <algorithm>
@@ -134,7 +136,8 @@ private:
     Vector<T, 2> size_;
 };
 
-using iRect = Rect<int>;
+using iRect = Rect<i32>;
+using uRect = Rect<ui32>;
 using fRect = Rect<float>;
 using dRect = Rect<double>;
 

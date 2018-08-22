@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "util.h"
+
 #include <SDL2/SDL_pixels.h>
 
 #include <cstdint>
@@ -17,7 +19,7 @@ namespace rterm {
  *
  * Object of this class is a color in format RGBA8888 (8 bits for each channel)
  */
-class Color {
+class alignas(ui32) Color {
 public:
     /**
      * @brief Constuctor for Color object
@@ -26,11 +28,7 @@ public:
      * @param _b blue channel
      * @param _a alpha channel
      */
-    explicit Color(
-        uint8_t _r = 0,
-        uint8_t _g = 0,
-        uint8_t _b = 0,
-        uint8_t _a = 0);
+    explicit Color(ui8 _r = 0, ui8 _g = 0, ui8 _b = 0, ui8 _a = 0);
 
     bool operator==(const Color& other) const;
     bool operator!=(const Color& other) const;
@@ -39,47 +37,43 @@ public:
      * @brief convert Color to SDL_Color
      * @return SDL_Color represents the same color as this object
      */
-    SDL_Color toSdlColor() const {
+    inline SDL_Color toSdlColor() const {
         return SDL_Color{r(), g(), b(), a()};
     }
 
     /**
-     * @brief get reference to red component
-     * @return reference to red component
+     * @brief set red component
      */
-    uint8_t& r() {
-        return r_;
+    inline void r(ui8 _r) {
+        r_ = _r;
     }
 
     /**
      * @brief get reference to green component
-     * @return reference to green component
      */
-    uint8_t& g() {
-        return g_;
+    inline void g(ui8 _g) {
+        g_ = _g;
     }
 
     /**
      * @brief get reference to blue component
-     * @return reference to blue component
      */
-    uint8_t& b() {
-        return b_;
+    inline void b(ui8 _b) {
+        b_ = _b;
     }
 
     /**
      * @brief get reference to alpha component
-     * @return reference to alpha component
      */
-    uint8_t& a() {
-        return a_;
+    inline void a(ui8 _a) {
+        a_ = _a;
     }
 
     /**
      * @brief get red component
      * @return red component
      */
-    uint8_t r() const {
+    ui8 r() const {
         return r_;
     }
 
@@ -87,7 +81,7 @@ public:
      * @brief get green component
      * @return green component
      */
-    uint8_t g() const {
+    ui8 g() const {
         return g_;
     }
 
@@ -95,7 +89,7 @@ public:
      * @brief get blue component
      * @return blue component
      */
-    uint8_t b() const {
+    ui8 b() const {
         return b_;
     }
 
@@ -103,15 +97,26 @@ public:
      * @brief get alpha component
      * @return alpha component
      */
-    uint8_t a() const {
+    ui8 a() const {
         return a_;
     }
 
+    ui32 rgba() const;
+
+    static const Color Black;
+    static const Color Red;
+    static const Color Green;
+    static const Color Yellow;
+    static const Color Blue;
+    static const Color Magenta;
+    static const Color Cyan;
+    static const Color White;
+
 private:
-    uint8_t r_; ///< red channel
-    uint8_t g_; ///< green channel
-    uint8_t b_; ///< blue channel
-    uint8_t a_; ///< alpha channel
+    ui8 r_; ///< red channel
+    ui8 g_; ///< green channel
+    ui8 b_; ///< blue channel
+    ui8 a_; ///< alpha channel
 };
 
 } // namespace rterm

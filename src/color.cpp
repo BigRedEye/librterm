@@ -2,7 +2,7 @@
 
 namespace rterm {
 
-Color::Color(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a)
+Color::Color(ui8 _r, ui8 _g, ui8 _b, ui8 _a)
     : r_(_r)
     , g_(_g)
     , b_(_b)

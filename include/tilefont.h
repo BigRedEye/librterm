@@ -34,7 +34,7 @@ public:
      * @param _w width of a tile in pixels
      * @param _h height of a tile in pixels
      */
-    TileFont(const std::string& path, size_t _w, size_t _h);
+    TileFont(const std::string& path, ui32 _w, ui32 _h);
 
     /**
      * @brief Move operator=
@@ -49,13 +49,13 @@ public:
      * @brief Font width
      * @return width of a tile
      */
-    virtual size_t w() const override;
+    virtual ui32 w() const override;
 
     /**
      * @brief Font height
      * @return height of a tile
      */
-    virtual size_t h() const override;
+    virtual ui32 h() const override;
 
 private:
     /**
@@ -67,8 +67,8 @@ private:
 
     SdlHolder<SDL_Surface> p_tilemap_;        ///< tilemap surface
     SdlHolder<SDL_Texture> p_tilemapTexture_; ///< cached tilemap texture
-    size_t w_,                                ///< tile width
-        h_;                                   ///< tile height
+    ui32 w_;                                  ///< tile width
+    ui32 h_;                                  ///< tile height
 };
 
 } // namespace rterm

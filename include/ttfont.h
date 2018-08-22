@@ -35,7 +35,7 @@ public:
      * @param path path to .ttf file
      * @param sz point size
      */
-    TTFont(const std::string& path, size_t sz);
+    TTFont(const std::string& path, ui32 sz);
 
     /**
      * @brief Move operator=
@@ -58,13 +58,13 @@ public:
      * @brief Font width
      * @return width of one character
      */
-    virtual size_t w() const override;
+    virtual ui32 w() const override;
 
     /**
      * @brief Font height
      * @return height of one character
      */
-    virtual size_t h() const override;
+    virtual ui32 h() const override;
 
 private:
     SdlHolder<TTF_Font> p_font_; ///< real font

@@ -25,8 +25,9 @@ int main(int argc, char** argv) {
         terminal.setFgColor(rterm::Color(100, 0xff, 100));
         terminal.setFullscreen(false);
         terminal.setResizable(true);
-        int flooditers = 500;
+        int flooditers = 5000;
         int randomiters = 4000;
+        int frames = 0;
         std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
         for (int iters = 0; iters < flooditers; ++iters) {
             for (int i = 0; i < int(terminal.cols()); ++i)
@@ -50,6 +51,7 @@ int main(int argc, char** argv) {
             terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
             terminal.poll();
             terminal.redraw();
+            ++frames;
             if (iters % 100 == 0) {
                 rterm::Logger() << "Full redraw : " << iters << " / " << flooditers;
             }
@@ -60,7 +62,9 @@ int main(int argc, char** argv) {
         std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::ratio<1, 1>> deltaTime = end - start;
         rterm::Logger().printf("Flood time usage: %f s", deltaTime.count());
+        rterm::Logger().printf("FPS: %f", frames / deltaTime.count());
         start = end;
+        frames = 0;
 
         for (int iters = 0; iters < randomiters; ++iters) {
             int i = rand() % terminal.cols();
@@ -81,6 +85,7 @@ int main(int argc, char** argv) {
             terminal.print(0, terminal.rows() - 1, "FPS = %d ", int(terminal.fps()));
             terminal.poll();
             terminal.redraw();
+            ++frames;
             if (iters % 100 == 0) {
                 rterm::Logger() << "Random : " << iters << " / " << randomiters;
             }
@@ -88,6 +93,7 @@ int main(int argc, char** argv) {
         end = std::chrono::high_resolution_clock::now();
         deltaTime = end - start;
         rterm::Logger().printf("Random time usage: %f s", deltaTime.count());
+        rterm::Logger().printf("FPS: %f", frames / deltaTime.count());
     } catch (const rterm::Exception& e) {
         rterm::Logger(rterm::Logger::CRITICAL) << "Caught an exception: " << e.what();
     }

@@ -14,7 +14,7 @@ public:
     SoftwareTexture(const SoftwareTexture& other);
     SoftwareTexture(SoftwareTexture&& moved) = default;
     SoftwareTexture(SDL_Surface* surface);
-    SoftwareTexture(int w, int h);
+    SoftwareTexture(i32 w, i32 h);
 
     SoftwareTexture& operator=(const SoftwareTexture& other);
     SoftwareTexture& operator=(SoftwareTexture&& moved) = default;
@@ -31,22 +31,22 @@ public:
         return surface_.operator bool();
     }
 
-    inline Vector<int, 2> size() const {
+    inline Vector<i32, 2> size() const {
         if (surface_) {
             return {surface_->w, surface_->h};
         }
         return {0, 0};
     }
 
-    inline int w() const {
+    inline i32 w() const {
         return size()[0];
     }
 
-    inline int h() const {
+    inline i32 h() const {
         return size()[1];
     }
 
-    static constexpr uint32_t format = SDL_PIXELFORMAT_RGBA8888;
+    static constexpr ui32 format = SDL_PIXELFORMAT_RGBA8888;
 
 private:
     SdlHolder<SDL_Surface> surface_;

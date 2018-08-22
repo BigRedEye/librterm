@@ -2,6 +2,7 @@
 
 #include "key.h"
 #include "mouse.h"
+#include "util.h"
 
 #include <SDL2/SDL_events.h>
 
@@ -31,21 +32,21 @@ struct EventType {
     };
 };
 
-inline int eventTypeFromSDLEvent(SDL_Event* event) noexcept;
+inline i32 eventTypeFromSDLEvent(SDL_Event* event) noexcept;
 
 class Event {
 public:
     using rtclock = std::chrono::high_resolution_clock;
 
     explicit Event(SDL_Event* event = nullptr);
-    explicit Event(int etype);
+    explicit Event(i32 etype);
     virtual ~Event() = default;
 
-    int type() const;
+    i32 type() const;
     const rtclock::time_point& time() const;
 
 private:
-    int type_;
+    i32 type_;
     rtclock::time_point tp_;
 };
 
@@ -60,12 +61,12 @@ class WindowEvent : public Event {
 public:
     WindowEvent(SDL_Event* ev);
 
-    int x() const;
-    int y() const;
+    i32 x() const;
+    i32 y() const;
 
 private:
-    int x_;
-    int y_;
+    i32 x_;
+    i32 y_;
 };
 
 class WindowShownEvent : public WindowEvent {
@@ -141,58 +142,58 @@ class MouseEvent : public Event {
 public:
     explicit MouseEvent(SDL_Event* event = nullptr);
 
-    uint32_t buttons() const;
+    ui32 buttons() const;
 
 private:
-    uint32_t buttons_;
+    ui32 buttons_;
 };
 
 class MouseMoveEvent : public MouseEvent {
 public:
     explicit MouseMoveEvent(SDL_Event* event = nullptr);
 
-    int x() const;
-    int y() const;
-    int xrel() const;
-    int yrel() const;
+    i32 x() const;
+    i32 y() const;
+    i32 xrel() const;
+    i32 yrel() const;
 
 private:
-    int x_;
-    int y_;
-    int xrel_;
-    int yrel_;
+    i32 x_;
+    i32 y_;
+    i32 xrel_;
+    i32 yrel_;
 };
 
 class MouseDownEvent : public MouseEvent {
 public:
     explicit MouseDownEvent(SDL_Event* event = nullptr);
 
-    uint32_t button() const;
+    ui32 button() const;
 
 private:
-    uint32_t button_;
+    ui32 button_;
 };
 
 class MouseUpEvent : public MouseEvent {
 public:
     explicit MouseUpEvent(SDL_Event* event = nullptr);
 
-    uint32_t button() const;
+    ui32 button() const;
 
 private:
-    uint32_t button_;
+    ui32 button_;
 };
 
 class MouseWheelEvent : public Event {
 public:
     explicit MouseWheelEvent(SDL_Event* event = nullptr);
 
-    int dx() const;
-    int dy() const;
+    i32 dx() const;
+    i32 dy() const;
 
 private:
-    int dx_;
-    int dy_;
+    i32 dx_;
+    i32 dy_;
 };
 
 } // namespace events

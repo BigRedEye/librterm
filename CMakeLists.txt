@@ -60,6 +60,7 @@ file(
     include/texture.h
     include/tilefont.h
     include/ttfont.h
+    include/util.h
     include/virtualconsole.h
     include/window.h
     include/term.tpp
