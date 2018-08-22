@@ -1,5 +1,5 @@
-#include "char.h"
 #include "logger.h"
+#include "char.h"
 
 #include <chrono>
 #include <cstdarg>
@@ -7,14 +7,12 @@
 #include <iostream>
 #include <string>
 
-
 namespace rterm {
 
 Logger::Logger(Logger::MessagePriority priority)
     : prior_(priority)
     , delim_(0)
-    , flush_(true)
-{
+    , flush_(true) {
     *this << "[ ";
 
     switch (priority) {

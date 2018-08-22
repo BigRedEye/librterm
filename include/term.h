@@ -5,29 +5,27 @@
 
 #pragma once
 
-
 #include "char.h"
 #include "color.h"
 #include "event_system.h"
 #include "framerate_counter.h"
+#include "glyph_cache.h"
 #include "key.h"
 #include "sdl_ptr.h"
 #include "term_format.h"
 #include "virtualconsole.h"
 #include "window.h"
-#include "glyph_cache.h"
 
 #include <SDL2/SDL.h>
 
 #include <chrono>
 #include <cstddef>
 
-
 namespace rterm {
 
 /**
  * @brief Terminal class
- * 
+ *
  * This class controls event handling, terminal window and rendering
  */
 class Term {
@@ -36,7 +34,7 @@ public:
      * @brief Constructs empty terminal
      */
     Term();
-    
+
     /**
      * @brief Constructs terminal with fixed size
      * @param cols columns
@@ -60,10 +58,10 @@ public:
      * @return false otherwise
      */
     bool isRunning() const;
-    
+
     /**
      * @brief Get number of columns
-     * @return number of columns in terminal 
+     * @return number of columns in terminal
      */
     size_t cols() const;
 
@@ -89,7 +87,7 @@ public:
      * @return frames per second
      */
     long double fps() const;
-    
+
     /**
      * @brief Get cursor X
      * @return cursor X position
@@ -101,7 +99,7 @@ public:
      * @return cursor y position
      */
     size_t getCursorY() const;
-    
+
     /**
      * @brief Set cursor position
      * @param x new cursor x
@@ -147,14 +145,14 @@ public:
      * @see redraw
      */
     void setChar(size_t x, size_t y, char_t c);
-    
+
     /**
      * @brief Set true type terminal font
      * @param path to a .ttf file
      * @param sz size of font
      */
     void setFont(const std::string& path, size_t sz);
-    
+
     /**
      * @brief Set tiled terminal font
      * @param path to a tilemap
@@ -176,13 +174,13 @@ public:
      * @param y position
      */
     void setBgColor(const Color& bg, size_t x, size_t y);
-    
+
     /**
      * @brief Set default foreground color
      * @param fg foreground color
      */
     void setFgColor(const Color& fg);
-    
+
     /**
      * @brief Set foreground color at certain position
      * @param fg foreground color
@@ -193,7 +191,8 @@ public:
 
     /**
      * @brief Set terminal window fullscreen
-     * @param fullscreen if true, set fullscreen, otherwise set terminal in a windowed mode
+     * @param fullscreen if true, set fullscreen, otherwise set terminal in a
+     * windowed mode
      */
     void setFullscreen(bool fullscreen);
 
@@ -203,21 +202,21 @@ public:
      * @note this function requires SDL version not lower than 2.0.5
      */
     void setResizable(bool resizable);
-    
+
     /**
      * @brief Set minimum window size
      * @param width minimum width in pixels
      * @param height minimum width in pixels
      */
     void setMinWindowSize(size_t width, size_t height);
-    
+
     /**
      * @brief Set maximum window size
      * @param width maximum width in pixels
      * @param height maximum width in pixels
      */
     void setMaxWindowSize(size_t width, size_t height);
-    
+
     /**
      * @brief Close terminal
      */
@@ -226,7 +225,8 @@ public:
     /**
      * @brief Wait for the next pressed key
      * @return Key object represents next pressed key
-     * @note if during this function call the terminal will be closed it will return Key(rterm::UNKNOWN)
+     * @note if during this function call the terminal will be closed it will
+     * return Key(rterm::UNKNOWN)
      * @see getChar if you want only printable characters
      */
     Key getKey();
@@ -234,7 +234,8 @@ public:
     /**
      * @brief Wait for the next printable character
      * @return Key object represents next pressed printable key
-     * @note if during this function call the terminal will be closed it will return Key(rterm::UNKNOWN)
+     * @note if during this function call the terminal will be closed it will
+     * return Key(rterm::UNKNOWN)
      * @see getKey if you doesn't want only printable characters
      */
     char_t getChar();
@@ -268,9 +269,11 @@ public:
 
     /**
      * @brief Draw all changes to screen
-     * @param force if true the whole screen will be redrawn otherwise only updated part
-     * 
-     * This function applies all changes since last redraw() call and renders them on the screen
+     * @param force if true the whole screen will be redrawn otherwise only
+     * updated part
+     *
+     * This function applies all changes since last redraw() call and renders
+     * them on the screen
      */
     void redraw(bool force = false);
 
@@ -349,7 +352,7 @@ private:
      * @return reference to Char at specific position
      */
     Char& get(size_t x, size_t y);
-    
+
     /**
      * @brief Get Char at (x, y)
      * @param x position
@@ -364,14 +367,14 @@ private:
     void renderToScreen();
 
 private:
-    SdlLoader loader_; ///< keeps SDL loaded
+    SdlLoader loader_;       ///< keeps SDL loaded
     VirtualConsole console_; ///< logical console
 
-    Window window_; ///< wrapper around SDL_Window
+    Window window_;         ///< wrapper around SDL_Window
     GlyphCache glyphCache_; ///< glyph renderer
 
     bool quitRequested_; ///< was quit requested by user or system
-    bool wasShift_; ///< was screen shifted
+    bool wasShift_;      ///< was screen shifted
 
     Color fgCol_; ///< default foreground color
     Color bgCol_; ///< default background color
@@ -394,7 +397,6 @@ int unusedEventFilter(void* data, SDL_Event* ev);
 /// @endcond
 
 } // namespace rterm
-
 
 /* template members implementation */
 #include "term.tpp"

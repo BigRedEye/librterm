@@ -1,14 +1,12 @@
 #pragma once
 
-
 #include "api.h"
-#include "sdl_loader.h"
 #include "renderer.h"
+#include "sdl_loader.h"
 
 #include <SDL2/SDL.h>
 
 #include <memory>
-
 
 namespace rterm {
 

@@ -1,8 +1,6 @@
 #pragma once
 
-
 #include "api.h"
-
 
 namespace rterm {
 
@@ -14,5 +12,5 @@ class HardwareTexture;
 
 } // namespace rterm
 
-#include "sdl_hardware_texture.tpp"
 #include "gl_hardware_texture.tpp"
+#include "sdl_hardware_texture.tpp"

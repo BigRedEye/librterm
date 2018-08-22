@@ -1,9 +1,7 @@
 #pragma once
 
-
 #include <chrono>
 #include <queue>
-
 
 namespace rterm {
 

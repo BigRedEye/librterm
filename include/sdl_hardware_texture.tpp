@@ -1,11 +1,9 @@
 #pragma once
 
-
 #include "error.h"
 #include "hardware_texture.h"
-#include "software_texture.h"
 #include "sdl_ptr.h"
-
+#include "software_texture.h"
 
 namespace rterm {
 
@@ -15,8 +13,7 @@ public:
     using RawTextureRef = SDL_Texture*;
 
     HardwareTextureBase(RawTextureRef raw = nullptr)
-        : holder_(new Holder(raw))
-    {
+        : holder_(new Holder(raw)) {
     }
 
     HardwareTextureBase(HardwareTextureBase&& other) {
@@ -24,8 +21,7 @@ public:
     }
 
     HardwareTextureBase(const HardwareTextureBase& other)
-        : holder_(other.holder_)
-    {
+        : holder_(other.holder_) {
     }
 
     HardwareTextureBase& operator=(const HardwareTextureBase& other) {
@@ -71,8 +67,8 @@ private:
     struct Holder {
         Holder(RawTextureRef texture = nullptr)
             : texture_(texture)
-            , cachedSize_({0, 0})
-        {}
+            , cachedSize_({0, 0}) {
+        }
 
         ~Holder() {
             SDL_DestroyTexture(texture_);
@@ -102,8 +98,7 @@ public:
     HardwareTexture& operator=(HardwareTexture&& moved) = default;
 
     HardwareTexture(RawTextureRef texture)
-        : base_(texture)
-    {
+        : base_(texture) {
     }
 
     ~HardwareTexture() {
@@ -137,6 +132,5 @@ public:
 private:
     HardwareTextureBase<Api::SDL> base_;
 };
-
 
 } // namespace rterm

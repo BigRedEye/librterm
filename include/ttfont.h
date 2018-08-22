@@ -4,9 +4,7 @@
 
 #pragma once
 
-
 /// @cond INTERNAL
-
 
 #include "char.h"
 #include "font.h"
@@ -14,19 +12,17 @@
 
 #include <SDL2/SDL_ttf.h>
 
-
 namespace rterm {
 
 /**
  * @brief The TTFont class
- * 
+ *
  * This class represents true type fonts
- * 
+ *
  * @see TileFont for tilemap fonts
  */
 class TTFont : public Font {
 public:
-
     /**
      * @brief Constructs empty TTFont
      */

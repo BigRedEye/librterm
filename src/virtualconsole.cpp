@@ -1,17 +1,14 @@
 #include "virtualconsole.h"
 
-
 namespace rterm {
 
 VirtualConsole::VirtualConsole()
-    : VirtualConsole(0, 0)
-{
+    : VirtualConsole(0, 0) {
 }
 
 VirtualConsole::VirtualConsole(size_t ncols, size_t nrows)
     : cursorX_(0)
-    , cursorY_(0)
-{
+    , cursorY_(0) {
     data_.assign(nrows, std::vector<Char>(ncols, ' '));
     mask_.assign(nrows, std::vector<char>(ncols, false));
 }
@@ -27,7 +24,11 @@ size_t VirtualConsole::rows() const {
     return data_.size();
 }
 
-void VirtualConsole::resize(size_t ncols, size_t nrows, Color bgColor, Color fgColor) {
+void VirtualConsole::resize(
+    size_t ncols,
+    size_t nrows,
+    Color bgColor,
+    Color fgColor) {
     Char defaultChar(' ', bgColor, fgColor);
     data_.resize(nrows, std::vector<Char>(ncols, defaultChar));
     mask_.resize(nrows, std::vector<char>(ncols, true));
@@ -100,13 +101,12 @@ void VirtualConsole::addChar(char_t c) {
         } else {
             --cursorX_;
         }
-        set(cursorX_, cursorY_,
+        set(cursorX_,
+            cursorY_,
             Char(
-                 ' ',
-                 data_[cursorY_][cursorX_].bg(),
-                 data_[cursorY_][cursorX_].fg()
-            )
-        );
+                ' ',
+                data_[cursorY_][cursorX_].bg(),
+                data_[cursorY_][cursorX_].fg()));
         break;
     case '\t':
         for (int i = 0; i < 4; ++i) {
@@ -114,13 +114,12 @@ void VirtualConsole::addChar(char_t c) {
         }
         break;
     default:
-        set(cursorX_, cursorY_,
+        set(cursorX_,
+            cursorY_,
             Char(
                 c,
                 data_[cursorY_][cursorX_].bg(),
-                data_[cursorY_][cursorX_].fg()
-            )
-        );
+                data_[cursorY_][cursorX_].fg()));
         ++cursorX_;
         if (cursorX_ >= cols()) {
             cursorX_ = 0;
@@ -134,7 +133,8 @@ void VirtualConsole::addChar(char_t c) {
     cursorY_ = (cursorY_ + 2 * rows()) % rows();
 }
 
-std::vector<std::pair<size_t, size_t>> VirtualConsole::getUpdatedChars(bool force) {
+std::vector<std::pair<size_t, size_t>> VirtualConsole::getUpdatedChars(
+    bool force) {
     std::vector<std::pair<size_t, size_t>> result;
     for (size_t j = 0; j < rows(); ++j) {
         for (size_t i = 0; i < cols(); ++i) {
@@ -147,13 +147,12 @@ std::vector<std::pair<size_t, size_t>> VirtualConsole::getUpdatedChars(bool forc
     return result;
 }
 
-bool Char::operator ==(const Char &other) const {
-    return this->c() == other.c() &&
-           this->bg() == other.bg() &&
+bool Char::operator==(const Char& other) const {
+    return this->c() == other.c() && this->bg() == other.bg() &&
            this->fg() == other.fg();
 }
 
-bool Char::operator !=(const Char &other) const {
+bool Char::operator!=(const Char& other) const {
     return !(*this == other);
 }
 

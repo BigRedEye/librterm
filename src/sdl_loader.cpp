@@ -1,5 +1,5 @@
-#include "error.h"
 #include "sdl_loader.h"
+#include "error.h"
 
 #include <SDL2/SDL.h>
 
@@ -24,12 +24,9 @@ int TTF_Init(int) {
 void TTF_Quit() {
 }
 
-enum {
-    IMG_INIT_PNG = 0
-};
+enum { IMG_INIT_PNG = 0 };
 
 #endif // RTERM_WITHOUT_TTF
-
 
 namespace rterm {
 

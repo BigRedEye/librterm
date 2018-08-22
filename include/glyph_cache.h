@@ -1,15 +1,13 @@
 #pragma once
 
-
 #include "color.h"
 #include "font.h"
-#include "texture_view.h"
 #include "renderer.h"
+#include "texture_view.h"
 
 #include <memory>
-#include <vector>
 #include <unordered_map>
-
+#include <vector>
 
 namespace rterm {
 
@@ -18,8 +16,7 @@ public:
     template<typename T>
     GlyphCache(Renderer<Api::api>& renderer, T&& font)
         : font_(std::forward<T>(font))
-        , renderer_(renderer)
-    {
+        , renderer_(renderer) {
     }
 
     void setFont(const std::string& path, size_t sz);
@@ -42,8 +39,7 @@ private:
     class GlyphMapping {
     public:
         GlyphMapping()
-            : small_(threshold, T{})
-        {
+            : small_(threshold, T{}) {
         }
 
         void set(char_t ch, const T& hit) {
@@ -76,12 +72,13 @@ private:
         }
 
         static constexpr std::size_t threshold = 0xffff;
+
     private:
         std::vector<T> small_;
         std::unordered_map<size_t, T> huge_;
     };
 
-    struct CacheHit {    
+    struct CacheHit {
         static constexpr size_t invalid = static_cast<size_t>(-1);
 
         size_t texture = invalid;

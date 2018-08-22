@@ -3,7 +3,6 @@
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_ttf.h>
 
-
 namespace rterm {
 
 Exception::Exception()
@@ -12,8 +11,7 @@ Exception::Exception()
 }
 
 Exception::Exception(const std::string& error)
-    : error_(error)
-{
+    : error_(error) {
 }
 
 const char* Exception::what() const noexcept {
@@ -21,18 +19,15 @@ const char* Exception::what() const noexcept {
 }
 
 BadTexture::BadTexture()
-    : Exception()
-{
+    : Exception() {
 }
 
 BadRenderer::BadRenderer()
-    : Exception()
-{
+    : Exception() {
 }
 
 BadFont::BadFont()
-    : Exception(TTF_GetError())
-{
+    : Exception(TTF_GetError()) {
 }
 
 } // namespace rterm

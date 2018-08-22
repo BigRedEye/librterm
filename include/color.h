@@ -4,20 +4,17 @@
  * @author BigRedEye
  */
 
- 
 #pragma once
-
 
 #include <SDL2/SDL_pixels.h>
 
 #include <cstdint>
 
-
 namespace rterm {
 
 /**
  * @brief The Color class
- * 
+ *
  * Object of this class is a color in format RGBA8888 (8 bits for each channel)
  */
 class Color {
@@ -33,8 +30,7 @@ public:
         uint8_t _r = 0,
         uint8_t _g = 0,
         uint8_t _b = 0,
-        uint8_t _a = 0
-    );
+        uint8_t _a = 0);
 
     bool operator==(const Color& other) const;
     bool operator!=(const Color& other) const;
@@ -54,7 +50,7 @@ public:
     uint8_t& r() {
         return r_;
     }
-    
+
     /**
      * @brief get reference to green component
      * @return reference to green component
@@ -62,7 +58,7 @@ public:
     uint8_t& g() {
         return g_;
     }
-    
+
     /**
      * @brief get reference to blue component
      * @return reference to blue component
@@ -70,7 +66,7 @@ public:
     uint8_t& b() {
         return b_;
     }
-    
+
     /**
      * @brief get reference to alpha component
      * @return reference to alpha component
@@ -78,7 +74,7 @@ public:
     uint8_t& a() {
         return a_;
     }
-    
+
     /**
      * @brief get red component
      * @return red component
@@ -86,7 +82,7 @@ public:
     uint8_t r() const {
         return r_;
     }
-    
+
     /**
      * @brief get green component
      * @return green component
@@ -94,7 +90,7 @@ public:
     uint8_t g() const {
         return g_;
     }
-    
+
     /**
      * @brief get blue component
      * @return blue component
@@ -102,7 +98,7 @@ public:
     uint8_t b() const {
         return b_;
     }
-    
+
     /**
      * @brief get alpha component
      * @return alpha component
@@ -112,7 +108,7 @@ public:
     }
 
 private:
-    uint8_t r_; ///< red channel 
+    uint8_t r_; ///< red channel
     uint8_t g_; ///< green channel
     uint8_t b_; ///< blue channel
     uint8_t a_; ///< alpha channel

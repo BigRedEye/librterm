@@ -1,13 +1,11 @@
 #pragma once
 
-
 #include "key.h"
 #include "mouse.h"
 
 #include <SDL2/SDL_events.h>
 
 #include <chrono>
-
 
 namespace rterm {
 
@@ -45,6 +43,7 @@ public:
 
     int type() const;
     const rtclock::time_point& time() const;
+
 private:
     int type_;
     rtclock::time_point tp_;
@@ -53,7 +52,8 @@ private:
 class QuitEvent : public Event {
 public:
     explicit QuitEvent()
-        : Event(EventType::Quit) {}
+        : Event(EventType::Quit) {
+    }
 };
 
 class WindowEvent : public Event {
@@ -62,6 +62,7 @@ public:
 
     int x() const;
     int y() const;
+
 private:
     int x_;
     int y_;
@@ -107,6 +108,7 @@ public:
     explicit SystemEvent(SDL_Event* event = nullptr)
         : Event(event) {
     }
+
 private:
     SDL_Event sysevent_;
 };
@@ -116,6 +118,7 @@ public:
     explicit KeyboardEvent(SDL_Event* event = nullptr);
 
     const Key& key() const;
+
 protected:
     Key key_;
 };
@@ -124,8 +127,7 @@ class KeyDownEvent : public KeyboardEvent {
 public:
     explicit KeyDownEvent(
         SDL_Event* event = nullptr,
-        SDL_Event* text = nullptr
-    );
+        SDL_Event* text = nullptr);
 };
 
 class KeyUpEvent : public KeyboardEvent {
@@ -140,6 +142,7 @@ public:
     explicit MouseEvent(SDL_Event* event = nullptr);
 
     uint32_t buttons() const;
+
 private:
     uint32_t buttons_;
 };
@@ -165,6 +168,7 @@ public:
     explicit MouseDownEvent(SDL_Event* event = nullptr);
 
     uint32_t button() const;
+
 private:
     uint32_t button_;
 };
@@ -174,6 +178,7 @@ public:
     explicit MouseUpEvent(SDL_Event* event = nullptr);
 
     uint32_t button() const;
+
 private:
     uint32_t button_;
 };
@@ -184,6 +189,7 @@ public:
 
     int dx() const;
     int dy() const;
+
 private:
     int dx_;
     int dy_;
