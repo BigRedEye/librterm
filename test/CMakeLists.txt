@@ -10,12 +10,16 @@ if (MINGW)
 endif (MINGW)
 
 file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+file(GLOB_RECURSE resources "${PROJECT_SOURCE_DIR}/../resources/*")
+
+message("${resources}")
 
 foreach(abssourcefile ${sources})
     get_filename_component(sourcefile ${abssourcefile} NAME)
     
     string(REPLACE ".cpp" "" exename ${sourcefile})
-    add_executable(${exename} ${sourcefile})
+    file(COPY ${resources} DESTINATION resources)
+    add_executable(${exename} ${sourcefile} ${resources})
     if (MINGW)
         target_link_libraries(${exename} -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf)
     endif (MINGW)

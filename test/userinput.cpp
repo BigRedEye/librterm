@@ -20,7 +20,8 @@ int main(int argc, char **argv) {
         terminal.setTitle("rterm example");
         /* load TrueType font */
         int fontSize = 18;
-        terminal.setFont("../fonts/ttf/DejaVuSansMono.ttf", fontSize);
+        terminal.setFont("resources/DejaVuSansMono.ttf", fontSize);
+        terminal.setIcon("resources/terminal.ico");
         /* set foreground color to green (#00FF00) */
         terminal.setFgColor(rterm::Color(0x00, 0xff, 0x00));
         /* set callback for keypress */
