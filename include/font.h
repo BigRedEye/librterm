@@ -5,18 +5,15 @@
 
 #pragma once
 
-
 /// @cond INTERNAL
 
-
-#include "color.h"
 #include "char.h"
+#include "color.h"
 
 #include "software_texture.h"
 
 #include <cstddef>
 #include <string>
-
 
 namespace rterm {
 

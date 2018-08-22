@@ -1,7 +1,6 @@
+#include "window.h"
 #include "api.h"
 #include "sdl_ptr.h"
-#include "window.h"
-
 
 namespace rterm {
 
@@ -11,13 +10,7 @@ Window::Window(int w, int h) {
         flags |= SDL_WINDOW_OPENGL;
     }
     SDL_Window* win = SDL_CreateWindow(
-        "rterm",
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        w,
-        h,
-        flags
-    );
+        "rterm", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flags);
     if (!win) {
         throw Exception();
     }
@@ -45,7 +38,7 @@ void Window::setTitle(const std::string& title) {
     SDL_SetWindowTitle(get(), title.c_str());
 }
 
-void Window::setIcon(const SoftwareTexture &icon) {
+void Window::setIcon(const SoftwareTexture& icon) {
     SDL_SetWindowIcon(get(), icon.get());
 }
 
@@ -65,10 +58,7 @@ Vector<int, 2> Window::size() const {
 
 void Window::initSDL() {
     SDL_Renderer* ren = SDL_CreateRenderer(
-        get(),
-        -1,
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE
-    );
+        get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
     if (!ren) {
         ren = SDL_CreateRenderer(window_.get(), -1, 0);
     }

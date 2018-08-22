@@ -1,16 +1,14 @@
-#include "event.h"
 #include "event_system.h"
+#include "event.h"
 #include "logger.h"
 
 #include <memory>
-
 
 namespace rterm {
 
 EventSystem::EventSystem()
     : quitRequested_(false)
-    , callbacks_(events::EventType::COUNT)
-{
+    , callbacks_(events::EventType::COUNT) {
     SDL_StartTextInput();
 }
 
@@ -34,7 +32,8 @@ std::unique_ptr<events::Event> getKeyDownEvent(SDL_Event* ev) {
     if (ev->type == SDL_KEYDOWN) {
         SDL_PumpEvents();
         SDL_Event e;
-        if (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT) > 0) {
+        if (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT) >
+            0) {
             event = new events::KeyDownEvent(ev, &e);
         } else {
             event = new events::KeyDownEvent(ev);
@@ -105,7 +104,8 @@ int EventSystem::eventHandler(SDL_Event* ev) {
         }
     }
     if (event && event->type() == EventType::KeyDown) {
-        events::KeyDownEvent *keyev = static_cast<events::KeyDownEvent*>(event.get());
+        events::KeyDownEvent* keyev =
+            static_cast<events::KeyDownEvent*>(event.get());
         pendingKey_ = keyev->key();
     }
     return 1;

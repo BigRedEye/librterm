@@ -6,7 +6,6 @@
 #include <locale>
 #include <memory>
 
-
 namespace rterm {
 
 using std::va_list;

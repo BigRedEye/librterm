@@ -1,12 +1,10 @@
 #pragma once
 
-
 #include <SDL2/SDL_rect.h>
 
 #include <algorithm>
 #include <array>
 #include <type_traits>
-
 
 namespace rterm {
 
@@ -77,14 +75,12 @@ template<typename T>
 class Rect {
 public:
     explicit Rect(T x = T(), T y = T(), T w = T(), T h = T())
-        : Rect({x, y}, {w, h})
-    {
+        : Rect({x, y}, {w, h}) {
     }
-    
+
     Rect(Vector<T, 2> pos, Vector<T, 2> size)
         : pos_(pos)
-        , size_(size)
-    {
+        , size_(size) {
     }
 
     template<typename U>
@@ -100,31 +96,31 @@ public:
     inline T& x() {
         return pos_[0];
     }
-    
+
     inline T& y() {
         return pos_[1];
     }
-    
+
     inline T& w() {
         return size_[0];
     }
-    
+
     inline T& h() {
         return size_[1];
     }
-    
+
     inline const T& x() const {
         return pos_[0];
     }
-    
+
     inline const T& y() const {
         return pos_[1];
     }
-    
+
     inline const T& w() const {
         return size_[0];
     }
-    
+
     inline const T& h() const {
         return size_[1];
     }

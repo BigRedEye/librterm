@@ -4,14 +4,11 @@
  * for working with UTF8 characters
  */
 
- 
 #pragma once
-
 
 #include <assert.h>
 #include <cstdarg>
 #include <string>
-
 
 /**
  * @brief Namespace for all rterm functionality

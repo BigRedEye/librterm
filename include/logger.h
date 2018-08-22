@@ -1,8 +1,6 @@
 #pragma once
 
-
 #include <iostream>
-
 
 namespace rterm {
 
@@ -14,13 +12,7 @@ public:
     /**
      * @brief Enum of log messages priority
      */
-    enum MessagePriority {
-        LOG,
-        INFO,
-        WARNING,
-        ERROR,
-        CRITICAL
-    };
+    enum MessagePriority { LOG, INFO, WARNING, ERROR, CRITICAL };
 
     /**
      * @brief Constructs logger with given priority
@@ -42,10 +34,11 @@ public:
      * @return reference to Logger object
      */
     Logger& setDelimer(char delim);
-    
+
     /**
      * @brief Set flush flag
-     * @param flush if true, output of logger will be flushed when ~Logger() will be called
+     * @param flush if true, output of logger will be flushed when ~Logger()
+     * will be called
      * @return reference to Logger object
      */
     Logger& setFlush(bool flush);
@@ -55,7 +48,7 @@ public:
      * @return reference to Logger object
      */
     template<typename T>
-    inline Logger& operator<<(const T &msg) {
+    inline Logger& operator<<(const T& msg) {
         std::cout << msg;
         if (delim_)
             std::cout << delim_;
@@ -67,7 +60,7 @@ public:
      * @param fmt format string
      * @return reference to Logger object
      */
-    Logger& printf(const std::string &fmt, ...);
+    Logger& printf(const std::string& fmt, ...);
 
 private:
     MessagePriority prior_;

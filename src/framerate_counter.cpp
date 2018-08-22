@@ -2,12 +2,10 @@
 
 #include <numeric>
 
-
 namespace rterm {
 
 FrameRateCounter::FrameRateCounter(size_t framesToStore)
-    : framesToStore_(framesToStore)
-{
+    : framesToStore_(framesToStore) {
 }
 
 void FrameRateCounter::nextFrame(highResClock::time_point pt) {

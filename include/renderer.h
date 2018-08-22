@@ -1,11 +1,9 @@
 #pragma once
 
-
 #include "api.h"
+#include "screen_view.h"
 #include "sdl_ptr.h"
 #include "texture_view.h"
-#include "screen_view.h"
-
 
 namespace rterm {
 
@@ -14,5 +12,5 @@ class Renderer;
 
 } // namespace rterm
 
-#include "sdl_renderer.tpp"
 #include "gl_renderer.tpp"
+#include "sdl_renderer.tpp"

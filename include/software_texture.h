@@ -1,12 +1,10 @@
 #pragma once
 
-
-#include "sdl_ptr.h"
 #include "rect.h"
+#include "sdl_ptr.h"
 
-#include <vector>
 #include <SDL2/SDL.h>
-
+#include <vector>
 
 namespace rterm {
 

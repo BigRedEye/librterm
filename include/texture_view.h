@@ -1,10 +1,8 @@
 #pragma once
 
-
 #include "api.h"
 #include "hardware_texture.h"
 #include "rect.h"
-
 
 namespace rterm {
 

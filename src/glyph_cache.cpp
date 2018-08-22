@@ -1,7 +1,6 @@
 #include "glyph_cache.h"
-#include "ttfont.h"
 #include "tilefont.h"
-
+#include "ttfont.h"
 
 namespace rterm {
 

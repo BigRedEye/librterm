@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "event.h"
 #include "key.h"
 
@@ -9,9 +8,8 @@
 #include <functional>
 #include <vector>
 
-
 namespace rterm {
-    
+
 class EventSystem {
 public:
     using highResClock = std::chrono::high_resolution_clock;

@@ -1,27 +1,25 @@
+#include "term.h"
 #include "font.h"
+#include "hardware_texture.h"
 #include "logger.h"
 #include "mouse.h"
-#include "term.h"
 #include "tilefont.h"
 #include "ttfont.h"
-#include "hardware_texture.h"
 
 #include <SDL2/SDL_image.h>
 
 #include <functional>
 #include <iostream>
-#include <thread>
 #include <sstream>
+#include <thread>
 
 #define UNUSED(var) (void)var;
-
 
 namespace rterm {
 using namespace events;
 
 Term::Term()
-    : Term(0, 0)
-{
+    : Term(0, 0) {
 }
 
 Term::Term(const TermFormat& format)
@@ -30,8 +28,7 @@ Term::Term(const TermFormat& format)
     , glyphCache_(window_.renderer(), new TTFont)
     , quitRequested_(false)
     , fgCol_(0x00, 0xff, 0x00)
-    , bgCol_(0x00, 0x00, 0x00)
-{
+    , bgCol_(0x00, 0x00, 0x00) {
     redraw(true);
     setupCallbacks();
     eventSystem_.poll();
@@ -58,7 +55,8 @@ bool Term::isRunning() const {
 }
 
 void Term::delay(uint32_t msec) {
-    auto until = std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(msec);
+    auto until = std::chrono::high_resolution_clock::now() +
+                 std::chrono::milliseconds(msec);
     while (std::chrono::high_resolution_clock::now() < until) {
         poll();
         if (!isRunning()) {
@@ -202,9 +200,7 @@ void Term::setFullscreen(bool fullscr) {
     }
 
     SDL_SetWindowFullscreen(
-        window_.get(),
-        (fullscr ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0)
-    );
+        window_.get(), (fullscr ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
 
     /* set correct resolution */
     ncols = prevCols, nrows = prevRows;
@@ -232,12 +228,13 @@ void Term::setResizable(bool resizable) {
     SDL_SetWindowResizable(window_.get(), (resizable ? SDL_TRUE : SDL_FALSE));
 #else
     UNUSED(resizable);
-    Logger(Logger::ERROR).printf(
-        "SDL version %d.%d.%d doesn't support setWindowResizable, update it to 2.0.5", 
-        SDL_MAJOR_VERSION,
-        SDL_MINOR_VERSION,
-        SDL_PATCHLEVEL
-    );
+    Logger(Logger::ERROR)
+        .printf(
+            "SDL version %d.%d.%d doesn't support setWindowResizable, update "
+            "it to 2.0.5",
+            SDL_MAJOR_VERSION,
+            SDL_MINOR_VERSION,
+            SDL_PATCHLEVEL);
 #endif
 }
 
@@ -269,11 +266,7 @@ void Term::setBgColor(const Color& bg) {
     bgCol_ = bg;
     for (size_t i = 0; i < rows(); ++i) {
         for (size_t j = 0; j < cols(); ++j) {
-            Char toSet(
-                console_.get(j, i).c(),
-                bg,
-                console_.get(j, i).fg()
-            );
+            Char toSet(console_.get(j, i).c(), bg, console_.get(j, i).fg());
             console_.set(j, i, toSet);
         }
     }
@@ -281,11 +274,7 @@ void Term::setBgColor(const Color& bg) {
 }
 
 void Term::setBgColor(const Color& bg, size_t x, size_t y) {
-    Char toSet(
-        console_.get(x, y).c(),
-        bg,
-        console_.get(x, y).fg()
-    );
+    Char toSet(console_.get(x, y).c(), bg, console_.get(x, y).fg());
     console_.set(x, y, toSet);
 }
 
@@ -293,11 +282,7 @@ void Term::setFgColor(const Color& fg) {
     fgCol_ = fg;
     for (size_t i = 0; i < rows(); ++i) {
         for (size_t j = 0; j < cols(); ++j) {
-            Char toSet(
-                console_.get(j, i).c(),
-                console_.get(j, i).bg(),
-                fg
-            );
+            Char toSet(console_.get(j, i).c(), console_.get(j, i).bg(), fg);
             console_.set(j, i, toSet);
         }
     }
@@ -305,11 +290,7 @@ void Term::setFgColor(const Color& fg) {
 }
 
 void Term::setFgColor(const Color& fg, size_t x, size_t y) {
-    Char toSet(
-        console_.get(x, y).c(),
-        console_.get(x, y).bg(),
-        fg
-    );
+    Char toSet(console_.get(x, y).c(), console_.get(x, y).bg(), fg);
     console_.set(x, y, toSet);
 }
 
@@ -329,15 +310,15 @@ void Term::renderToScreen() {
 }
 
 void Term::setupCallbacks() {
-    eventSystem_.registerCallback(EventType::Quit, [this](Event* ev){
+    eventSystem_.registerCallback(EventType::Quit, [this](Event* ev) {
         UNUSED(ev);
         this->close();
     });
-    eventSystem_.registerCallback(EventType::WindowExposed, [this](Event* ev){
+    eventSystem_.registerCallback(EventType::WindowExposed, [this](Event* ev) {
         UNUSED(ev);
         this->redraw(true);
     });
-    eventSystem_.registerCallback(EventType::WindowResized, [this](Event* ev){
+    eventSystem_.registerCallback(EventType::WindowResized, [this](Event* ev) {
         auto event = static_cast<events::WindowResizedEvent*>(ev);
         this->setWindowSize(event->x(), event->y());
         this->redraw(true);
@@ -349,8 +330,7 @@ void Term::redraw(size_t x, size_t y) {
         x * glyphCache_.w(),
         y * glyphCache_.h(),
         glyphCache_.w(),
-        glyphCache_.h()
-    );
+        glyphCache_.h());
     Char ch = console_.get(x, y);
     TextureView<Api::api> tview = glyphCache_.getGlyph(ch.c());
     window_.renderer().render(tview, dst, ch.bg(), ch.fg());

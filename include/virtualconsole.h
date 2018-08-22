@@ -1,8 +1,6 @@
 #pragma once
 
-
 /// @cond INTERNAL
-
 
 #include "char.h"
 #include "color.h"
@@ -11,14 +9,13 @@
 #include <utility>
 #include <vector>
 
-
 namespace rterm {
 
 class Char;
 
 /**
  * @brief The VirtualConsole class
- * 
+ *
  * This class represents virtual console as 2d-array of characters
  */
 class VirtualConsole {
@@ -49,7 +46,7 @@ public:
      * @return number of columns
      */
     size_t cols() const;
-    
+
     /**
      * @brief Gen number of rows
      * @return number of rows
@@ -85,14 +82,14 @@ public:
      * @return Cursor Y position
      */
     size_t cursorY() const;
-    
+
     /**
      * @brief Set cursor position
      * @param x new x position
      * @param y new y position
      */
     void setCursorPosition(size_t x, size_t y);
-    
+
     /**
      * @brief Add char at cursor position and move cursor forward
      * @param c character
@@ -102,7 +99,8 @@ public:
     /**
      * @brief Get updated positions since last getUpdatedChars call
      * @param force if true, returns whole console
-     * @return std::vector of updated positions, where positions are std::pair<size_t, size_t>(x, y)
+     * @return std::vector of updated positions, where positions are
+     * std::pair<size_t, size_t>(x, y)
      */
     std::vector<std::pair<size_t, size_t>> getUpdatedChars(bool force = false);
 
@@ -110,38 +108,40 @@ private:
     bool getMask(size_t x, size_t y) const;
 
     std::vector<std::vector<Char>> data_; ///< array of characters
-    std::vector<std::vector<char>> mask_; ///< mask_[i][j] = true, if character at (j, i) was uptated
+    std::vector<std::vector<char>>
+        mask_;       ///< mask_[i][j] = true, if character at (j, i) was uptated
     size_t cursorX_, ///< cursor position
-           cursorY_; ///< cursor position
+        cursorY_;    ///< cursor position
 };
 
 /**
  * @brief The Char class
- * 
+ *
  * This class contains UTF8 character and back- and fore- ground colors
  */
 class Char {
 public:
-
     /**
      * @brief Constructs Char objects
      * @param ch UTF8 character
      * @param bg background color
      * @param fg foreground color
      */
-    Char(char_t ch = 0, Color bg = Color(0, 0, 0), Color fg = Color(255, 255, 255))
+    Char(
+        char_t ch = 0,
+        Color bg = Color(0, 0, 0),
+        Color fg = Color(255, 255, 255))
         : ch_(ch)
         , bg_(bg)
-        , fg_(fg)
-    {
+        , fg_(fg) {
     }
 
     /**
      * @brief eq operator
      * @param other
      * @return @code
-     * this->c() == other.c() && 
-     * this->bg() == other.bg() && 
+     * this->c() == other.c() &&
+     * this->bg() == other.bg() &&
      * this->fg() == other.fg() @endcode
      */
     bool operator==(const Char& other) const;
@@ -173,20 +173,19 @@ public:
      * @brief Get foreground color
      * @return foreground color
      */
-    inline Color fg() const { 
+    inline Color fg() const {
         return fg_;
     }
-    
+
     friend class VirtualConsole;
     friend class Term;
 
 private:
     char_t ch_; ///< real UTF8 char
-    Color bg_; ///< background color
-    Color fg_; ///< foreground color
+    Color bg_;  ///< background color
+    Color fg_;  ///< foreground color
 };
 
 } // namespace rterm
-
 
 /// @endcond INTERNAL
