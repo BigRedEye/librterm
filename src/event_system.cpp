@@ -32,8 +32,7 @@ std::unique_ptr<events::Event> getKeyDownEvent(SDL_Event* ev) {
     if (ev->type == SDL_KEYDOWN) {
         SDL_PumpEvents();
         SDL_Event e;
-        if (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT) >
-            0) {
+        if (SDL_PeepEvents(&e, 1, SDL_GETEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT) > 0) {
             event = new events::KeyDownEvent(ev, &e);
         } else {
             event = new events::KeyDownEvent(ev);

@@ -294,9 +294,8 @@ void Term::setFgColor(const Color& fg, size_t x, size_t y) {
 
 void Term::redraw(bool force) {
     auto update = console_.getUpdatedChars(force);
-    for (const auto& p : update) {
-        redraw(p.first, p.second);
-    }
+    redrawBackground(update);
+    redrawForeground(update);
     if (!update.empty() || force) {
         renderToScreen();
     }
@@ -323,15 +322,29 @@ void Term::setupCallbacks() {
     });
 }
 
-void Term::redraw(size_t x, size_t y) {
-    ScreenView dst(
-        x * glyphCache_.w(),
-        y * glyphCache_.h(),
-        glyphCache_.w(),
-        glyphCache_.h());
+void Term::redrawGlyph(size_t x, size_t y) {
+    ScreenView dst(x * glyphCache_.w(), y * glyphCache_.h(), glyphCache_.w(), glyphCache_.h());
     Char ch = console_.get(x, y);
     TextureView<Api::api> tview = glyphCache_.getGlyph(ch.c());
-    window_.renderer().render(tview, dst, ch.bg(), ch.fg());
+    window_.renderer().render(tview, dst, ch.fg());
+}
+
+void Term::redrawBackground(const std::vector<std::pair<ui32, ui32>>& updates) {
+    auto hash = [](Color color) { return std::hash<ui32>{}(color.rgba()); };
+    std::unordered_map<Color, std::vector<ScreenView>, decltype(hash)> colors(0, hash);
+    for (const auto& p : updates) {
+        ScreenView dst(p.first * glyphCache_.w(), p.second * glyphCache_.h(), glyphCache_.w(), glyphCache_.h());
+        colors[console_.get(p.first, p.second).bg()].push_back(std::move(dst));
+    }
+    for (const auto& color : colors) {
+        window_.renderer().fillRects(color.first, color.second);
+    }
+}
+
+void Term::redrawForeground(const std::vector<std::pair<ui32, ui32>>& updates) {
+    for (const auto& p : updates) {
+        redrawGlyph(p.first, p.second);
+    }
 }
 
 } // namespace rterm

@@ -126,9 +126,23 @@ public:
             }
         } else {
             SDL_Rect rect = dst.rect().sdl();
+            if (rect.h == -1) {
+                throw BadRenderer();
+            }
             if (SDL_RenderFillRect(get(), &rect) < 0) {
                 throw BadRenderer();
             }
+        }
+    }
+
+    void fillRects(const Color& color, const std::vector<ScreenView>& dst) {
+        setColor(color);
+        std::vector<SDL_Rect> sdlDst;
+        std::transform(dst.begin(), dst.end(), std::back_inserter(sdlDst), [](const ScreenView& view) {
+            return view.rect().sdl();
+        });
+        if (SDL_RenderFillRects(get(), sdlDst.data(), sdlDst.size()) < 0) {
+            throw BadRenderer();
         }
     }
 
