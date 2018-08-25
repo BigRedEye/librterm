@@ -11,6 +11,7 @@ Minimalistic terminal emulator written on C++ and SDL2.
 This piece of code creates an empty `80 x 24` terminal and displays each character pressed by the user.
 ```cpp
 #include <rterm/term.h>
+#include <rterm/logger.h>
 
 int main(int argc, const char* argv[]) {
     try {
@@ -26,8 +27,8 @@ int main(int argc, const char* argv[]) {
             terminal.poll();
         }
         return 0;
-    } catch (const rterm::Exception& e)
-        std::cerr << e.what() << std::endl;
+    } catch (const rterm::Exception& e) {
+        rterm::Logger() << e.what();
         return 1;
     }
 }
@@ -36,7 +37,7 @@ int main(int argc, const char* argv[]) {
 
 ## Requirements ##
 
-+ Compiler with C++11 suppot
++ Compiler with C++14 suppot
 + [SDL2](https://www.libsdl.org/download-2.0.php)
 + [SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/)
 + [SDL2_image](https://www.libsdl.org/projects/SDL_image/)
@@ -51,7 +52,7 @@ int main(int argc, const char* argv[]) {
 
 + Clone this repository
 ```sh
-git clone https://github.com/BigRedEye/rterm.git
+git clone --recurse-submodules https://github.com/BigRedEye/rterm.git
 cd rterm
 ```
 
@@ -59,8 +60,11 @@ cd rterm
 
 + Build
 ```sh
-cmake .
-make
+mkdir build
+cd build
+
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j
 ```
 
 + Install the library
@@ -71,8 +75,8 @@ sudo make install
 + Build examples
 ```sh
 cd test
-cmake .
-make
+cmake . -DCMAKE_BUILD_TYPE=Release
+make -j
 ```
 
 ### Windows (MinGW) ###
@@ -81,7 +85,7 @@ make
 
 + Build
 ```
-cmake . -G "MinGW Makefiles"
+cmake . -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles"
 mingw32-make
 ```
 
@@ -91,7 +95,7 @@ mingw32-make
 ```
 copy librterm.dll test/librterm.dll
 cd test
-cmake . -G "MinGW Makefiles"
+cmake . -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles"
 mingw32-make
 ```
 
