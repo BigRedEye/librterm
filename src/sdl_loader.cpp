@@ -1,10 +1,10 @@
 #include "sdl_loader.h"
 #include "error.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #ifndef RTERM_WITHOUT_IMG
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 #else
 int IMG_Init(int) {
     return 0;
@@ -15,7 +15,7 @@ void IMG_Quit() {
 #endif // RTERM_WITHOUT_IMG
 
 #ifndef RTERM_WITHOUT_TTF
-#include <SDL2/SDL_ttf.h>
+#include <SDL_ttf.h>
 #else
 int TTF_Init(int) {
     return 0;

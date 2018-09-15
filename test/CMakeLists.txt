@@ -4,15 +4,12 @@ project(tests)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-if (MINGW)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mwindows")
-endif (MINGW)
+set(CMAKE_CXX_FLAGS "-static")
 
 file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 file(GLOB_RECURSE resources "${PROJECT_SOURCE_DIR}/../resources/*")
 
-message("${resources}")
+message("${RTERM_LIBS}")
 
 foreach(abssourcefile ${sources})
     get_filename_component(sourcefile ${abssourcefile} NAME)
@@ -20,9 +17,7 @@ foreach(abssourcefile ${sources})
     string(REPLACE ".cpp" "" exename ${sourcefile})
     file(COPY ${resources} DESTINATION resources)
     add_executable(${exename} ${sourcefile} ${resources})
-    if (MINGW)
-        target_link_libraries(${exename} -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf)
-    endif (MINGW)
-    target_link_libraries(${exename} -lrterm)
+    target_include_directories(${exename} PUBLIC ${RTERM_HEADERS})
+    target_link_libraries(${exename} ${RTERM_LIBS})
 
 endforeach(abssourcefile ${sources})

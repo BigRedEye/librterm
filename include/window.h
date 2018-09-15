@@ -4,7 +4,7 @@
 #include "renderer.h"
 #include "sdl_loader.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <memory>
 

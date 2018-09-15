@@ -2,7 +2,7 @@
 #include "error.h"
 #include "logger.h"
 
-#include <SDL2/SDL_ttf.h>
+#include <SDL_ttf.h>
 
 namespace rterm {
 

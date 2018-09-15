@@ -10,7 +10,7 @@
 #include "font.h"
 #include "sdl_ptr.h"
 
-#include <SDL2/SDL_ttf.h>
+#include <SDL_ttf.h>
 
 namespace rterm {
 

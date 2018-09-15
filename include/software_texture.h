@@ -3,7 +3,7 @@
 #include "rect.h"
 #include "sdl_ptr.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <vector>
 
 namespace rterm {

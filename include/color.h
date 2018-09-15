@@ -8,7 +8,7 @@
 
 #include "util.h"
 
-#include <SDL2/SDL_pixels.h>
+#include <SDL_pixels.h>
 
 #include <cstdint>
 

@@ -1,12 +1,12 @@
-#include <rterm/key.h>
-#include <rterm/logger.h>
-#include <rterm/mouse.h>
-#include <rterm/term.h>
-#include <rterm/error.h>
+#include <key.h>
+#include <logger.h>
+#include <mouse.h>
+#include <term.h>
+#include <error.h>
 
 #define UNUSED(cond) (void)(cond)
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
     /* on Windows SDL2 redefines main with custom SDL_main function,
      * so we need argc and argv 
      */
@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
         /* set foreground color to green (#00FF00) */
         terminal.setFgColor(rterm::Color(0x00, 0xff, 0x00));
         /* set callback for keypress */
-        terminal.onKeyDown([&](rterm::events::KeyDownEvent ev) {
+        terminal.onKeyDown([&](const rterm::events::KeyDownEvent& ev) {
             /* if key has visual representation... */
             if (ev.key().toChar()) {
                 /* add character to terminal */
@@ -42,5 +42,6 @@ int main(int argc, char **argv) {
         return 0;
     } catch (const rterm::Exception& e) {
         rterm::Logger() << e.what();
+        return 0;
     }
 }

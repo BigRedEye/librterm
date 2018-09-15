@@ -4,7 +4,7 @@
 #include "key.h"
 #include "util.h"
 
-#include <SDL2/SDL_events.h>
+#include <SDL_events.h>
 
 #include <functional>
 #include <vector>

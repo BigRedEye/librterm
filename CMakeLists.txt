@@ -1,14 +1,19 @@
 cmake_minimum_required(VERSION 3.5)
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Debug" FORCE)
-endif(NOT CMAKE_BUILD_TYPE)
-
 project(rterm)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/third/sdl2-cmake")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wpedantic")
+
+if (${CMAKE_CXX_COMPILER_ID} MATCHES  "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Weverything -Werror")
+elseif (${CMAKE_CXX_COMPILER_ID} MATCHES  "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wpedantic")
+elseif (${CMAKE_CXX_COMPILER_ID} MATCHES  "MSVC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+endif()
 
 file(
     GLOB SOURCES
@@ -69,26 +74,57 @@ file(
     include/screen_view.h
 )
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+if (MINGW)
+    set(SDL2_PATH C:/Tools/Libs/mingw/x64/SDL2/x86_64-w64-mingw32)
+    set(SDL2_IMAGE_PATH C:/Tools/Libs/mingw/x64/SDL2_image/x86_64-w64-mingw32)
+    set(SDL2_TTF_PATH C:/Tools/Libs/mingw/x64/SDL2_ttf/x86_64-w64-mingw32)
+endif()
 
-add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
+find_package(Threads REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
+
+set (RTERM_HEADERS
+   ${CMAKE_CURRENT_SOURCE_DIR}/include/
+   ${SDL2_INCLUDE_DIR}
+   ${SDL2_IMAGE_INCLUDE_DIR}
+   ${SDL2_TTF_INCLUDE_DIR}
+)
+
+set (RTERM_INTERNAL_LIBS
+    ${SDL2_LIBRARY}
+    ${SDL2_IMAGE_LIBRARIES}
+    ${SDL2_TTF_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+
+add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${RTERM_HEADERS})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${HEADERS}")
 
-if (MINGW)
-    target_link_libraries(${PROJECT_NAME} -lmingw32 -lSDL2main)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mwindows")
-endif (MINGW)
-
-target_link_libraries(${PROJECT_NAME} -lSDL2 -lSDL2_ttf -lSDL2_image -lpthread)
+target_link_libraries(${PROJECT_NAME} ${RTERM_INTERNAL_LIBS})
 
 if (MINGW)
-    install(TARGETS ${PROJECT_NAME}
-            RUNTIME DESTINATION lib
-            PUBLIC_HEADER DESTINATION include/rterm
-    )
+#    install(
+#        TARGETS ${PROJECT_NAME}
+#        RUNTIME DESTINATION lib
+#        PUBLIC_HEADER DESTINATION include/rterm
+#    )
 else ()
-    install(TARGETS ${PROJECT_NAME}
-            LIBRARY DESTINATION lib
-            PUBLIC_HEADER DESTINATION include/rterm
-    )
+#    install(
+#       TARGETS ${PROJECT_NAME}
+#        LIBRARY DESTINATION lib
+#        PUBLIC_HEADER DESTINATION include/rterm
+#    )
 endif (MINGW)
+
+set(RTERM_LIBS ${RTERM_INTERNAL_LIBS} ${PROJECT_NAME})
+
+set (ADD_TEST_TARGET True)
+if (ADD_TEST_TARGET)
+    add_subdirectory(test)
+endif(ADD_TEST_TARGET)
+
+export(PACKAGE ${PROJECT_NAME})

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <SDL2/SDL_keycode.h>
+#include <SDL_keycode.h>
 
 namespace rterm {
 

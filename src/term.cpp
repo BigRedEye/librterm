@@ -6,7 +6,7 @@
 #include "tilefont.h"
 #include "ttfont.h"
 
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 
 #include <functional>
 #include <iostream>
@@ -180,12 +180,12 @@ void Term::setFullscreen(bool fullscr) {
     int ncols;
     int nrows;
     static bool isFullscr = false;
-    static SDL_DisplayMode* windowedMode = NULL;
+    static SDL_DisplayMode* windowedMode = nullptr;
     static int prevCols = 0;
     static int prevRows = 0;
 
     if (!isFullscr) {
-        if (windowedMode == NULL) {
+        if (windowedMode == nullptr) {
             windowedMode = new SDL_DisplayMode;
             if (SDL_GetWindowDisplayMode(window_.get(), windowedMode) < 0) {
                 throw Exception();

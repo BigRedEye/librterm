@@ -1,6 +1,6 @@
-#include <rterm/error.h>
-#include <rterm/logger.h>
-#include <rterm/term.h>
+#include <error.h>
+#include <logger.h>
+#include <term.h>
 
 #include <chrono>
 #include <cstring>

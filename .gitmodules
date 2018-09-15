@@ -1,0 +1,6 @@
+[submodule "third\\glad"]
+	path = third\\glad
+	url = https://github.com/Dav1dde/glad
+[submodule "third\\sdl2-cmake"]
+	path = third\\sdl2-cmake
+	url = https://github.com/tcbrindle/sdl2-cmake-scripts
