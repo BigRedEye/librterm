@@ -1,6 +1,6 @@
-[submodule "third\\glad"]
-	path = third\\glad
+[submodule "third/glad"]
+	path = third_party/glad
 	url = https://github.com/Dav1dde/glad
-[submodule "third\\sdl2-cmake"]
-	path = third\\sdl2-cmake
+[submodule "third/sdl2-cmake"]
+	path = third_party/sdl2-cmake
 	url = https://github.com/tcbrindle/sdl2-cmake-scripts
