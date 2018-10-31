@@ -117,7 +117,7 @@ Key EventSystem::getKey() {
     return pendingKey_;
 }
 
-char_t EventSystem::getChar() {
+ch32 EventSystem::getChar() {
     while (true) {
         Key key = getKey();
         if (key.toChar()) {
@@ -136,7 +136,7 @@ Key EventSystem::getKey(const highResClock::time_point& until) {
     return pendingKey_;
 }
 
-char_t EventSystem::getChar(const highResClock::time_point& until) {
+ch32 EventSystem::getChar(const highResClock::time_point& until) {
     while (highResClock::now() < until) {
         Key key = getKey(until);
         if (key.toChar()) {

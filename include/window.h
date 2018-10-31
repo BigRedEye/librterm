@@ -35,14 +35,15 @@ public:
     void setIcon(const SoftwareTexture& icon);
     void setMinimumSize(int width, int height);
     void setMaximumSize(int width, int height);
+    SoftwareTexture dumpPixels() const;
 
     Vector<int, 2> size() const;
 
-    inline int w() {
+    int w() const {
         return size()[0];
     }
 
-    inline int h() {
+    int h() const {
         return size()[1];
     }
 

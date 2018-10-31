@@ -111,35 +111,30 @@ void Term::resize(size_t ncols, size_t nrows) {
     setWindowSize(ncols * glyphCache_.w(), nrows * glyphCache_.h());
 }
 
-void Term::setChar(size_t x, size_t y, char_t c) {
+void Term::setChar(size_t x, size_t y, ch32 c) {
     console_.set(x, y, Char(c, bgCol_, fgCol_));
 }
 
-void Term::addChar(char_t c) {
+void Term::addChar(ch32 c) {
     console_.addChar(c);
 }
 
-void Term::print(size_t x, size_t y, const std::string& fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-
-    std::string formatted = vformat(fmt, args);
-    std::u32string u32formatted = Utf8ToUtf32(formatted);
+void Term::print(size_t x, size_t y, const std::string& str) {
+    std::u32string u32formatted = utf8ToUtf32(str);
     size_t prevCursorX = getCursorX();
     size_t prevCursorY = getCursorY();
     setCursorPosition(x, y);
-    for (char_t c : u32formatted) {
+    for (ch32 c : u32formatted) {
         addChar(c);
     }
     setCursorPosition(prevCursorX, prevCursorY);
-    va_end(args);
 }
 
 Key Term::getKey() {
     return eventSystem_.getKey();
 }
 
-char_t Term::getChar() {
+ch32 Term::getChar() {
     return eventSystem_.getChar();
 }
 
@@ -158,7 +153,7 @@ int Term::getMouseButtons() {
     return result;
 }
 
-char_t Term::charAt(size_t x, size_t y) const {
+ch32 Term::charAt(size_t x, size_t y) const {
     return console_.get(x, y).c();
 }
 
@@ -168,6 +163,10 @@ Color Term::bgColorAt(size_t x, size_t y) const {
 
 Color Term::fgColorAt(size_t x, size_t y) const {
     return console_.get(x, y).fg();
+}
+
+SoftwareTexture Term::dumpScreen() const {
+    return window_.dumpPixels();
 }
 
 std::string Term::getError() const {

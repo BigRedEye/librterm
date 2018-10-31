@@ -109,9 +109,6 @@ public:
     explicit SystemEvent(SDL_Event* event = nullptr)
         : Event(event) {
     }
-
-private:
-    SDL_Event sysevent_;
 };
 
 class KeyboardEvent : public Event {

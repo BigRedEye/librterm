@@ -46,12 +46,12 @@ ui32 TTFont::h() const {
     return h;
 }
 
-SoftwareTexture TTFont::render(char_t ch) {
+SoftwareTexture TTFont::render(ch32 ch) {
     if (!p_font_.get()) {
         return SoftwareTexture(w(), h());
     }
 
-    std::string str = Utf32ToUtf8({ch});
+    std::string str = utf32ToUtf8({ch});
     SDL_Surface* res = TTF_RenderUTF8_Blended(p_font_.get(), str.data(), SDL_Color{0xff, 0xff, 0xff, 0xff});
     if (!res) {
         throw BadFont();

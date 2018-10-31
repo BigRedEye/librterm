@@ -52,7 +52,7 @@ public:
      * @param fg foreground color
      * @param bg background color
      */
-    virtual SoftwareTexture render(char_t ch) override;
+    virtual SoftwareTexture render(ch32 ch) override;
 
     /**
      * @brief Font width

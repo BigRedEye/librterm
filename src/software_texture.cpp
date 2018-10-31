@@ -31,9 +31,9 @@ SoftwareTexture::SoftwareTexture(SDL_Surface* surface)
     : surface_(surface) {
 }
 
-SoftwareTexture::SoftwareTexture(int w, int h) {
+SoftwareTexture::SoftwareTexture(i32 w, i32 h) {
 #if SDL_VERSION_ATLEAST(2, 0, 5)
-    SDL_Surface* raw = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, SDL_PIXELFORMAT_RGBA32);
+    SDL_Surface* raw = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, format);
 #else
     Uint32 rmask, gmask, bmask, amask;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -58,6 +58,14 @@ SoftwareTexture::SoftwareTexture(int w, int h) {
 SoftwareTexture& SoftwareTexture::operator=(const SoftwareTexture& other) {
     surface_.reset(::sdlCopySurface(other.get()));
     return *this;
+}
+
+void SoftwareTexture::save(const std::string &file) {
+    if (!surface_) {
+        throw BadTexture();
+    }
+
+    SDL_SaveBMP(surface_.get(), file.data());
 }
 
 } // namespace rterm

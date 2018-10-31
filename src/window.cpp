@@ -49,6 +49,10 @@ void Window::setMaximumSize(int width, int height) {
     SDL_SetWindowMaximumSize(get(), width, height);
 }
 
+SoftwareTexture Window::dumpPixels() const {
+    return renderer_.dumpPixels(iRect(0, 0, w(), h()));
+}
+
 Vector<int, 2> Window::size() const {
     Vector<int, 2> wh;
     SDL_GetWindowSize(window_.get(), &wh[0], &wh[1]);

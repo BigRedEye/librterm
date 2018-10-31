@@ -32,7 +32,7 @@ public:
      * @return generated SoftwareTexture
      * @note this function doesn't provide any caching
      */
-    virtual SoftwareTexture render(char_t ch) = 0;
+    virtual SoftwareTexture render(ch32 ch) = 0;
 
     /**
      * @brief font width

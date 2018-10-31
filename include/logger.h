@@ -1,5 +1,7 @@
 #pragma once
 
+#include "char.h"
+
 #include <iostream>
 
 namespace rterm {
@@ -61,7 +63,10 @@ public:
      * @param fmt format string
      * @return reference to Logger object
      */
-    Logger& printf(const std::string& fmt, ...);
+    template<typename ...Args>
+    Logger& printf(const std::string& fmt, Args&& ...args) {
+        return operator<<(format(fmt, std::forward<Args>(args)...));
+    }
 
 private:
     MessagePriority prior_;

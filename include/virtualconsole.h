@@ -24,7 +24,7 @@ public:
      * @param bg background color
      * @param fg foreground color
      */
-    Char(char_t ch = 0, Color bg = Color::Black, Color fg = Color::White)
+    Char(ch32 ch = 0, Color bg = Color::Black, Color fg = Color::White)
         : ch_(ch)
         , bg_(bg)
         , fg_(fg) {
@@ -51,7 +51,7 @@ public:
      * @brief Get UTF8 character
      * @return UTF8 character
      */
-    inline char_t c() const {
+    inline ch32 c() const {
         return ch_;
     }
 
@@ -75,7 +75,7 @@ public:
     friend class Term;
 
 private:
-    char_t ch_; ///< real UTF8 char
+    ch32 ch_; ///< real UTF8 char
     Color bg_;  ///< background color
     Color fg_;  ///< foreground color
 };

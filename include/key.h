@@ -24,26 +24,26 @@ public:
      * @brief Construct Key from SDL_Keycode
      * @param code SDL_Keycode constant
      */
-    explicit Key(SDL_Keycode code = SDLK_UNKNOWN, char_t ch = 0);
+    explicit Key(SDL_Keycode code = SDLK_UNKNOWN, ch32 ch = 0);
 
     /**
      * @brief Construct Key from KeyCode
      * @param code KeyCode constant
      * @see keycode.h for the list of key codes
      */
-    explicit Key(KeyCode code, char_t ch = 0);
+    explicit Key(KeyCode code, ch32 ch = 0);
 
     /**
      * @brief Construct Key from unicode character
      * @param ch unicode char
      */
-    explicit Key(char_t ch);
+    explicit Key(ch32 ch);
 
     /**
      * @brief Construct Key from SDL_Keysym
      * @param sym SDL_Keysym from SDL events
      */
-    explicit Key(SDL_Keysym sym, char_t ch = 0);
+    explicit Key(SDL_Keysym sym, ch32 ch = 0);
 
     inline operator bool() const {
         return code_;
@@ -55,7 +55,7 @@ public:
      * @return 0, if this key doesn't have printable representation,for example,
      * rterm::KeyCode::LEFT
      */
-    char_t toChar() const;
+    ch32 toChar() const;
 
     /**
      * @brief Gey KeyCode of a key if any
@@ -87,7 +87,7 @@ private:
      * @param c unicode char
      * @return reference to this object
      */
-    Key& setChar(char_t c);
+    Key& setChar(ch32 c);
 
     /**
      * @brief add modifier to this key
@@ -100,7 +100,7 @@ private:
 private:
     SDL_Keycode code_; ///< real code value
     ui32 mod_;         ///< OR'ed KeyMod constants
-    char_t unicode_;   ///< unicode char
+    ch32 unicode_;   ///< unicode char
 
     /// @endcond
 };

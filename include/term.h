@@ -12,6 +12,7 @@
 #include "glyph_cache.h"
 #include "key.h"
 #include "sdl_ptr.h"
+#include "software_texture.h"
 #include "term_format.h"
 #include "virtualconsole.h"
 #include "window.h"
@@ -144,7 +145,7 @@ public:
      * @note This function won't redraw terminal window
      * @see redraw
      */
-    void setChar(size_t x, size_t y, char_t c);
+    void setChar(size_t x, size_t y, ch32 c);
 
     /**
      * @brief Set true type terminal font
@@ -238,7 +239,7 @@ public:
      * return Key(rterm::UNKNOWN)
      * @see getKey if you doesn't want only printable characters
      */
-    char_t getChar();
+    ch32 getChar();
 
     /**
      * @brief Get mouse position in tile
@@ -257,7 +258,7 @@ public:
      * @brief Write next character and move cursor forward
      * @param c unicode char to write
      */
-    void addChar(char_t c);
+    void addChar(ch32 c);
 
     /**
      * @brief Print printf-style fomated data
@@ -265,7 +266,18 @@ public:
      * @param y position of the first character
      * @param fmt format
      */
-    void print(size_t x, size_t y, const std::string& fmt, ...);
+    template<typename ...Args>
+    void print(size_t x, size_t y, const std::string& fmt, Args&& ...args) {
+        print(x, y, format(fmt, std::forward<Args>(args)...));
+    }
+
+    /**
+     * @brief Print utf8 string
+     * @param x position of the first character
+     * @param y position of the first character
+     * @param str string
+     */
+    void print(size_t x, size_t y, const std::string& str);
 
     /**
      * @brief Draw all changes to screen
@@ -283,7 +295,7 @@ public:
      * @param y position
      * @return unicode char at (x, y)
      */
-    char_t charAt(size_t x, size_t y) const;
+    ch32 charAt(size_t x, size_t y) const;
 
     /**
      * @brief Get background color at specific position
@@ -300,6 +312,13 @@ public:
      * @return foreground color at (x, y)
      */
     Color fgColorAt(size_t x, size_t y) const;
+
+    /**
+     * @brief Get screen image
+     * @return SoftwareTexture contains screen image
+     * @note This function is extremely slow and should only be used for debug / testing purposes
+     */
+    SoftwareTexture dumpScreen() const;
 
     std::string getError() const;
 

@@ -82,6 +82,13 @@ public:
         }
     }
 
+    SoftwareTexture dumpPixels(const iRect& rect) const {
+        SoftwareTexture result(rect.w(), rect.h());
+        SDL_Rect sdlRect = rect.sdl();
+        SDL_RenderReadPixels(get(), &sdlRect, result.format, result.data(), SDL_BYTESPERPIXEL(result.format) * result.w());
+        return result;
+    }
+
     void flush() {
         present();
         if (buffered_) {

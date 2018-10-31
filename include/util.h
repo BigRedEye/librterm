@@ -14,6 +14,7 @@ using ui16 = std::uint16_t;
 using ui32 = std::uint32_t;
 using ui64 = std::uint64_t;
 
-using char_t = char32_t;
+using ch8 = char;
+using ch32 = char32_t;
 
 } // namespace rterm

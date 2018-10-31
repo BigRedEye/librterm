@@ -43,7 +43,7 @@ public:
      */
     TileFont& operator=(TileFont&& rhs);
 
-    virtual SoftwareTexture render(char_t ch) override;
+    virtual SoftwareTexture render(ch32 ch) override;
 
     /**
      * @brief Font width
@@ -63,7 +63,7 @@ private:
      * @param c UTF8 character
      * @return SDL_Rect of tile on the tilemap
      */
-    SDL_Rect getRect(char_t c) const;
+    SDL_Rect getRect(ch32 c) const;
 
     SdlHolder<SDL_Surface> p_tilemap_;        ///< tilemap surface
     SdlHolder<SDL_Texture> p_tilemapTexture_; ///< cached tilemap texture

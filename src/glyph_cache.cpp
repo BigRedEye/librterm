@@ -20,7 +20,7 @@ i32 GlyphCache::h() {
     return font_->h();
 }
 
-TextureView<Api::api> GlyphCache::getGlyph(char_t ch) {
+TextureView<Api::api> GlyphCache::getGlyph(ch32 ch) {
     CacheHit hit;
     if (cache_.mapping.has(ch)) {
         hit = cache_.mapping.get(ch);

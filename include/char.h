@@ -9,8 +9,8 @@
 #include "util.h"
 
 #include <assert.h>
-#include <cstdarg>
 #include <string>
+#include <cstdio>
 
 /**
  * @brief Namespace for all rterm functionality
@@ -18,23 +18,24 @@
  */
 namespace rterm {
 
-std::u32string Utf8ToUtf32(const std::string& str);
+std::u32string utf8ToUtf32(const std::string& str);
 
-std::string Utf32ToUtf8(const std::u32string& str);
+std::string utf32ToUtf8(const std::u32string& str);
 
 /**
  * @brief Get printf-like formatted string
  * @param fmt printf-style format string
  * @return formatted string
  */
-std::string format(const std::string& fmt, ...);
-
-/**
- * @brief Get printf-like formatted string
- * @param fmt printf-style format string
- * @param args va_list of arguments
- * @return formatted string
- */
-std::string vformat(const std::string& fmt, va_list args);
+template<typename ...Args>
+std::string format(const std::string& fmt, Args&& ...args) {
+    int bufSize = snprintf(nullptr, 0, fmt.data(), std::forward<Args>(args)...);
+    if (bufSize < 0) {
+        return "";
+    }
+    std::string result(bufSize + 1, '\0');
+    snprintf(&result[0], result.size(), fmt.data(), std::forward<Args>(args)...);
+    return result;
+}
 
 } // namespace rterm

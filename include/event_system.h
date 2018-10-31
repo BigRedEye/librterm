@@ -28,9 +28,9 @@ public:
     i32 eventHandler(SDL_Event* ev);
 
     Key getKey();
-    char_t getChar();
+    ch32 getChar();
     Key getKey(const highResClock::time_point& until);
-    char_t getChar(const highResClock::time_point& until);
+    ch32 getChar(const highResClock::time_point& until);
 
 private:
     bool quitRequested_;

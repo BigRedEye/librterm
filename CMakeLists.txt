@@ -2,13 +2,15 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rterm)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/third/sdl2-cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/third_party/sdl2-cmake")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+message(${CMAKE_CXX_STANDARD})
+
 if (${CMAKE_CXX_COMPILER_ID} MATCHES  "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Weverything -Werror")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wpedantic")
 elseif (${CMAKE_CXX_COMPILER_ID} MATCHES  "GNU")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wpedantic")
 elseif (${CMAKE_CXX_COMPILER_ID} MATCHES  "MSVC")
@@ -99,32 +101,16 @@ set (RTERM_INTERNAL_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
-add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
+add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${RTERM_HEADERS})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${HEADERS}")
 
 target_link_libraries(${PROJECT_NAME} ${RTERM_INTERNAL_LIBS})
 
-if (MINGW)
-#    install(
-#        TARGETS ${PROJECT_NAME}
-#        RUNTIME DESTINATION lib
-#        PUBLIC_HEADER DESTINATION include/rterm
-#    )
-else ()
-#    install(
-#       TARGETS ${PROJECT_NAME}
-#        LIBRARY DESTINATION lib
-#        PUBLIC_HEADER DESTINATION include/rterm
-#    )
-endif (MINGW)
-
 set(RTERM_LIBS ${RTERM_INTERNAL_LIBS} ${PROJECT_NAME})
 
-set (ADD_TEST_TARGET True)
+set(ADD_TEST_TARGET ON)
 if (ADD_TEST_TARGET)
     add_subdirectory(test)
 endif(ADD_TEST_TARGET)
-
-export(PACKAGE ${PROJECT_NAME})

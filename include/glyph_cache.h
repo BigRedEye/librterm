@@ -26,7 +26,7 @@ public:
     i32 w();
     i32 h();
 
-    TextureView<Api::api> getGlyph(char_t ch);
+    TextureView<Api::api> getGlyph(ch32 ch);
 
 private:
     template<typename T>
@@ -44,7 +44,7 @@ private:
             : small_(threshold, T{}) {
         }
 
-        void set(char_t ch, const T& hit) {
+        void set(ch32 ch, const T& hit) {
             if (ch < threshold) {
                 small_[ch] = hit;
             } else {
@@ -52,7 +52,7 @@ private:
             }
         }
 
-        bool has(char_t ch) {
+        bool has(ch32 ch) {
             if (ch < threshold) {
                 return small_[ch].texture != T::invalid;
             } else {
@@ -60,7 +60,7 @@ private:
             }
         }
 
-        const T& get(char_t ch) {
+        const T& get(ch32 ch) {
             if (ch < threshold) {
                 return small_[ch];
             } else {

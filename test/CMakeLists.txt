@@ -4,7 +4,6 @@ project(tests)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-static")
 
 file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 file(GLOB_RECURSE resources "${PROJECT_SOURCE_DIR}/../resources/*")

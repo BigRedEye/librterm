@@ -2,28 +2,28 @@
 
 namespace rterm {
 
-Key::Key(SDL_Keycode code, char_t ch)
+Key::Key(SDL_Keycode code, ch32 ch)
     : mod_(0)
     , unicode_(ch) {
     setKey(code);
 }
 
-Key::Key(KeyCode code, char_t ch)
+Key::Key(KeyCode code, ch32 ch)
     : Key(static_cast<int>(code), ch) {
 }
 
-Key::Key(char_t ch)
+Key::Key(ch32 ch)
     : code_(0)
     , mod_(0)
     , unicode_(ch) {
 }
 
-Key::Key(SDL_Keysym sym, char_t ch)
+Key::Key(SDL_Keysym sym, ch32 ch)
     : Key(sym.sym, ch) {
     addMod(sym.mod);
 }
 
-char_t Key::toChar() const {
+ch32 Key::toChar() const {
     return unicode_;
 }
 
@@ -53,7 +53,7 @@ Key& Key::setKey(int code) {
     return *this;
 }
 
-Key& Key::setChar(char_t c) {
+Key& Key::setChar(ch32 c) {
     unicode_ = c;
     return *this;
 }

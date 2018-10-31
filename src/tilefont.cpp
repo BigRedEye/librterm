@@ -41,7 +41,7 @@ ui32 TileFont::h() const {
     return h_;
 }
 
-SDL_Rect TileFont::getRect(char_t c) const {
+SDL_Rect TileFont::getRect(ch32 c) const {
     size_t tilemapCols = p_tilemap_->w / w();
     size_t tilemapRows = p_tilemap_->h / h();
     SDL_Rect result{0, 0, 0, 0};
@@ -57,7 +57,7 @@ SDL_Rect TileFont::getRect(char_t c) const {
     return result;
 }
 
-SoftwareTexture TileFont::render(char_t) {
+SoftwareTexture TileFont::render(ch32) {
     return {};
     /*
     if (!p_tilemap_) {

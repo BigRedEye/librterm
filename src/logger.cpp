@@ -1,5 +1,4 @@
 #include "logger.h"
-#include "char.h"
 
 #include <chrono>
 #include <cstdarg>
@@ -54,15 +53,6 @@ Logger& Logger::setDelimer(char delim) {
 
 Logger& Logger::setFlush(bool flush) {
     flush_ = flush;
-    return *this;
-}
-
-Logger& Logger::printf(const std::string& fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    auto str = vformat(fmt, args);
-    va_end(args);
-    operator<<(str);
     return *this;
 }
 
