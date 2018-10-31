@@ -1,8 +1,8 @@
 #pragma once
 
+#include "error.h"
 #include "rect.h"
 #include "sdl_ptr.h"
-#include "error.h"
 
 #include <SDL.h>
 #include <vector>

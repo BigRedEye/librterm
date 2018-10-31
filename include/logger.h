@@ -63,8 +63,8 @@ public:
      * @param fmt format string
      * @return reference to Logger object
      */
-    template<typename ...Args>
-    Logger& printf(const std::string& fmt, Args&& ...args) {
+    template<typename... Args>
+    Logger& printf(const std::string& fmt, Args&&... args) {
         return operator<<(format(fmt, std::forward<Args>(args)...));
     }
 

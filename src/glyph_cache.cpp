@@ -56,7 +56,7 @@ void GlyphCache::addAtlas() {
     cache_.nextEmpty_ = {0, 0};
 }
 
-void GlyphCache::writeGlyph(const SoftwareTexture& glyph) {
+void GlyphCache::writeGlyph(const SoftwareTexture &glyph) {
     iRect dst{cache_.nextEmpty_, glyph.size()};
     HardwareTexture<Api::SDL> glyphTexture = renderer_.createTexture(glyph);
     TextureView<Api::SDL> view(glyphTexture);

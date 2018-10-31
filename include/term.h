@@ -266,8 +266,8 @@ public:
      * @param y position of the first character
      * @param fmt format
      */
-    template<typename ...Args>
-    void print(size_t x, size_t y, const std::string& fmt, Args&& ...args) {
+    template<typename... Args>
+    void print(size_t x, size_t y, const std::string& fmt, Args&&... args) {
         print(x, y, format(fmt, std::forward<Args>(args)...));
     }
 

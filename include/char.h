@@ -9,8 +9,8 @@
 #include "util.h"
 
 #include <assert.h>
-#include <string>
 #include <cstdio>
+#include <string>
 
 /**
  * @brief Namespace for all rterm functionality
@@ -27,8 +27,8 @@ std::string utf32ToUtf8(const std::u32string& str);
  * @param fmt printf-style format string
  * @return formatted string
  */
-template<typename ...Args>
-std::string format(const std::string& fmt, Args&& ...args) {
+template<typename... Args>
+std::string format(const std::string& fmt, Args&&... args) {
     int bufSize = snprintf(nullptr, 0, fmt.data(), std::forward<Args>(args)...);
     if (bufSize < 0) {
         return "";

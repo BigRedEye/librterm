@@ -75,9 +75,9 @@ public:
     friend class Term;
 
 private:
-    ch32 ch_; ///< real UTF8 char
-    Color bg_;  ///< background color
-    Color fg_;  ///< foreground color
+    ch32 ch_;  ///< real UTF8 char
+    Color bg_; ///< background color
+    Color fg_; ///< foreground color
 };
 
 /**

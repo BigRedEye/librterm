@@ -100,7 +100,7 @@ private:
 private:
     SDL_Keycode code_; ///< real code value
     ui32 mod_;         ///< OR'ed KeyMod constants
-    ch32 unicode_;   ///< unicode char
+    ch32 unicode_;     ///< unicode char
 
     /// @endcond
 };

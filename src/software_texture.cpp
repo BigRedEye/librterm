@@ -60,7 +60,7 @@ SoftwareTexture& SoftwareTexture::operator=(const SoftwareTexture& other) {
     return *this;
 }
 
-void SoftwareTexture::save(const std::string &file) {
+void SoftwareTexture::save(const std::string& file) {
     if (!surface_) {
         throw BadTexture();
     }

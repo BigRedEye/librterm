@@ -63,8 +63,8 @@ bool VirtualConsole::getMask(ui32 x, ui32 y) const {
 void VirtualConsole::set(ui32 x, ui32 y, const Char& c) {
     if (x >= cols() || y >= rows()) {
         std::stringstream ss;
-        ss << "Invalid character position, maximum = ("
-            << cols() - 1 << ", " << rows() - 1 << "), got (" << x << ", " << y << ")";
+        ss << "Invalid character position, maximum = (" << cols() - 1 << ", " << rows() - 1 << "), got (" << x << ", "
+           << y << ")";
         throw Exception(ss.str());
     }
     if (c == data_[y][x]) {
