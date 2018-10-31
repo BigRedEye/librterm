@@ -17,7 +17,7 @@ public:
     Window();
     Window(int w, int h);
 
-    inline SDL_Window* get() const {
+    SDL_Window* get() const {
         return window_.get();
     }
 
@@ -39,11 +39,11 @@ public:
 
     Vector<int, 2> size() const;
 
-    int w() const {
+    i32 w() const {
         return size()[0];
     }
 
-    int h() const {
+    i32 h() const {
         return size()[1];
     }
 
@@ -55,8 +55,8 @@ private:
     SdlHolder<SDL_Window> window_;
     AbstractRenderer renderer_;
     SdlLoader loader_;
-    int w_;
-    int h_;
+    i32 w_;
+    i32 h_;
 };
 
 } // namespace rterm

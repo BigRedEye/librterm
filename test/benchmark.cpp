@@ -7,12 +7,8 @@
 #include <iostream>
 #include <random>
 
-#define UNUSED(var) (void)var
-
-int main(int argc, char** argv) {
+int main(int, const char*[]) {
     rterm::Logger() << "Benchmark";
-    UNUSED(argc);
-    UNUSED(argv);
 
     try {
         rterm::Term terminal(80, 24);
@@ -94,8 +90,9 @@ int main(int argc, char** argv) {
         deltaTime = end - start;
         rterm::Logger().printf("Random time usage: %f s", deltaTime.count());
         rterm::Logger().printf("FPS: %f", frames / deltaTime.count());
+        return 0;
     } catch (const rterm::Exception& e) {
-        rterm::Logger(rterm::Logger::CRITICAL) << "Caught an exception: " << e.what();
+        rterm::Logger() << e.what();
+        return 1;
     }
-    return 0;
 }

@@ -4,11 +4,11 @@
 #include <term.h>
 #include <error.h>
 
-/* on Windows SDL2 redefines main with custom SDL_main function,
+/*
+ * on Windows SDL2 redefines main with custom SDL_main function,
  * so we need argc and argv
  */
-int main(int, char *[]) {
-    /* rterm checks every SDL2 call, so: */
+int main(int, const char *[]) {
     try {
         /* create empty terminal with 80 columns and 24 rows */
         rterm::TermFormat format(80, 24);
@@ -20,7 +20,7 @@ int main(int, char *[]) {
         terminal.setFont("resources/DejaVuSansMono.ttf", fontSize);
         terminal.setIcon("resources/terminal.ico");
         /* set foreground color to green (#00FF00) */
-        terminal.setFgColor(rterm::Color(0x00, 0xff, 0x00));
+        terminal.setFgColor(rterm::Color::Blue);
         /* set callback for keypress */
         int x = 0;
         int y = 0;

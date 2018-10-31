@@ -27,8 +27,8 @@ Term::Term(const TermFormat& format)
     , window_(400, 400)
     , glyphCache_(window_.renderer(), std::make_unique<TTFont>())
     , quitRequested_(false)
-    , fgCol_(0x00, 0xff, 0x00)
-    , bgCol_(0x00, 0x00, 0x00) {
+    , fgCol_(Color::Blue)
+    , bgCol_(Color::Black) {
     redraw(true);
     setupCallbacks();
     eventSystem_.poll();
@@ -324,8 +324,10 @@ void Term::setupCallbacks() {
 void Term::redrawGlyph(size_t x, size_t y) {
     ScreenView dst(x * glyphCache_.w(), y * glyphCache_.h(), glyphCache_.w(), glyphCache_.h());
     Char ch = console_.get(x, y);
-    TextureView<Api::api> tview = glyphCache_.getGlyph(ch.c());
-    window_.renderer().render(tview, dst, ch.fg());
+    if (ch.c()) {
+        TextureView<Api::api> tview = glyphCache_.getGlyph(ch.c());
+        window_.renderer().render(tview, dst, ch.fg());
+    }
 }
 
 void Term::redrawBackground(const std::vector<std::pair<ui32, ui32>>& updates) {

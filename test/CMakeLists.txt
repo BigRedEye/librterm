@@ -8,8 +8,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 file(GLOB_RECURSE resources "${PROJECT_SOURCE_DIR}/../resources/*")
 
-message("${RTERM_LIBS}")
-
 foreach(abssourcefile ${sources})
     get_filename_component(sourcefile ${abssourcefile} NAME)
     
