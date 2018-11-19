@@ -1,4 +1,4 @@
-#include "error.h"
+#include "rterm/error.h"
 
 #include <SDL_error.h>
 #include <SDL_ttf.h>

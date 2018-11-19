@@ -1,5 +1,5 @@
-#include "software_texture.h"
-#include "error.h"
+#include "rterm/software_texture.h"
+#include "rterm/error.h"
 
 #include <cstring>
 

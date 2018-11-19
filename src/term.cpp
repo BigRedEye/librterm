@@ -1,10 +1,10 @@
-#include "term.h"
-#include "font.h"
-#include "hardware_texture.h"
-#include "logger.h"
-#include "mouse.h"
-#include "tilefont.h"
-#include "ttfont.h"
+#include "rterm/term.h"
+#include "rterm/font.h"
+#include "rterm/hardware_texture.h"
+#include "rterm/logger.h"
+#include "rterm/mouse.h"
+#include "rterm/tilefont.h"
+#include "rterm/ttfont.h"
 
 #include <SDL_image.h>
 

@@ -1,6 +1,6 @@
-#include "ttfont.h"
-#include "error.h"
-#include "logger.h"
+#include "rterm/ttfont.h"
+#include "rterm/error.h"
+#include "rterm/logger.h"
 
 #include <SDL_ttf.h>
 

@@ -1,6 +1,5 @@
-#include "virtualconsole.h"
-
-#include "error.h"
+#include "rterm/virtualconsole.h"
+#include "rterm/error.h"
 
 #include <sstream>
 

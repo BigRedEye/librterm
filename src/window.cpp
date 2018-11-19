@@ -1,6 +1,6 @@
-#include "window.h"
-#include "api.h"
-#include "sdl_ptr.h"
+#include "rterm/window.h"
+#include "rterm/api.h"
+#include "rterm/sdl_ptr.h"
 
 namespace rterm {
 

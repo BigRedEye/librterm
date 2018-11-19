@@ -43,40 +43,40 @@ file(
 
 file(
     GLOB HEADERS
-    include/api.h
-    include/char.h
-    include/color.h
-    include/error.h
-    include/event.h
-    include/event_system.h
-    include/font.h
-    include/framerate_counter.h
-    include/hardware_texture.h
-    include/key.h
-    include/keycode.h
-    include/logger.h
-    include/mouse.h
-    include/rect.h
-    include/renderer.h
-    include/gl_hardware_texture.tpp
-    include/gl_renderer.tpp
-    include/sdl_hardware_texture.tpp
-    include/sdl_renderer.tpp
-    include/sdl_loader.h
-    include/sdl_ptr.h
-    include/software_texture.h
-    include/term.h
-    include/term_format.h
-    include/texture.h
-    include/tilefont.h
-    include/ttfont.h
-    include/util.h
-    include/virtualconsole.h
-    include/window.h
-    include/term.tpp
-    include/glyph_cache.h
-    include/texture_view.h
-    include/screen_view.h
+    include/rterm/api.h
+    include/rterm/char.h
+    include/rterm/color.h
+    include/rterm/error.h
+    include/rterm/event.h
+    include/rterm/event_system.h
+    include/rterm/font.h
+    include/rterm/framerate_counter.h
+    include/rterm/hardware_texture.h
+    include/rterm/key.h
+    include/rterm/keycode.h
+    include/rterm/logger.h
+    include/rterm/mouse.h
+    include/rterm/rect.h
+    include/rterm/renderer.h
+    include/rterm/gl_hardware_texture.tpp
+    include/rterm/gl_renderer.tpp
+    include/rterm/sdl_hardware_texture.tpp
+    include/rterm/sdl_renderer.tpp
+    include/rterm/sdl_loader.h
+    include/rterm/sdl_ptr.h
+    include/rterm/software_texture.h
+    include/rterm/term.h
+    include/rterm/term_format.h
+    include/rterm/texture.h
+    include/rterm/tilefont.h
+    include/rterm/ttfont.h
+    include/rterm/util.h
+    include/rterm/virtualconsole.h
+    include/rterm/window.h
+    include/rterm/term.tpp
+    include/rterm/glyph_cache.h
+    include/rterm/texture_view.h
+    include/rterm/screen_view.h
 )
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
@@ -110,7 +110,7 @@ if (OPENGL_FOUND)
     set(RTERM_HEADERS ${RTERM_HEADERS} OPENGL_INCLUDE_DIRS GLAD_INCLUDE_DIRS)
 endif(OPENGL_FOUND)
 
-set (RTERM_HEADERS
+set(RTERM_HEADERS
    ${RTERM_HEADERS}
    ${CMAKE_CURRENT_SOURCE_DIR}/include/
    ${SDL2_INCLUDE_DIR}

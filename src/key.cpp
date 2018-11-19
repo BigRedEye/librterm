@@ -1,4 +1,4 @@
-#include "key.h"
+#include "rterm/key.h"
 
 namespace rterm {
 

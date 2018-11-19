@@ -1,6 +1,6 @@
-#include "tilefont.h"
-#include "error.h"
-#include "logger.h"
+#include "rterm/tilefont.h"
+#include "rterm/error.h"
+#include "rterm/logger.h"
 
 #include <SDL_image.h>
 

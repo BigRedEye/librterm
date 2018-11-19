@@ -1,5 +1,5 @@
-#include "event.h"
-#include "logger.h"
+#include "rterm/event.h"
+#include "rterm/logger.h"
 
 namespace rterm {
 

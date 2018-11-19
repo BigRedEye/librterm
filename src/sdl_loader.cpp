@@ -1,5 +1,5 @@
-#include "sdl_loader.h"
-#include "error.h"
+#include "rterm/sdl_loader.h"
+#include "rterm/error.h"
 
 #include <SDL.h>
 

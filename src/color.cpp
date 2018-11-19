@@ -1,4 +1,4 @@
-#include "color.h"
+#include "rterm/color.h"
 
 namespace rterm {
 

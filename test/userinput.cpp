@@ -1,8 +1,8 @@
-#include <key.h>
-#include <logger.h>
-#include <mouse.h>
-#include <term.h>
-#include <error.h>
+#include <rterm/key.h>
+#include <rterm/logger.h>
+#include <rterm/mouse.h>
+#include <rterm/term.h>
+#include <rterm/error.h>
 
 #include <chrono>
 

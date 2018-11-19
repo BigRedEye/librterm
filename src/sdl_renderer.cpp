@@ -1,4 +1,4 @@
-#include "sdl_renderer.h"
+#include "rterm/renderer.h"
 
 namespace rterm {
 
