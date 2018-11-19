@@ -1,11 +1,11 @@
 SET STARTDIR="%cd%"
 cd .. &&^
-cmake . -G "MinGW Makefiles" &&^
-mingw32-make &&^
+mkdir bulid &&^
+cd build &&^
+cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DRTERM_ADD_TEST_TARGET=ON &&^
+cmake --build . --parallel 4 &&^
 copy librterm.dll test &&^
 cd test &&^
-cmake . -G "MinGW Makefiles" &&^
-mingw32-make &&^
 benchmark.exe ||^
 pause
 cd %STARTDIR%
