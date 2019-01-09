@@ -16,18 +16,20 @@ deploy:
           appveyor_repo_tag: true
 
 install:
-    - set INSTALL_PATH=C:\deps
+    - git submodule update --init --recursive
+
+    - set INSTALL_PATH=C:\deps\
     - mkdir %INSTALL_PATH%
     - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.9-mingw.tar.gz
     - 7z x SDL2-devel-2.0.9-mingw.tar.gz
     - 7z x SDL2-devel-2.0.9-mingw.tar
     - xcopy SDL2-2.0.9\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
-    
+
     - appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.4-mingw.tar.gz
     - 7z x SDL2_image-devel-2.0.4-mingw.tar.gz
     - 7z x SDL2_image-devel-2.0.4-mingw.tar
     - xcopy SDL2_image-2.0.4\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
-    
+
     - appveyor DownloadFile https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-2.0.14-mingw.tar.gz
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar.gz
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar
@@ -40,10 +42,10 @@ build_script:
     - g++ -E -x c++ - -v < nul
     - mkdir %APPVEYOR_BUILD_FOLDER%\build
     - cd %APPVEYOR_BUILD_FOLDER%\build
-    - cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DRTERM_ADD_TEST_TARGET=ON -DRTERM_SDL2_PATH=%INSTALL_PATH%
+    - cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DRTERM_BUILD_TESTS=ON -DRTERM_SDL2_PATH=%INSTALL_PATH% -DBUILD_SHARED_LIBS=ON
     - cmake --build .
+    - copy librterm.dll test\
     - cd test
-    - where librterm.dll
     - where SDL2.dll
     - benchmark.exe
     - cd ..
