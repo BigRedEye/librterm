@@ -14,7 +14,6 @@ foreach(abssourcefile ${sources})
     string(REPLACE ".cpp" "" exename ${sourcefile})
     file(COPY ${resources} DESTINATION resources)
     add_executable(${exename} ${sourcefile} ${resources})
-    target_include_directories(${exename} PUBLIC ${RTERM_HEADERS})
-    target_link_libraries(${exename} ${RTERM_LIBS})
+    target_link_libraries(${exename} rterm)
 
 endforeach(abssourcefile ${sources})

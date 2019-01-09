@@ -16,18 +16,17 @@ deploy:
           appveyor_repo_tag: true
 
 install:
-    - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
-    - set INSTALL_PATH=%MINGW%\x86_64-w64-mingw32\
+    - set INSTALL_PATH=sdl2-path
 
-    - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.8-mingw.tar.gz
-    - 7z x SDL2-devel-2.0.8-mingw.tar.gz
-    - 7z x SDL2-devel-2.0.8-mingw.tar
-    - xcopy SDL2-2.0.8\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
+    - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.9-mingw.tar.gz
+    - 7z x SDL2-devel-2.0.9-mingw.tar.gz
+    - 7z x SDL2-devel-2.0.9-mingw.tar
+    - xcopy SDL2-2.0.9\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
     
-    - appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.1-mingw.tar.gz
-    - 7z x SDL2_image-devel-2.0.1-mingw.tar.gz
-    - 7z x SDL2_image-devel-2.0.1-mingw.tar
-    - xcopy SDL2_image-2.0.1\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
+    - appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.4-mingw.tar.gz
+    - 7z x SDL2_image-devel-2.0.4-mingw.tar.gz
+    - 7z x SDL2_image-devel-2.0.4-mingw.tar
+    - xcopy SDL2_image-2.0.4\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
     
     - appveyor DownloadFile https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-2.0.14-mingw.tar.gz
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar.gz
@@ -35,21 +34,17 @@ install:
     - xcopy SDL2_ttf-2.0.14\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
 
 build_script:
+    - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
     - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
     - set PATH=%MINGW%\bin;%MINGW%\lib;%INSTALL_PATH%\bin;%PATH%
     - g++ -E -x c++ - -v < nul
-    - cd %APPVEYOR_BUILD_FOLDER%
-    - cmake . -G "MinGW Makefiles"
-    - mingw32-make
-    - copy librterm.dll %INSTALL_PATH%\bin\
-    - copy librterm.dll.a %INSTALL_PATH%\lib\
-    - mkdir %INSTALL_PATH%\include\rterm
-    - copy include %INSTALL_PATH%\include\rterm\
+    - mkdir %APPVEYOR_BUILD_FOLDER%/build
+    - cd %APPVEYOR_BUILD_FOLDER%/build
+    - cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DRTERM_ADD_TEST_TARGET=ON
+    - cmake --build .
     - cd test
     - where librterm.dll
     - where SDL2.dll
-    - cmake . -G "MinGW Makefiles"
-    - mingw32-make
     - benchmark.exe
     - cd ..
 
