@@ -38,6 +38,10 @@ install:
     - dir /B %INSTALL_PATH%
     - dir /B %INSTALL_PATH%\bin
 
+    - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
+    - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+    - set PATH=%MINGW%\bin;%MINGW%\lib;%INSTALL_PATH%\bin;%PATH%
+
     - where zlib1.dll
     - where SDL2.dll
     - where libpng16-16.dll
@@ -45,9 +49,6 @@ install:
     - where zlib1.dll
 
 build_script:
-    - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
-    - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
-    - set PATH=%MINGW%\bin;%MINGW%\lib;%INSTALL_PATH%\bin;%PATH%
 
     - mkdir %APPVEYOR_BUILD_FOLDER%\build
     - cd %APPVEYOR_BUILD_FOLDER%\build
