@@ -45,7 +45,7 @@ install:
     - where zlib1.dll
     - where SDL2.dll
     - where libpng16-16.dll
-    - for /f %f in ('where zlib1.dll') do copy %INSTALL_PATH%\bin\zlib1.dll %f
+    - for /f %%f in ('where zlib1.dll') do copy %INSTALL_PATH%\bin\zlib1.dll %%f
     - where zlib1.dll
 
 build_script:
