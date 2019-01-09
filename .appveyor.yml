@@ -38,10 +38,9 @@ build_script:
     - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
     - set PATH=%MINGW%\bin;%MINGW%\lib;%INSTALL_PATH%\bin;%PATH%
     - g++ -E -x c++ - -v < nul
-    - cd %APPVEYOR_BUILD_FOLDER%
-    - mkdir build
-    - cd build
-    - cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DRTERM_ADD_TEST_TARGET=ON
+    - mkdir %APPVEYOR_BUILD_FOLDER%\build
+    - cd %APPVEYOR_BUILD_FOLDER%\build
+    - cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DRTERM_ADD_TEST_TARGET=ON -DSDL2_PATH=%INSTALL_PATH%
     - cmake --build .
     - cd test
     - where librterm.dll
