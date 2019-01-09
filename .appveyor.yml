@@ -36,7 +36,7 @@ install:
     - xcopy SDL2_ttf-2.0.14\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
 
     - dir /B %INSTALL_PATH%
-    - dir /B %INSTALL_PATH%/bin
+    - dir /B %INSTALL_PATH%\bin
 
 build_script:
     - set PATH=%INSTALL_PATH%\bin;%PATH:C:\Program Files\Git\usr\bin;=%
