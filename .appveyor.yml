@@ -16,8 +16,8 @@ deploy:
           appveyor_repo_tag: true
 
 install:
-    - set INSTALL_PATH=sdl2-path
-
+    - set INSTALL_PATH=C:\deps
+    - mkdir %INSTALL_PATH%
     - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.9-mingw.tar.gz
     - 7z x SDL2-devel-2.0.9-mingw.tar.gz
     - 7z x SDL2-devel-2.0.9-mingw.tar
