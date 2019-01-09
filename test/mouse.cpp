@@ -8,7 +8,7 @@
  * on Windows SDL2 redefines main with custom SDL_main function,
  * so we need argc and argv
  */
-int main(int, const char *[]) {
+int main(int, char**) {
     try {
         /* create empty terminal with 80 columns and 24 rows */
         rterm::TermFormat format(80, 24);

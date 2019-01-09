@@ -7,7 +7,7 @@
 #include <iostream>
 #include <random>
 
-int main(int, const char*[]) {
+int main(int, char**) {
     rterm::Logger() << "Benchmark";
 
     try {

@@ -10,7 +10,7 @@
  * on Windows SDL2 redefines main with custom SDL_main function,
  * so we need argc and argv
  */
-int main(int, const char *[]) {
+int main(int, char**) {
     try {
         /* create empty terminal with 80 columns and 24 rows */
         rterm::Term terminal(80, 24);
@@ -38,11 +38,11 @@ int main(int, const char *[]) {
         /* while terminal is not closed... */
         while (terminal.isRunning()) {
             /* measure polling time */
-            auto start = std::chrono::high_resolution_clock::now();
+            auto start = std::chrono::steady_clock::now();
             /* poll events */
             terminal.poll();
             /* if was keypress: */
-            auto end = std::chrono::high_resolution_clock::now();
+            auto end = std::chrono::steady_clock::now();
             if (wasInput) {
                 double secs = std::chrono::duration_cast<std::chrono::duration<double, std::micro>>(end - start).count();
                 rterm::Logger() << "Keypress: " << secs << "µs";
