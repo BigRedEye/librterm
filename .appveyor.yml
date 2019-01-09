@@ -35,18 +35,25 @@ install:
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar
     - xcopy SDL2_ttf-2.0.14\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
 
+    - dir /B %INSTALL_PATH%
+    - dir /B %INSTALL_PATH%/bin
+
 build_script:
-    - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
-    - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
-    - set PATH=%MINGW%\bin;%MINGW%\lib;%INSTALL_PATH%\bin;%PATH%
-    - g++ -E -x c++ - -v < nul
+    - set PATH=%INSTALL_PATH%\bin;%PATH:C:\Program Files\Git\usr\bin;=%
+
     - mkdir %APPVEYOR_BUILD_FOLDER%\build
     - cd %APPVEYOR_BUILD_FOLDER%\build
+
     - cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DRTERM_BUILD_TESTS=ON -DRTERM_SDL2_PATH=%INSTALL_PATH% -DBUILD_SHARED_LIBS=ON
     - cmake --build .
+
     - copy librterm.dll test\
     - cd test
+
     - where SDL2.dll
+    - where libpng16-16.dll
+    - where zlib1.dll
+
     - benchmark.exe
     - cd ..
 
