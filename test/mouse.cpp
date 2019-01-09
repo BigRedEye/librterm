@@ -8,7 +8,7 @@
  * on Windows SDL2 redefines main with custom SDL_main function,
  * so we need argc and argv
  */
-int main(int, const char *[]) {
+int main(int, char**) {
     try {
         /* create empty terminal with 80 columns and 24 rows */
         rterm::TermFormat format(80, 24);
@@ -18,7 +18,7 @@ int main(int, const char *[]) {
         /* load TrueType font */
         rterm::ui32 fontSize = 18;
         terminal.setFont("resources/DejaVuSansMono.ttf", fontSize);
-        terminal.setIcon("resources/terminal.ico");
+        terminal.setIcon("resources/icon.png");
         /* set foreground color to green (#00FF00) */
         terminal.setFgColor(rterm::Color::Blue);
         /* set callback for keypress */

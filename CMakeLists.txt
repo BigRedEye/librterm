@@ -7,16 +7,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/third_party/sd
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (${CMAKE_CXX_COMPILER_ID} MATCHES  "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wpedantic")
-elseif (${CMAKE_CXX_COMPILER_ID} MATCHES  "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wpedantic")
-elseif (${CMAKE_CXX_COMPILER_ID} MATCHES  "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-endif()
-
 option(RTERM_DISABLE_SDL "Diable SDL renderer" OFF)
 option(RTERM_DISABLE_OGL "Disable OpenGL renderer" OFF)
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 set(RTERM_HAS_SDL ON)
 set(RTERM_HAS_OGL OFF)
 
@@ -65,6 +58,7 @@ file(
     include/rterm/sdl_loader.h
     include/rterm/sdl_ptr.h
     include/rterm/software_texture.h
+    include/rterm/span.h
     include/rterm/term.h
     include/rterm/term_format.h
     include/rterm/texture.h
@@ -81,19 +75,36 @@ file(
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
-if (MINGW)
-    set(SDL2_PATH C:/Tools/Libs/mingw/x64/SDL2/x86_64-w64-mingw32)
-    set(SDL2_IMAGE_PATH C:/Tools/Libs/mingw/x64/SDL2_image/x86_64-w64-mingw32)
-    set(SDL2_TTF_PATH C:/Tools/Libs/mingw/x64/SDL2_ttf/x86_64-w64-mingw32)
+
+if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+    set_target_properties(
+        ${PROJECT_NAME}
+        PROPERTIES
+        COMPILE_FLAGS
+        "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wpedantic -Wshadow"
+    )
+elseif (${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC")
+    set_target_properties(
+        ${PROJECT_NAME}
+        PROPERTIES
+        COMPILE_FLAGS
+        "${CMAKE_CXX_FLAGS} /W4"
+    )
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 endif()
 
-set(RTERM_HEADERS)
-set(RTERM_INTERNAL_LIBS)
+if(DEFINED RTERM_SDL2_PATH)
+    set(SDL2_PATH ${RTERM_SDL2_PATH})
+    set(SDL2_TTF_PATH ${RTERM_SDL2_PATH})
+endif()
 
 find_package(Threads REQUIRED)
 find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf REQUIRED)
+
+# STB_Image
+add_subdirectory(third_party/stb)
+set(RTERM_INTERNAL_LIBS ${RTERM_INTERNAL_LIBS} stb_image)
 
 # OpenGL
 set(OpenGL_GL_PREFERENCE GLVND)
@@ -110,18 +121,19 @@ if (OPENGL_FOUND)
     set(RTERM_HEADERS ${RTERM_HEADERS} OPENGL_INCLUDE_DIRS GLAD_INCLUDE_DIRS)
 endif(OPENGL_FOUND)
 
-set(RTERM_HEADERS
-   ${RTERM_HEADERS}
-   ${CMAKE_CURRENT_SOURCE_DIR}/include/
-   ${SDL2_INCLUDE_DIR}
-   ${SDL2_IMAGE_INCLUDE_DIR}
-   ${SDL2_TTF_INCLUDE_DIR}
+set(RTERM_PUBLIC_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/
+    ${SDL2_INCLUDE_DIR}
+    ${SDL2_TTF_INCLUDE_DIR}
 )
 
-set (RTERM_INTERNAL_LIBS
+set(RTERM_HEADERS
+    ${RTERM_PUBLIC_HEADERS}
+)
+
+set(RTERM_INTERNAL_LIBS
     ${RTERM_INTERNAL_LIBS}
     ${SDL2_LIBRARY}
-    ${SDL2_IMAGE_LIBRARIES}
     ${SDL2_TTF_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
 )
@@ -129,18 +141,17 @@ set (RTERM_INTERNAL_LIBS
 target_include_directories(${PROJECT_NAME} PUBLIC ${RTERM_HEADERS})
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${HEADERS}")
 
-target_link_libraries(${PROJECT_NAME} ${RTERM_INTERNAL_LIBS})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${RTERM_INTERNAL_LIBS})
 
-# RTERM_HAS_XXX = !RTERM_DISABLE_XXX && RTERM_HAS_XXX
+# RTERM_ENABLE_XXX = !RTERM_DISABLE_XXX && RTERM_HAS_XXX
 target_compile_definitions(
-    ${PROJECT_NAME} PRIVATE
-    RTERM_HAS_SDL=$<AND:$<NOT:$<BOOL:${RTERM_DISABLE_SDL}>>,$<BOOL:${RTERM_HAS_SDL}$>>
-    RTERM_HAS_OGL=$<AND:$<NOT:$<BOOL:${RTERM_DISABLE_OGL}>>,$<BOOL:${RTERM_HAS_OGL}$>>
+    ${PROJECT_NAME} PUBLIC
+    RTERM_ENABLE_SDL=$<AND:$<NOT:$<BOOL:${RTERM_DISABLE_SDL}>>,$<BOOL:${RTERM_HAS_SDL}$>>
+    RTERM_ENABLE_OGL=$<AND:$<NOT:$<BOOL:${RTERM_DISABLE_OGL}>>,$<BOOL:${RTERM_HAS_OGL}$>>
 )
 
-set(RTERM_LIBS ${RTERM_INTERNAL_LIBS} ${PROJECT_NAME})
-
-set(RTERM_ADD_TEST_TARGET ON)
-if (RTERM_ADD_TEST_TARGET)
+set(RTERM_BUILD_TESTS ON)
+if (RTERM_BUILD_TESTS)
+    enable_testing()
     add_subdirectory(test)
-endif(RTERM_ADD_TEST_TARGET)
+endif(RTERM_BUILD_TESTS)

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <random>
 
-int main(int, const char*[]) {
+int main(int, char**) {
     rterm::Logger() << "Benchmark";
 
     try {
@@ -17,7 +17,7 @@ int main(int, const char*[]) {
         int fontSize = 18;
         terminal.setTitle("rterm demo");
         terminal.setFont("resources/DejaVuSansMono.ttf", fontSize);
-        terminal.setIcon("resources/terminal.ico");
+        terminal.setIcon("resources/icon.png");
         terminal.setFgColor(rterm::Color(100, 0xff, 100));
         terminal.setFullscreen(false);
         terminal.setResizable(true);

@@ -6,8 +6,6 @@
 #include "rterm/tilefont.h"
 #include "rterm/ttfont.h"
 
-#include <SDL_image.h>
-
 #include <functional>
 #include <iostream>
 #include <sstream>
@@ -97,7 +95,7 @@ Term& Term::setTitle(const std::string& title) {
 }
 
 Term& Term::setIcon(const std::string& path) {
-    SoftwareTexture pIcon(IMG_Load(path.c_str()));
+    SoftwareTexture pIcon(path);
     if (!pIcon) {
         throw Exception();
     } else {

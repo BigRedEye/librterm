@@ -1,8 +1,7 @@
 #include "rterm/tilefont.h"
 #include "rterm/error.h"
 #include "rterm/logger.h"
-
-#include <SDL_image.h>
+#include "rterm/software_texture.h"
 
 namespace rterm {
 TileFont::TileFont()
@@ -13,12 +12,7 @@ TileFont::TileFont(const std::string& path, ui32 _w, ui32 _h)
     : Font()
     , w_(_w)
     , h_(_h) {
-    static bool IMG_WasInit = false;
-    if (!IMG_WasInit) {
-        IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP);
-        IMG_WasInit = true;
-    }
-    p_tilemap_ = SdlHolder<SDL_Surface>(IMG_Load(path.c_str()));
+    p_tilemap_ = SdlHolder<SDL_Surface>(SoftwareTexture(path).release());
     if (!p_tilemap_.get()) {
         throw BadFont();
     }

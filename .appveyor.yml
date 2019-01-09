@@ -16,42 +16,54 @@ deploy:
           appveyor_repo_tag: true
 
 install:
-    - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
-    - set INSTALL_PATH=%MINGW%\x86_64-w64-mingw32\
+    - git submodule update --init --recursive
 
-    - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.8-mingw.tar.gz
-    - 7z x SDL2-devel-2.0.8-mingw.tar.gz
-    - 7z x SDL2-devel-2.0.8-mingw.tar
-    - xcopy SDL2-2.0.8\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
-    
-    - appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.1-mingw.tar.gz
-    - 7z x SDL2_image-devel-2.0.1-mingw.tar.gz
-    - 7z x SDL2_image-devel-2.0.1-mingw.tar
-    - xcopy SDL2_image-2.0.1\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
-    
+    - set INSTALL_PATH=C:\deps\
+    - mkdir %INSTALL_PATH%
+    - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.9-mingw.tar.gz
+    - 7z x SDL2-devel-2.0.9-mingw.tar.gz
+    - 7z x SDL2-devel-2.0.9-mingw.tar
+    - xcopy SDL2-2.0.9\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
+
+    - appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.4-mingw.tar.gz
+    - 7z x SDL2_image-devel-2.0.4-mingw.tar.gz
+    - 7z x SDL2_image-devel-2.0.4-mingw.tar
+    - xcopy SDL2_image-2.0.4\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
+
     - appveyor DownloadFile https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-2.0.14-mingw.tar.gz
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar.gz
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar
     - xcopy SDL2_ttf-2.0.14\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
 
-build_script:
+    - dir /B %INSTALL_PATH%
+    - dir /B %INSTALL_PATH%\bin
+
+    - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
     - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
     - set PATH=%MINGW%\bin;%MINGW%\lib;%INSTALL_PATH%\bin;%PATH%
-    - g++ -E -x c++ - -v < nul
-    - cd %APPVEYOR_BUILD_FOLDER%
-    - cmake . -G "MinGW Makefiles"
-    - mingw32-make
-    - copy librterm.dll %INSTALL_PATH%\bin\
-    - copy librterm.dll.a %INSTALL_PATH%\lib\
-    - mkdir %INSTALL_PATH%\include\rterm
-    - copy include %INSTALL_PATH%\include\rterm\
-    - cd test
-    - where librterm.dll
+
+    - where zlib1.dll
     - where SDL2.dll
-    - cmake . -G "MinGW Makefiles"
-    - mingw32-make
+    - where libpng16-16.dll
+    - for /f %%f in ('where zlib1.dll') do copy %INSTALL_PATH%\bin\zlib1.dll %%f
+    - where zlib1.dll
+
+build_script:
+
+    - mkdir %APPVEYOR_BUILD_FOLDER%\build
+    - cd %APPVEYOR_BUILD_FOLDER%\build
+
+    - cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DRTERM_BUILD_TESTS=ON -DRTERM_SDL2_PATH=%INSTALL_PATH% -DBUILD_SHARED_LIBS=ON
+    - cmake --build .
+
+    - copy librterm.dll test\
+    - copy C:\deps\bin\libpng16-16.dll test\
+    - cd test
+
+    # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
     - benchmark.exe
-    - cd ..
+    - cd ..\..
 
 after_build:
     - mkdir release
@@ -59,6 +71,6 @@ after_build:
     - mkdir release\lib
     - mkdir release\include
     - mkdir release\include\rterm
-    - copy librterm.dll release\bin\
-    - copy librterm.dll.a release\lib\
-    - copy include release\include\rterm\
+    - copy build\librterm.dll release\bin\
+    - copy build\librterm.dll.a release\lib\
+    - xcopy /E include release\include\rterm\

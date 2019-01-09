@@ -4,3 +4,6 @@
 [submodule "third/sdl2-cmake"]
 	path = third_party/sdl2-cmake
 	url = https://github.com/tcbrindle/sdl2-cmake-scripts
+[submodule "third_party/stb/stb"]
+	path = third_party/stb/stb
+	url = https://github.com/nothings/stb.git
