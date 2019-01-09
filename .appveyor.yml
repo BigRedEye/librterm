@@ -38,6 +38,12 @@ install:
     - dir /B %INSTALL_PATH%
     - dir /B %INSTALL_PATH%\bin
 
+    - where zlib1.dll
+    - where SDL2.dll
+    - where libpng16-16.dll
+    - for /f %f in ('where zlib1.dll') do copy %INSTALL_PATH%\bin\zlib1.dll %f
+    - where zlib1.dll
+
 build_script:
     - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
     - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
@@ -52,9 +58,6 @@ build_script:
     - copy librterm.dll test\
     - cd test
 
-    - where SDL2.dll
-    - where libpng16-16.dll
-    - where zlib1.dll
 
     - benchmark.exe
     - cd ..
