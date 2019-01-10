@@ -6,7 +6,6 @@
 #include <stb_image.h>
 
 #include <SDL_surface.h>
-#include <SDL_pixels.h>
 
 namespace rterm {
 

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "error.h"
-#include "rect.h"
-#include "sdl_ptr.h"
+#include "rterm/error.h"
+#include "rterm/image.h"
+#include "rterm/rect.h"
+#include "rterm/sdl_ptr.h"
 
 #include <SDL.h>
 #include <vector>
@@ -63,7 +64,7 @@ public:
      */
     void save(const std::string& file);
 
-    static constexpr ui32 format = SDL_PIXELFORMAT_RGBA8888;
+    static constexpr ui32 format = SDL_PIXELFORMAT_RGBA32;
 
 private:
     SdlHolder<SDL_Surface> surface_;
