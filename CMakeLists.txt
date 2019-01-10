@@ -22,7 +22,6 @@ file(
     src/event_system.cpp
     src/framerate_counter.cpp
     src/glyph_cache.cpp
-    src/image.cpp
     src/key.cpp
     src/logger.cpp
     src/sdl_loader.cpp
@@ -46,7 +45,6 @@ file(
     include/rterm/font.h
     include/rterm/framerate_counter.h
     include/rterm/hardware_texture.h
-    include/rterm/image.h
     include/rterm/key.h
     include/rterm/keycode.h
     include/rterm/logger.h
