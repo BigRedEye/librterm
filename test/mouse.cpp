@@ -1,8 +1,4 @@
-#include <rterm/key.h>
-#include <rterm/logger.h>
-#include <rterm/mouse.h>
-#include <rterm/term.h>
-#include <rterm/error.h>
+#include <rterm/rterm.h>
 
 /*
  * on Windows SDL2 redefines main with custom SDL_main function,

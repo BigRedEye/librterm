@@ -1,8 +1,4 @@
-#include <rterm/key.h>
-#include <rterm/logger.h>
-#include <rterm/mouse.h>
-#include <rterm/term.h>
-#include <rterm/error.h>
+#include <rterm/rterm.h>
 
 #include <chrono>
 
@@ -22,7 +18,7 @@ int main(int, char**) {
         terminal.setFont("resources/DejaVuSansMono.ttf", fontSize);
         terminal.setIcon("resources/icon.png");
         /* set foreground color to green (#00FF00) */
-        terminal.setFgColor(rterm::Color::White);
+        terminal.setFgColor(rterm::Color::Green);
         /* set callback for keypress */
         bool wasInput = false;
         terminal.onKeyDown([&](const rterm::events::KeyDownEvent& ev) {

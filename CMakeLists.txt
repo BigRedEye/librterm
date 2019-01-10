@@ -15,62 +15,71 @@ set(RTERM_HAS_OGL OFF)
 
 file(
     GLOB SOURCES
-    src/char.cpp
-    src/color.cpp
-    src/error.cpp
-    src/event.cpp
-    src/event_system.cpp
-    src/framerate_counter.cpp
-    src/glyph_cache.cpp
-    src/key.cpp
-    src/logger.cpp
-    src/sdl_loader.cpp
-    src/software_texture.cpp
-    src/term.cpp
-    src/texture.cpp
-    src/tilefont.cpp
-    src/ttfont.cpp
-    src/virtualconsole.cpp
-    src/window.cpp
+    src/rasterizer/glyph_cache.cpp
+    src/rasterizer/tilefont.cpp
+    src/rasterizer/ttfont.cpp
+
+    src/renderer/software_texture.cpp
+
+    src/term/term.cpp
+    src/term/virtualconsole.cpp
+
+    src/util/char.cpp
+    src/util/color.cpp
+    src/util/error.cpp
+    src/util/framerate_counter.cpp
+    src/util/logger.cpp
+
+    src/util/sdl/sdl_loader.cpp
+
+    src/window/event.cpp
+    src/window/event_system.cpp
+    src/window/key.cpp
+    src/window/window.cpp
 )
 
 file(
     GLOB HEADERS
-    include/rterm/api.h
-    include/rterm/char.h
-    include/rterm/color.h
-    include/rterm/error.h
-    include/rterm/event.h
-    include/rterm/event_system.h
-    include/rterm/font.h
-    include/rterm/framerate_counter.h
-    include/rterm/hardware_texture.h
-    include/rterm/key.h
-    include/rterm/keycode.h
-    include/rterm/logger.h
-    include/rterm/mouse.h
-    include/rterm/rect.h
-    include/rterm/renderer.h
-    include/rterm/gl_hardware_texture.tpp
-    include/rterm/gl_renderer.tpp
-    include/rterm/sdl_hardware_texture.tpp
-    include/rterm/sdl_renderer.tpp
-    include/rterm/sdl_loader.h
-    include/rterm/sdl_ptr.h
-    include/rterm/software_texture.h
-    include/rterm/span.h
-    include/rterm/term.h
-    include/rterm/term_format.h
-    include/rterm/texture.h
-    include/rterm/tilefont.h
-    include/rterm/ttfont.h
-    include/rterm/util.h
-    include/rterm/virtualconsole.h
-    include/rterm/window.h
-    include/rterm/term.tpp
-    include/rterm/glyph_cache.h
-    include/rterm/texture_view.h
-    include/rterm/screen_view.h
+    include/rterm/rterm.h
+
+    include/rterm/rasterizer/font.h
+    include/rterm/rasterizer/glyph_cache.h
+    include/rterm/rasterizer/tilefont.h
+    include/rterm/rasterizer/ttfont.h
+
+    include/rterm/renderer/gl_hardware_texture.tpp
+    include/rterm/renderer/gl_renderer.tpp
+    include/rterm/renderer/hardware_texture.h
+    include/rterm/renderer/renderer.h
+    include/rterm/renderer/screen_view.h
+    include/rterm/renderer/sdl_hardware_texture.tpp
+    include/rterm/renderer/sdl_renderer.tpp
+    include/rterm/renderer/software_texture.h
+    include/rterm/renderer/texture_view.h
+
+    include/rterm/term/term.h
+    include/rterm/term/term.tpp
+    include/rterm/term/term_format.h
+    include/rterm/term/virtualconsole.h
+
+    include/rterm/util/api.h
+    include/rterm/util/char.h
+    include/rterm/util/color.h
+    include/rterm/util/error.h
+    include/rterm/util/framerate_counter.h
+    include/rterm/util/logger.h
+    include/rterm/util/rect.h
+    include/rterm/util/sdl/sdl_loader.h
+    include/rterm/util/sdl/sdl_ptr.h
+    include/rterm/util/span.h
+    include/rterm/util/util.h
+
+    include/rterm/window/event.h
+    include/rterm/window/event_system.h
+    include/rterm/window/key.h
+    include/rterm/window/keycode.h
+    include/rterm/window/mouse.h
+    include/rterm/window/window.h
 )
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
