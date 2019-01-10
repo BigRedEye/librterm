@@ -57,6 +57,7 @@ build_script:
     - cmake --build .
 
     - copy librterm.dll test\
+    - copy C:\deps\bin\libpng16-16.dll test\
     - cd test
 
 
