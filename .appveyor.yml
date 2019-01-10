@@ -37,12 +37,6 @@ install:
     - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
     - set PATH=%MINGW%\bin;%MINGW%\lib;%INSTALL_PATH%\bin;%PATH%
 
-    - where zlib1.dll
-    - where SDL2.dll
-    - where libpng16-16.dll
-    - for /f %%f in ('where zlib1.dll') do copy %INSTALL_PATH%\bin\zlib1.dll %%f
-    - where zlib1.dll
-
 build_script:
 
     - mkdir %APPVEYOR_BUILD_FOLDER%\build
@@ -54,8 +48,6 @@ build_script:
     - copy librterm.dll test\
     - copy C:\deps\bin\libpng16-16.dll test\
     - cd test
-
-    # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
     - benchmark.exe
     - cd ..\..
