@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.5)
+
+project(freetype_download NONE)
+
+include(ExternalProject)
+ExternalProject_Add(freetype
+    URL               https://download.savannah.gnu.org/releases/freetype/freetype-2.9.1.tar.gz
+    SOURCE_DIR        "${CMAKE_CURRENT_BINARY_DIR}/freetype-src"
+    BINARY_DIR        "${CMAKE_CURRENT_BINARY_DIR}/freetype-build"
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    INSTALL_COMMAND   ""
+    TEST_COMMAND      ""
+)

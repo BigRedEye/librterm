@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rterm)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/third_party/sdl2-cmake")
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    "${PROJECT_SOURCE_DIR}/third_party/sdl2-cmake"
+    "${PROJECT_SOURCE_DIR}/cmake")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
