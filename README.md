@@ -11,8 +11,7 @@ Minimalistic terminal emulator written on C++ and SDL2.
 ## Minimal example ##
 This piece of code creates an empty `80 x 24` terminal and displays each character pressed by the user.
 ```cpp
-#include <rterm/term.h>
-#include <rterm/logger.h>
+#include <rterm/rterm.h>
 
 int main(int argc, const char* argv[]) {
     try {
@@ -65,38 +64,33 @@ mkdir build
 cd build
 
 cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j
+cmake --build . --parallel $(nproc)
 ```
 
-+ Install the library
-```sh
-sudo make install
+### Windows ###
+
++ Download latest [SDL2](https://www.libsdl.org/download-2.0.php) and [SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/) development libraries.
+
++ Extract the binaries for your architecture and compiler and place them somewhere, for example, in the `%SDL2_LIBS%` directory
+
++ Add `%SDL2_LIBS%\bin` to PATH
+
++ Create build directory
+```
+mkdir build
+cd build
 ```
 
-+ Build examples
-```sh
-cd test
-cmake . -DCMAKE_BUILD_TYPE=Release
-make -j
+###### MinGW
+```
+cmake .. -DCMAKE_BUILD_TYPE=Release -DRTERM_SDL2_PATH=%SDL2_LIBS% -G "MinGW Makefiles"
+cmake --build . --parallel 8
 ```
 
-### Windows (MinGW) ###
-
-+ Put all SDL2 related .dll's anywhere where Windows can find them.
-
-+ Build
+###### MSVC
 ```
-cmake . -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles"
-mingw32-make
+cmake .. -DCMAKE_BUILD_TYPE=Release -DRTERM_SDL2_PATH=%SDL2_LIBS% -G "Visual Studio 15 2017" -A x64
+cmake --build . --parallel 8
 ```
 
 + Alternatively, you can use automatically generated [builds](https://github.com/BigRedEye/rterm/releases).
-
-+ Build examples
-```
-copy librterm.dll test/librterm.dll
-cd test
-cmake . -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles"
-mingw32-make
-```
-
