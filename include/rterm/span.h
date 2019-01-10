@@ -14,6 +14,44 @@ namespace rterm {
 using span = std::span;
 #else
 
+namespace detail {
+#if __cplusplus >= 201703L
+using std::data;
+using std::size;
+#else
+/* based on http://eel.is/c++draft/iterator.container */
+template<class C>
+constexpr auto data(C& c) -> decltype(c.data()) {
+    return c.data();
+}
+
+template<class C>
+constexpr auto data(const C& c) -> decltype(c.data()) {
+    return c.data();
+}
+
+template<class T, std::size_t N>
+constexpr T* data(T (&array)[N]) noexcept {
+    return array;
+}
+
+template<class E>
+constexpr const E* data(std::initializer_list<E> il) noexcept {
+    return il.begin();
+}
+
+template <class C>
+constexpr auto size(const C& c) -> decltype(c.size()) {
+    return c.size();
+}
+
+template <class T, std::size_t N>
+constexpr std::size_t size(const T (&)[N]) noexcept {
+    return N;
+}
+#endif
+}
+
 /* based on http://eel.is/c++draft/views.span */
 template<typename T>
 class span {
@@ -61,12 +99,12 @@ public:
 
     template<typename Containter>
     constexpr span(Containter& cont)
-        : span(std::data(cont), std::size(cont))
+        : span(detail::data(cont), detail::size(cont))
     {}
 
     template<typename Containter>
     constexpr span(const Containter& cont)
-        : span(std::data(cont), std::size(cont))
+        : span(detail::data(cont), detail::size(cont))
     {}
 
     template<class U>

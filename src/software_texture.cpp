@@ -1,5 +1,6 @@
 #include "rterm/software_texture.h"
 #include "rterm/error.h"
+#include "rterm/image.h"
 
 #include <cstring>
 
@@ -25,6 +26,10 @@ constexpr uint32_t SoftwareTexture::format;
 SoftwareTexture::SoftwareTexture(const SoftwareTexture& other)
     : SoftwareTexture() {
     *this = other;
+}
+
+SoftwareTexture::SoftwareTexture(const std::string& path)
+    : SoftwareTexture(load(path)) {
 }
 
 SoftwareTexture::SoftwareTexture(SDL_Surface* surface)

@@ -15,6 +15,7 @@ public:
     SoftwareTexture(const SoftwareTexture& other);
     SoftwareTexture(SoftwareTexture&& moved) = default;
 
+    SoftwareTexture(const std::string& path);
     SoftwareTexture(SDL_Surface* surface);
     SoftwareTexture(i32 w, i32 h);
 

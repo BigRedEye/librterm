@@ -20,7 +20,7 @@ int main(int, char**) {
         /* load TrueType font */
         int fontSize = 18 * 96 / 72;
         terminal.setFont("resources/DejaVuSansMono.ttf", fontSize);
-        terminal.setIcon("resources/terminal.ico");
+        terminal.setIcon("resources/icon.png");
         /* set foreground color to green (#00FF00) */
         terminal.setFgColor(rterm::Color::White);
         /* set callback for keypress */
