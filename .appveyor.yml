@@ -25,11 +25,6 @@ install:
     - 7z x SDL2-devel-2.0.9-mingw.tar
     - xcopy SDL2-2.0.9\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
 
-    - appveyor DownloadFile https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.4-mingw.tar.gz
-    - 7z x SDL2_image-devel-2.0.4-mingw.tar.gz
-    - 7z x SDL2_image-devel-2.0.4-mingw.tar
-    - xcopy SDL2_image-2.0.4\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
-
     - appveyor DownloadFile https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-2.0.14-mingw.tar.gz
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar.gz
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar

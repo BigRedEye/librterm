@@ -40,14 +40,12 @@ int main(int argc, const char* argv[]) {
 + Compiler with C++14 suppot
 + [SDL2](https://www.libsdl.org/download-2.0.php)
 + [SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/)
-+ [SDL2_image](https://www.libsdl.org/projects/SDL_image/)
 + [cmake](https://cmake.org/)
 
 ## Compiling ##
 
 + Install the latest version of [SDL2](https://www.libsdl.org/download-2.0.php),
-[SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/),
-[SDL2_image](https://www.libsdl.org/projects/SDL_image/) and
+[SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/) and
 [cmake](https://cmake.org/).
 
 + Clone this repository
