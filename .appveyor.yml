@@ -20,6 +20,7 @@ install:
 
     - set INSTALL_PATH=C:\deps\
     - mkdir %INSTALL_PATH%
+
     - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.9-mingw.tar.gz
     - 7z x SDL2-devel-2.0.9-mingw.tar.gz
     - 7z x SDL2-devel-2.0.9-mingw.tar
@@ -29,9 +30,6 @@ install:
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar.gz
     - 7z x SDL2_ttf-devel-2.0.14-mingw.tar
     - xcopy SDL2_ttf-2.0.14\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
-
-    - dir /B %INSTALL_PATH%
-    - dir /B %INSTALL_PATH%\bin
 
     - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
     - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
@@ -46,7 +44,6 @@ build_script:
     - cmake --build .
 
     - copy librterm.dll test\
-    - copy C:\deps\bin\libpng16-16.dll test\
     - cd test
 
     - benchmark.exe
