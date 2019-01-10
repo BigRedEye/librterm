@@ -62,7 +62,6 @@ build_script:
     - copy C:\deps\bin\libpng16-16.dll test\
     - cd test
 
-
     - benchmark.exe
     - cd ..
 
