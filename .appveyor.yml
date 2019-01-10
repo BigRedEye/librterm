@@ -60,7 +60,7 @@ build_script:
     - copy C:\deps\bin\libpng16-16.dll test\
     - cd test
 
-    - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+    # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
     - benchmark.exe
     - cd ..

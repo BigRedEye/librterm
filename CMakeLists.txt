@@ -125,6 +125,7 @@ set(RTERM_INTERNAL_LIBS
     ${SDL2_IMAGE_LIBRARIES}
     ${SDL2_TTF_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
+    -lz
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${RTERM_HEADERS})
