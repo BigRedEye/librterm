@@ -63,7 +63,7 @@ build_script:
     # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
     - benchmark.exe
-    - cd ..
+    - cd ..\..
 
 after_build:
     - mkdir release
@@ -71,6 +71,6 @@ after_build:
     - mkdir release\lib
     - mkdir release\include
     - mkdir release\include\rterm
-    - copy librterm.dll release\bin\
-    - copy librterm.dll.a release\lib\
+    - copy build\librterm.dll release\bin\
+    - copy build\librterm.dll.a release\lib\
     - xcopy /E include release\include\rterm\
