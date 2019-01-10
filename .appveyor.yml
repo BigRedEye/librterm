@@ -73,4 +73,4 @@ after_build:
     - mkdir release\include\rterm
     - copy librterm.dll release\bin\
     - copy librterm.dll.a release\lib\
-    - copy include release\include\rterm\
+    - xcopy /E include release\include\rterm\
