@@ -8,3 +8,4 @@
 [submodule "third_party/cmake-conan"]
 	path = third_party/cmake-conan
 	url = https://github.com/conan-io/cmake-conan.git
+	branch = master

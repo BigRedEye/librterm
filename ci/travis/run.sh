@@ -15,4 +15,4 @@ cd bin
 readelf -d benchmark | grep NEEDED
 
 # Run becnhmark
-time ./benchmark
+time ./benchmark 300 500

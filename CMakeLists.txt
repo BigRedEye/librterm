@@ -157,7 +157,6 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL conan)
     endif()
 
     include(conan)
-    conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
     conan_cmake_run(CONANFILE conanfile.txt BASIC_SETUP CMAKE_TARGETS BUILD missing)
     set(CMAKE_BUILD_TYPE ${CACHED_BUILD_TYPE})
 
@@ -190,9 +189,12 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL local)
         add_library(Freetype::Freetype ALIAS freetype)
     endif()
 
+    # We need to find git to patch SDL2_ttf CMakeLists.txt
+    find_package(Git REQUIRED)
     FetchContent_Declare(
         sdl2-ttf
         URL https://github.com/SDL-mirror/SDL_ttf/archive/release-2.0.15.tar.gz
+        PATCH_COMMAND ${GIT_EXECUTABLE} init && ${GIT_EXECUTABLE} apply ${CMAKE_CURRENT_LIST_DIR}/third_party/patch/sdl2-ttf.patch
     )
     FetchContent_GetProperties(sdl2-ttf)
 
