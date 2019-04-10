@@ -9,3 +9,7 @@
 	path = third_party/cmake-conan
 	url = https://github.com/conan-io/cmake-conan.git
 	branch = master
+[submodule "third_party/utfcpp"]
+	path = third_party/utfcpp
+	url = https://github.com/nemtrif/utfcpp.git
+	branch = master
