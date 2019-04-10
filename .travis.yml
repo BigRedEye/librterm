@@ -4,11 +4,11 @@ sudo: require
 language: cpp
 
 addons:
-    apt:
-      sources:
-        - ubuntu-toolchain-r-test
-      packages:
-        - g++-7
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-7
 
 compiler:
   - gcc
@@ -20,12 +20,12 @@ env:
   - RTERM_LIBS=local
 
 before_install:
-    - if [ $CC = gcc ]; then export CC=gcc-7; fi
-    - if [ $CXX = g++ ]; then export CXX=g++-7; fi
-    - echo $CXX_FOR_BUILD
-    - echo $CXX
-    - echo $CC
-    - echo $CC_FOR_BUILD
+  - if [ $CC = gcc ]; then export CC=gcc-7; fi
+  - if [ $CXX = g++ ]; then export CXX=g++-7; fi
+  - echo $CXX_FOR_BUILD
+  - echo $CXX
+  - echo $CC
+  - echo $CC_FOR_BUILD
 
 install:
   # Install dependecies based on installation type
@@ -36,5 +36,5 @@ before_script:
   - ./ci/travis/xvfb.sh
 
 script:
-    - echo $RTERM_LIBS
-    #    - ci/run.sh
+  - echo $RTERM_LIBS
+#  - ci/run.sh

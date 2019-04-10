@@ -2,8 +2,8 @@
 
 set -e
 
-sudo pip install -U pip
-sudo pip install conan
+pip install --user --upgrade pip
+pip install --user conan
 
 pip --version
 conan --version
