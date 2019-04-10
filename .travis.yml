@@ -29,7 +29,7 @@ install:
 
 before_script:
   # Setup virtual framebuffer for testing
-  - ./ci/travis/xvfb.sh
+  - source ./ci/travis/xvfb.sh
 
 script:
   - ./ci/travis/run.sh
