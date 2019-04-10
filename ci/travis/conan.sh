@@ -2,9 +2,8 @@
 
 set -e
 
-pip3 install --user --upgrade pip3
-pip3 install --user conan
+python3 -m pip install --user --upgrade pip
+python3 -m pip install --user conan
 
-pip3 --version
 conan --version
 conan user
