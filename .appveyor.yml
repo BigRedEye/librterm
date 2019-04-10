@@ -46,7 +46,7 @@ install:
   - call ci\appveyor\install\fixpath.bat
 
 build_script:
-  - call ci\appveyor\build\%CONFIGURATION%\%RTERM_LIBS%.bat
+  - call ci\appveyor\compile\%CONFIGURATION%\%RTERM_LIBS%.bat
   - call ci\appveyor\run\run.bat
 
 after_build:
