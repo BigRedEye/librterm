@@ -19,26 +19,21 @@ env:
   - RTERM_LIBS=conan
   - RTERM_LIBS=local
 
-install:
-  - ./ci/travis/$RTERM_LIBS.sh
-
 before_install:
+    - if [ $CC = gcc ]; then export CC=gcc-7; fi
+    - if [ $CXX = g++ ]; then export CXX=g++-7; fi
     - echo $CXX_FOR_BUILD
     - echo $CXX
     - echo $CC
     - echo $CC_FOR_BUILD
-#    - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 
-#before_script:
-#    - "export DISPLAY=:99.0"
-#    - "sh -e /etc/init.d/xvfb start"
-#    - sleep 3 # give xvfb some time to start
+install:
+  # Install dependecies based on installation type
+  - ./ci/travis/$RTERM_LIBS.sh
 
-#    - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
-#    - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
-
-#    - export CC=/usr/bin/gcc-6
-#    - export CXX=/usr/bin/g++-6
+before_script:
+  # Setup virtual framebuffer for testing
+  - ./ci/travis/xvfb.sh
 
 script:
     - echo $RTERM_LIBS
