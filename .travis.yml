@@ -1,33 +1,71 @@
-dist: trusty
+dist: xenial
 sudo: require
 
 language: cpp
-compiler: gcc
 
 addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - gcc-6
-      - g++-6
-      - cmake3
-      - libsdl2-dev
-      - libsdl2-ttf-dev
+    apt:
+      sources:
+        - ubuntu-toolchain-r-test
+      packages:
+        - gcc-7
+        - g++-7
+        - cmake3
+
+compiler:
+  - gcc
+  - clang
+
+matrix:
+  include:
+    - name: "system libs"
+      addons:
+        apt:
+          - libsdl2-dev
+          - libsdl2-ttf-dev
+      env:
+        - RTERM_LIBS=system
+
+    - name: "conan libs"
+      cache:
+        directories:
+          - "$HOME/.conan"
+      language: python
+      python: '3.7'
+      env:
+        - RTERM_LIBS=conan
+      before_script:
+        - pip --version
+        - conan --version
+        - conan user
+      install:
+        - pip install -U pip
+        - pip install conan
+
+    - name: "local libs"
+      env:
+        - RTERM_LIBS=local
+
+
 
 before_install:
-    - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+    - echo $CXX_FOR_BUILD
+    - echo $CXX
+    - echo $CC
+    - echo $CC_FOR_BUILD
+#    - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 
-before_script:
-    - "export DISPLAY=:99.0"
-    - "sh -e /etc/init.d/xvfb start"
-    - sleep 3 # give xvfb some time to start
+#before_script:
+#    - "export DISPLAY=:99.0"
+#    - "sh -e /etc/init.d/xvfb start"
+#    - sleep 3 # give xvfb some time to start
 
-    - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
-    - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
+#    - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
+#    - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
 
-    - export CC=/usr/bin/gcc-6
-    - export CXX=/usr/bin/g++-6
+#    - export CC=/usr/bin/gcc-6
+#    - export CXX=/usr/bin/g++-6
 
 script:
-    - ci/run.sh
+    - echo $RTERM_LIBS
+    #    - ci/run.sh
