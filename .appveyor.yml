@@ -56,6 +56,7 @@ install:
     #- set PATH=%MINGW%\bin;%MINGW%\lib;%INSTALL_PATH%\bin;%PATH%
 
 build_script:
+  - echo %PATH%
 
     #- mkdir %APPVEYOR_BUILD_FOLDER%\build
     #- cd %APPVEYOR_BUILD_FOLDER%\build
@@ -70,7 +71,7 @@ build_script:
     #- cd ..\..
 
 after_build:
-    #- mkdir release
+  - mkdir release
     #- mkdir release\bin
     #- mkdir release\lib
     #- mkdir release\include
