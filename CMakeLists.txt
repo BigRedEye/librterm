@@ -157,6 +157,8 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL conan)
     endif()
 
     include(conan)
+    conan_check(REQUIRED)
+    conan_add_remote(NAME bincrafters INDEX 1 URL https://api.bintray.com/conan/bincrafters/public-conan)
     conan_cmake_run(CONANFILE conanfile.txt BASIC_SETUP CMAKE_TARGETS BUILD missing)
     set(CMAKE_BUILD_TYPE ${CACHED_BUILD_TYPE})
 
