@@ -50,4 +50,4 @@ build_script:
   - call ci\appveyor\run\run.bat
 
 after_build:
-  - call ci\appveyor\release.bat
+  - call ..\ci\appveyor\release\release.bat
