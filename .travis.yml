@@ -16,37 +16,13 @@ compiler:
   - gcc
   - clang
 
-matrix:
-  include:
-    - name: "system libs"
-      addons:
-        apt:
-          - libsdl2-dev
-          - libsdl2-ttf-dev
-      env:
-        - RTERM_LIBS=system
+env:
+  - RTERM_LIBS=system
+  - RTERM_LIBS=conan
+  - RTERM_LIBS=local
 
-    - name: "conan libs"
-      cache:
-        directories:
-          - "$HOME/.conan"
-      language: python
-      python: '3.7'
-      env:
-        - RTERM_LIBS=conan
-      before_script:
-        - pip --version
-        - conan --version
-        - conan user
-      install:
-        - pip install -U pip
-        - pip install conan
-
-    - name: "local libs"
-      env:
-        - RTERM_LIBS=local
-
-
+install:
+  - ./ci/travis/$RTERM_LIBS.sh
 
 before_install:
     - echo $CXX_FOR_BUILD
