@@ -42,8 +42,12 @@ environment:
 
 install:
   - git submodule update --init --recursive
+
+  - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
+  - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+  - set PATH=%MINGW%\bin;%MINGW%\lib;%DEPS_PATH%\bin;%PATH%
+
   - call ci\appveyor\install\%CONFIGURATION%\%RTERM_LIBS%.bat
-  - call ci\appveyor\install\fixpath.bat
 
 build_script:
   - call ci\appveyor\compile\%CONFIGURATION%\%RTERM_LIBS%.bat
