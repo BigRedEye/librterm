@@ -5,7 +5,7 @@
 #include <iostream>
 #include <random>
 
-int main(int, char**) {
+int main(int argc, char** argv) {
     rterm::Logger() << "Benchmark";
 
     try {
@@ -21,6 +21,15 @@ int main(int, char**) {
         terminal.setResizable(true);
         int flooditers = 5000;
         int randomiters = 40000;
+
+        if (argc > 2) {
+            flooditers = std::stoi(argv[1]);
+        }
+
+        if (argc > 3) {
+            randomiters = std::stoi(argv[2]);
+        }
+
         int frames = 0;
         std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
         for (int iters = 0; iters < flooditers; ++iters) {

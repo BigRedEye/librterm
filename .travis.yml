@@ -22,10 +22,6 @@ env:
 before_install:
   - if [ $CC = gcc ]; then export CC=gcc-7; fi
   - if [ $CXX = g++ ]; then export CXX=g++-7; fi
-  - echo $CXX_FOR_BUILD
-  - echo $CXX
-  - echo $CC
-  - echo $CC_FOR_BUILD
 
 install:
   # Install dependecies based on installation type
@@ -36,5 +32,4 @@ before_script:
   - ./ci/travis/xvfb.sh
 
 script:
-  - echo $RTERM_LIBS
-#  - ci/run.sh
+  - ./ci/travis/run.sh
