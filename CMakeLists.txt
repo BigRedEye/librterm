@@ -140,6 +140,10 @@ list(APPEND RTERM_PUBLIC_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 find_package(Threads REQUIRED)
 list(APPEND RTERM_PUBLIC_LIBS Threads::Threads)
 
+if (MINGW)
+    list(APPEND RTERM_PUBLIC_LIBS -lmingw32)
+endif()
+
 if (RTERM_EXTERNAL_LIBS STREQUAL system)
     # Poor windows users
     # Conan is better btw

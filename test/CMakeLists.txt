@@ -14,13 +14,15 @@ endif()
 
 foreach(abssourcefile ${sources})
     get_filename_component(sourcefile ${abssourcefile} NAME)
-    
+
     string(REPLACE ".cpp" "" exename ${sourcefile})
     file(COPY ${resources} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resources)
     add_executable(${exename} ${sourcefile} ${resources})
     target_link_libraries(${exename} rterm::rterm)
     if(CMAKE_VERSION VERSION_LESS "3.9.0")
         message(STATUS "Old cmake version (${CMAKE_VERSION}); LTO is not supported.")
+    elseif(MINGW)
+        message(STATUS "MinGW does not support LTO")
     else()
         include(CheckIPOSupported)
         check_ipo_supported(RESULT result OUTPUT output)
