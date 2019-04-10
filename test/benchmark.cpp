@@ -28,12 +28,12 @@ int main(int argc, char** argv) {
         int flooditers = 5000;
         int randomiters = 40000;
 
-        if (argc > 1) {
-            flooditers = std::stoi(argv[1]);
+        if (argc > 2) {
+            flooditers = std::stoi(argv[2]);
         }
 
-        if (argc > 2) {
-            randomiters = std::stoi(argv[2]);
+        if (argc > 3) {
+            randomiters = std::stoi(argv[3]);
         }
 
         int frames = 0;

@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 project(rterm)
 
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # Modules
 list(APPEND CMAKE_MODULE_PATH
     ${PROJECT_SOURCE_DIR}/third_party/sdl2-cmake-scripts
@@ -151,7 +155,7 @@ if (RTERM_EXTERNAL_LIBS STREQUAL system)
     list(APPEND RTERM_PUBLIC_HEADERS ${SDL2_INCLUDE_DIR} ${SDL2_TTF_INCLUDE_DIRS})
 elseif (RTERM_EXTERNAL_LIBS STREQUAL conan)
     set(CACHED_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-    if (${CMAKE_BUILD_TYPE} STREQUAL Sanitizers)
+    if (CMAKE_BUILD_TYPE STREQUAL Sanitizers)
         # Temporary enable Debug build type
         set(CMAKE_BUILD_TYPE Debug)
     endif()
@@ -159,7 +163,7 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL conan)
     include(conan)
     conan_check(REQUIRED)
     conan_add_remote(NAME bincrafters INDEX 1 URL https://api.bintray.com/conan/bincrafters/public-conan)
-    conan_cmake_run(CONANFILE conanfile.txt BASIC_SETUP CMAKE_TARGETS BUILD missing)
+    conan_cmake_run(CONANFILE conanfile.py BASIC_SETUP CMAKE_TARGETS BUILD missing)
     set(CMAKE_BUILD_TYPE ${CACHED_BUILD_TYPE})
 
     list(APPEND RTERM_PUBLIC_LIBS CONAN_PKG::sdl2 CONAN_PKG::sdl2_ttf)
@@ -216,7 +220,13 @@ endif()
 
 # STB_Image
 add_subdirectory(third_party/stb)
-list(APPEND RTERM_PRIVATE_LIBS ${RTERM_PRIVATE_LIBS} stb_image)
+list(APPEND RTERM_PRIVATE_LIBS stb_image)
+
+# utfcpp
+set(UTF8_TESTS OFF CACHE BOOL "" FORCE)
+set(UTF8_SAMPLES OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/utfcpp EXCLUDE_FROM_ALL)
+list(APPEND RTERM_PRIVATE_LIBS utf8::cpp)
 
 # OpenGL
 set(OpenGL_GL_PREFERENCE GLVND)
@@ -240,11 +250,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC ${RTERM_PUBLIC_LIBS}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 14
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
-    PUBLIC_HEADER "${HEADERS}")
+set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${HEADERS}")
 
 # RTERM_ENABLE_XXX = !RTERM_DISABLE_XXX && RTERM_HAS_XXX
 target_compile_definitions(
