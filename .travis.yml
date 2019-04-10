@@ -8,9 +8,7 @@ addons:
       sources:
         - ubuntu-toolchain-r-test
       packages:
-        - gcc-7
         - g++-7
-        - cmake3
 
 compiler:
   - gcc
