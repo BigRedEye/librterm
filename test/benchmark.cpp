@@ -14,8 +14,14 @@ int main(int argc, char** argv) {
         terminal.setMinWindowSize(200, 100);
         int fontSize = 18;
         terminal.setTitle("rterm demo");
-        terminal.setFont("resources/DejaVuSansMono.ttf", fontSize);
-        terminal.setIcon("resources/icon.png");
+
+        std::string resources = "resources";
+        if (argc > 1) {
+            resources = argv[1];
+        }
+
+        terminal.setFont(resources + "/DejaVuSansMono.ttf", fontSize);
+        terminal.setIcon(resources + "/icon.png");
         terminal.setFgColor(rterm::Color(100, 0xff, 100));
         terminal.setFullscreen(false);
         terminal.setResizable(true);

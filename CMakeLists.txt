@@ -196,7 +196,7 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL local)
     FetchContent_Declare(
         sdl2-ttf
         URL https://github.com/SDL-mirror/SDL_ttf/archive/release-2.0.15.tar.gz
-        PATCH_COMMAND ${GIT_EXECUTABLE} init && ${GIT_EXECUTABLE} apply ${CMAKE_CURRENT_LIST_DIR}/third_party/patch/sdl2-ttf.patch
+        PATCH_COMMAND ${GIT_EXECUTABLE} init && ${GIT_EXECUTABLE} apply --ignore-space-change --ignore-whitespace ${CMAKE_CURRENT_LIST_DIR}/third_party/patch/sdl2-ttf.patch
     )
     FetchContent_GetProperties(sdl2-ttf)
 

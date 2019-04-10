@@ -78,7 +78,9 @@ private:
         }
 
         ~Holder() {
-            SDL_DestroyTexture(texture_);
+			if (texture_) {
+				SDL_DestroyTexture(texture_);
+			}
         }
 
         RawTextureRef texture_ = nullptr;
