@@ -172,10 +172,14 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL conan)
 
     list(APPEND RTERM_PUBLIC_LIBS CONAN_PKG::sdl2 CONAN_PKG::sdl2_ttf)
 elseif (RTERM_EXTERNAL_LIBS STREQUAL local)
+    # We need to find git to patch SDL2 & SDL2_ttf
+    find_package(Git REQUIRED)
+
     include(FetchContent)
     FetchContent_Declare(
         sdl2
         URL https://github.com/SDL-mirror/SDL/archive/release-2.0.9.tar.gz
+        PATCH_COMMAND ${GIT_EXECUTABLE} init && ${GIT_EXECUTABLE} apply --ignore-space-change --ignore-whitespace ${CMAKE_CURRENT_LIST_DIR}/third_party/patch/sdl2.patch
     )
     FetchContent_GetProperties(sdl2)
     if(NOT sdl2_POPULATED)
@@ -199,8 +203,6 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL local)
         add_library(Freetype::Freetype ALIAS freetype)
     endif()
 
-    # We need to find git to patch SDL2_ttf CMakeLists.txt
-    find_package(Git REQUIRED)
     FetchContent_Declare(
         sdl2-ttf
         URL https://github.com/SDL-mirror/SDL_ttf/archive/release-2.0.15.tar.gz

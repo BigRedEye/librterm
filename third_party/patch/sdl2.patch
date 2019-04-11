@@ -1,0 +1,12 @@
+diff --git a/src/render/opengl/SDL_render_gl.c b/src/render/opengl/SDL_render_gl.c
+--- a/src/render/opengl/SDL_render_gl.c
++++ b/src/render/opengl/SDL_render_gl.c
+@@ -1134,7 +1134,7 @@ GL_SetShader(GL_RenderData * data, GL_Shader shader)
+ static void
+ GL_SetColor(GL_RenderData * data, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+ {
+-    Uint32 color = ((a << 24) | (r << 16) | (g << 8) | b);
++    Uint32 color = (((Uint32)a << 24) | (r << 16) | (g << 8) | b);
+ 
+     if (color != data->current.color) {
+         data->glColor4f((GLfloat) r * inv255f,

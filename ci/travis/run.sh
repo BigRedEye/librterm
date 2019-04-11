@@ -15,4 +15,4 @@ cd bin
 readelf -d benchmark | grep NEEDED
 
 # Run becnhmark
-time ./benchmark ./resources 300 500
+LSAN_OPTIONS=suppressions=./../../asan.supp ./benchmark ./resources 200 200

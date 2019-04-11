@@ -65,6 +65,8 @@ SDL_Surface* load(const std::string& path) {
     RAIISurfaceLocker locker(result);
     std::copy(pixels.begin(), pixels.end(), static_cast<ui8*>(result->pixels));
 
+    stbi_image_free(data);
+
     return result;
 }
 
