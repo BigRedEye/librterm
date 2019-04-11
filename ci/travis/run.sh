@@ -15,6 +15,4 @@ cd bin
 readelf -d benchmark | grep NEEDED
 
 # Run becnhmark
-# Do not run target that uses local installation mode
-if [ $RTERM_LIBS = local ]; then exit 0; fi
 time ./benchmark ./resources 300 500

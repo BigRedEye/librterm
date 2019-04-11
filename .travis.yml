@@ -18,18 +18,18 @@ compiler:
   - clang
 
 env:
+  - RTERM_LIBS=local
+    BUILD_TYPE=Release
   - RTERM_LIBS=system
     BUILD_TYPE=Release
   - RTERM_LIBS=conan
-    BUILD_TYPE=Release
-  - RTERM_LIBS=local
     BUILD_TYPE=Release
 
 matrix:
   include:
     - compiler: clang
       env:
-        RTERM_LIBS=conan
+        RTERM_LIBS=local
         BUILD_TYPE=Sanitizers
 
 before_install:
