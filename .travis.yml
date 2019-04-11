@@ -19,15 +19,24 @@ compiler:
 
 env:
   - RTERM_LIBS=system
+    BUILD_TYPE=Release
   - RTERM_LIBS=conan
+    BUILD_TYPE=Release
   - RTERM_LIBS=local
+    BUILD_TYPE=Release
+
+matrix:
+  include:
+    - compiler: clang
+      env:
+        RTERM_LIBS=conan
+        BUILD_TYPE=Sanitizers
 
 before_install:
   - if [ $CC = gcc ]; then export CC=gcc-8; fi
   - if [ $CXX = g++ ]; then export CXX=g++-8; fi
 
 install:
-  # Install dependecies based on installation type
   - ./ci/travis/$RTERM_LIBS.sh
 
 script:
