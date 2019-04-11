@@ -178,8 +178,9 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL local)
     include(FetchContent)
     FetchContent_Declare(
         sdl2
-        URL https://github.com/SDL-mirror/SDL/archive/release-2.0.9.tar.gz
-        PATCH_COMMAND ${GIT_EXECUTABLE} init && ${GIT_EXECUTABLE} apply --ignore-space-change --ignore-whitespace ${CMAKE_CURRENT_LIST_DIR}/third_party/patch/sdl2.patch
+        # URL https://github.com/SDL-mirror/SDL/archive/release-2.0.9.tar.gz
+        GIT_REPOSITORY https://github.com/SDL-mirror/SDL.git
+        # PATCH_COMMAND ${GIT_EXECUTABLE} init && ${GIT_EXECUTABLE} apply --ignore-space-change --ignore-whitespace ${CMAKE_CURRENT_LIST_DIR}/third_party/patch/sdl2.patch
     )
     FetchContent_GetProperties(sdl2)
     if(NOT sdl2_POPULATED)
