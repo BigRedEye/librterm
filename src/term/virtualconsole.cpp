@@ -2,6 +2,7 @@
 
 #include "rterm/util/error.h"
 
+#include <algorithm>
 #include <sstream>
 
 namespace rterm {

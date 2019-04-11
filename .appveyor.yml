@@ -1,60 +1,57 @@
-os: Visual Studio 2015
+os: Visual Studio 2017
 
 artifacts:
-    - path: release
-      name: MinGW-w64
-      type: zip
+  - path: release
+    name: rterm-mingw
+    type: zip
+  - path: release
+    name: rterm-msvc
+    type: zip
 
 deploy:
     - provider: GitHub
       auth_token:
           secure: sWX4wYH0ZYhsKcO3KuQfsIg46ToY2A7YsRjmumo2PugdMdEtAWxr/yqMQGIOci9S
-      artifact: MinGW-w64
+      artifact: rterm-mingw
+      prerelease: true
+      on:
+          branch: master
+          appveyor_repo_tag: true
+    - provider: GitHub
+      auth_token:
+          secure: sWX4wYH0ZYhsKcO3KuQfsIg46ToY2A7YsRjmumo2PugdMdEtAWxr/yqMQGIOci9S
+      artifact: rterm-msvc
       prerelease: true
       on:
           branch: master
           appveyor_repo_tag: true
 
+cache:
+  - C:\.conan -> conanfile.py
+  - C:\Users\appveyor\.conan -> conanfile.py
+
+configuration:
+  - mingw
+  - msvc
+
+environment:
+  matrix:
+    - RTERM_LIBS: system
+    - RTERM_LIBS: local
+    - RTERM_LIBS: conan
+
 install:
-    - git submodule update --init --recursive
+  - git submodule update --init --recursive
 
-    - set INSTALL_PATH=C:\deps\
-    - mkdir %INSTALL_PATH%
+  - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
+  - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+  - set PATH=%MINGW%\bin;%MINGW%\lib;%DEPS_PATH%\bin;%DEPS_PATH%\lib\x64;%PATH%
 
-    - appveyor DownloadFile https://www.libsdl.org/release/SDL2-devel-2.0.9-mingw.tar.gz
-    - 7z x SDL2-devel-2.0.9-mingw.tar.gz
-    - 7z x SDL2-devel-2.0.9-mingw.tar
-    - xcopy SDL2-2.0.9\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
-
-    - appveyor DownloadFile https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-2.0.14-mingw.tar.gz
-    - 7z x SDL2_ttf-devel-2.0.14-mingw.tar.gz
-    - 7z x SDL2_ttf-devel-2.0.14-mingw.tar
-    - xcopy SDL2_ttf-2.0.14\x86_64-w64-mingw32 %INSTALL_PATH% /s/e/y
-
-    - set MINGW=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64
-    - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
-    - set PATH=%MINGW%\bin;%MINGW%\lib;%INSTALL_PATH%\bin;%PATH%
+  - call ci\appveyor\install\%CONFIGURATION%\%RTERM_LIBS%.bat
 
 build_script:
-
-    - mkdir %APPVEYOR_BUILD_FOLDER%\build
-    - cd %APPVEYOR_BUILD_FOLDER%\build
-
-    - cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DRTERM_BUILD_TESTS=ON -DRTERM_SDL2_PATH=%INSTALL_PATH% -DBUILD_SHARED_LIBS=ON
-    - cmake --build .
-
-    - copy librterm.dll test\
-    - cd test
-
-    - benchmark.exe
-    - cd ..\..
+  - call ci\appveyor\compile\%CONFIGURATION%\%RTERM_LIBS%.bat
+  - call ci\appveyor\run\run.bat
 
 after_build:
-    - mkdir release
-    - mkdir release\bin
-    - mkdir release\lib
-    - mkdir release\include
-    - mkdir release\include\rterm
-    - copy build\librterm.dll release\bin\
-    - copy build\librterm.dll.a release\lib\
-    - xcopy /E include release\include\rterm\
+  - call ci\appveyor\package\package.bat

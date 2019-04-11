@@ -5,7 +5,7 @@
 #include <iostream>
 #include <random>
 
-int main(int, char**) {
+int main(int argc, char** argv) {
     rterm::Logger() << "Benchmark";
 
     try {
@@ -14,13 +14,28 @@ int main(int, char**) {
         terminal.setMinWindowSize(200, 100);
         int fontSize = 18;
         terminal.setTitle("rterm demo");
-        terminal.setFont("resources/DejaVuSansMono.ttf", fontSize);
-        terminal.setIcon("resources/icon.png");
+
+        std::string resources = "resources";
+        if (argc > 1) {
+            resources = argv[1];
+        }
+
+        terminal.setFont(resources + "/DejaVuSansMono.ttf", fontSize);
+        terminal.setIcon(resources + "/icon.png");
         terminal.setFgColor(rterm::Color(100, 0xff, 100));
         terminal.setFullscreen(false);
         terminal.setResizable(true);
         int flooditers = 5000;
         int randomiters = 40000;
+
+        if (argc > 2) {
+            flooditers = std::stoi(argv[2]);
+        }
+
+        if (argc > 3) {
+            randomiters = std::stoi(argv[3]);
+        }
+
         int frames = 0;
         std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
         for (int iters = 0; iters < flooditers; ++iters) {
