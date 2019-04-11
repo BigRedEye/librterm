@@ -35,8 +35,11 @@ SdlLoader::SdlLoader() {
 SdlLoader::~SdlLoader() {
     --countOfLoads_;
     if (countOfLoads_ == 0) {
+        /* https://github.com/google/sanitizers/issues/89 */
+#ifndef RTERM_SANITIZERS
         TTF_Quit();
         SDL_Quit();
+#endif
     }
 }
 

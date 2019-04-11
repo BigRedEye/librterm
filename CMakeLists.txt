@@ -17,7 +17,9 @@ list(APPEND CMAKE_MODULE_PATH
 option(RTERM_DISABLE_SDL "Diable SDL renderer" OFF)
 option(RTERM_DISABLE_OGL "Disable OpenGL renderer" OFF)
 option(RTERM_BUILD_TESTS "Build tests" OFF)
+option(RTERM_SANITIZERS "librterm built with ASan; skip all dlclose calls" OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+
 
 set(RTERM_EXTERNAL_LIBS
     "system"
@@ -178,9 +180,8 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL local)
     include(FetchContent)
     FetchContent_Declare(
         sdl2
-        # URL https://github.com/SDL-mirror/SDL/archive/release-2.0.9.tar.gz
-        GIT_REPOSITORY https://github.com/SDL-mirror/SDL.git
-        # PATCH_COMMAND ${GIT_EXECUTABLE} init && ${GIT_EXECUTABLE} apply --ignore-space-change --ignore-whitespace ${CMAKE_CURRENT_LIST_DIR}/third_party/patch/sdl2.patch
+        URL https://github.com/SDL-mirror/SDL/archive/release-2.0.9.tar.gz
+        PATCH_COMMAND ${GIT_EXECUTABLE} init && ${GIT_EXECUTABLE} apply --ignore-space-change --ignore-whitespace ${CMAKE_CURRENT_LIST_DIR}/third_party/patch/sdl2.patch
     )
     FetchContent_GetProperties(sdl2)
     if(NOT sdl2_POPULATED)
@@ -264,6 +265,7 @@ target_compile_definitions(
     ${PROJECT_NAME} PUBLIC
     RTERM_ENABLE_SDL=$<AND:$<NOT:$<BOOL:${RTERM_DISABLE_SDL}>>,$<BOOL:${RTERM_HAS_SDL}$>>
     RTERM_ENABLE_OGL=$<AND:$<NOT:$<BOOL:${RTERM_DISABLE_OGL}>>,$<BOOL:${RTERM_HAS_OGL}$>>
+    RTERM_SANITIZERS=$<BOOL:${RTERM_SANITIZERS}>
 )
 
 if (RTERM_BUILD_TESTS)
