@@ -1,14 +1,14 @@
-# rterm #
+# librterm
 
 [![Build Status](https://travis-ci.org/BigRedEye/rterm.svg?branch=master)](https://travis-ci.org/BigRedEye/rterm)
 [![Build status](https://ci.appveyor.com/api/projects/status/ch37wqe58bkt6577/branch/master?svg=true
 )](https://ci.appveyor.com/project/BigRedEye/rterm)
 [![GitHub tag](https://img.shields.io/github/tag/BigRedEye/rterm.svg)](https://semver.org)
-[![license](https://img.shields.io/github/license/BigRedEye/rterm.svg)](https://github.com/BigRedEye/rterm/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/BigRedEye/rterm.svg?color=blue)](https://github.com/BigRedEye/rterm/blob/master/LICENSE)
 
-Minimalistic terminal emulator written on C++ and SDL2.
+Terminal emulator library.
 
-## Minimal example ##
+## Motivating example
 This piece of code creates an empty `80 x 24` terminal and displays each character pressed by the user.
 ```cpp
 #include <rterm/rterm.h>
@@ -35,60 +35,90 @@ int main(int argc, const char* argv[]) {
 
 ```
 
-## Requirements ##
-
-+ Compiler with C++14 suppot
-+ [SDL2](https://www.libsdl.org/download-2.0.php)
-+ [SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/)
+## Requirements
++ Compiler with C++14 support (Clang 7, GCC 8, MSVC 19.16, and MinGW-w64 7.2 tested)
 + [cmake](https://cmake.org/)
 
-## Compiling ##
-
-+ Install the latest version of [SDL2](https://www.libsdl.org/download-2.0.php),
-[SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/) and
-[cmake](https://cmake.org/).
-
-+ Clone this repository
+## Installation ##
+Add the library as a git submodule:
 ```sh
-git clone --recurse-submodules https://github.com/BigRedEye/rterm.git
-cd rterm
+$ git submodule add -b master https://github.com/BigRedEye/librterm.git third_party/librterm
+$ git submodule update --init --recursive
 ```
+And include into your build tree:
+```cmake
+set(RTERM_LIBS ...)
+add_subdirectory(third_party/librterm)
+...
+target_link_libraries(${YOUR_EXECUTABLE} PRIVATE rterm::librterm)
+```
+The `RTERM_LIBS` option is documented in the [dependencies](#dependencies) section.
 
-### Linux ###
+## Dependencies
+librterm requires some external dependecies ([SDL2](https://www.libsdl.org/download-2.0.php) and [SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/)). The library supports a few different methods of dependency management:
++ [conan (preferred)](#conan)
++ [system libraries (enabled by default)](#system)
++ [automatically downloaded libraries](#local)
++ [manual](#manual)
 
-+ Build
+To choose one, set option `RTERM_LIBS=(conan|system|local|manual)` in your CMakeLists.txt.
+#### Conan
+The easiest way to obtain them is to use [conan](https://conan.io). Just install it:
 ```sh
-mkdir build
-cd build
-
-cmake .. -DCMAKE_BUILD_TYPE=Release
-cmake --build . --parallel $(nproc)
+$ pip install conan
+```
+And set `RTERM_LIBS`:
+```cmake
+set(RTERM_LIBS conan)
 ```
 
-### Windows ###
+#### System
+###### Linux
++ Install sdl2 and sdl2-ttf development packages:
+```sh
+# Arch Linux:
+$ sudo pacman -S sdl2 sdl2-ttf
 
-+ Download latest [SDL2](https://www.libsdl.org/download-2.0.php) and [SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/) development libraries.
-
-+ Extract the binaries for your architecture and compiler and place them somewhere, for example, in the `%SDL2_LIBS%` directory
-
-+ Add `%SDL2_LIBS%\bin` to PATH
-
-+ Create build directory
+# Ubuntu:
+$ sudo apt-get install libsdl2-dev libsdl2-ttf-dev
 ```
-mkdir build
-cd build
++ Set `RTERM_LIBS` to `system`:
+```cmake
+set(RTERM_LIBS system)
+```
+###### Windows
++ Download [SDL2](https://www.libsdl.org/download-2.0.php) and
+[SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/) development libraries (...-VS.zip for MSVC, ...-mingw.tar.gz for MinGW-w64).
++ Extract downloaded archives somewhere, for example to `%SDL_LIBS%`.
++ Add `%SDL_LIBS%` to `PATH`
++ Configure cmake:
+```cmake
+set(RTERM_SDL2_PATH %SDL_LIBS%)
+set(RTERM_LIBS system)
+```
+Alternatively you can pass `%SDL_LIBS%` directly to cmake:
+```batch
+cmake ... -RTERM_SDL2_PATH=%SDL_LIBS%
 ```
 
-###### MinGW
-```
-cmake .. -DCMAKE_BUILD_TYPE=Release -DRTERM_SDL2_PATH=%SDL2_LIBS% -G "MinGW Makefiles"
-cmake --build . --parallel 8
+Really, use conan.
+
+#### Local
+In this mode librterm will try to download and build required libraries automatically. This increases build time while provides better debugging / profiling results. Set `RTERM_LIBS` to `local`:
+```cmake
+set(RTERM_LIBS local)
 ```
 
-###### MSVC
+#### Manual
+If you are brave enough, you can try to setup cmake targets for SDL2, SDL2main and SDL2_ttf manually:
++ Set `RTERM_SDL2_TARGETS` as a list of required targets, for example:
+```cmake
+set(RTERM_SDL2_TARGETS)
+list(APPEND RTERM_SDL2_TARGETS SDL2-static)
+list(APPEND RTERM_SDL2_TARGETS SDL2_ttf)
 ```
-cmake .. -DCMAKE_BUILD_TYPE=Release -DRTERM_SDL2_PATH=%SDL2_LIBS% -G "Visual Studio 15 2017" -A x64
-cmake --build . --parallel 8
++ Set `RTERM_LIBS` to `manual`:
+```cmake
+set(RTERM_LIBS manual)
 ```
-
-+ Alternatively, you can use automatically generated [builds](https://github.com/BigRedEye/rterm/releases).
+librterm tested with SDL2 2.0.9 and SDL2_ttf 2.0.15.
