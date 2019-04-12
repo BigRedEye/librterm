@@ -1,10 +1,9 @@
 # librterm
 
-[![Build Status](https://travis-ci.org/BigRedEye/rterm.svg?branch=master)](https://travis-ci.org/BigRedEye/rterm)
-[![Build status](https://ci.appveyor.com/api/projects/status/ch37wqe58bkt6577/branch/master?svg=true
-)](https://ci.appveyor.com/project/BigRedEye/rterm)
+[![Build Status](https://travis-ci.org/BigRedEye/librterm.svg?branch=dev)](https://travis-ci.org/BigRedEye/librterm)
+[![Build status](https://ci.appveyor.com/api/projects/status/ch37wqe58bkt6577/branch/dev?svg=true)](https://ci.appveyor.com/project/BigRedEye/rterm/branch/dev)
 [![GitHub tag](https://img.shields.io/github/tag/BigRedEye/rterm.svg)](https://semver.org)
-[![license](https://img.shields.io/github/license/BigRedEye/rterm.svg?color=blue)](https://github.com/BigRedEye/rterm/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/BigRedEye/rterm.svg?color=blue)](https://github.com/BigRedEye/rterm/blob/dev/LICENSE)
 
 Terminal emulator library.
 
