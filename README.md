@@ -46,12 +46,12 @@ $ git submodule update --init --recursive
 ```
 And include into your build tree:
 ```cmake
-set(RTERM_LIBS ...)
+set(RTERM_EXTERNAL_LIBS ...)
 add_subdirectory(third_party/librterm)
 ...
 target_link_libraries(${YOUR_EXECUTABLE} PRIVATE rterm::librterm)
 ```
-The `RTERM_LIBS` option is documented in the [dependencies](#dependencies) section.
+The `RTERM_EXTERNAL_LIBS` option is documented in the [dependencies](#dependencies) section.
 
 ## Dependencies
 librterm requires some external dependecies ([SDL2](https://www.libsdl.org/download-2.0.php) and [SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/)). The library supports a few different methods of dependency management:
@@ -60,15 +60,15 @@ librterm requires some external dependecies ([SDL2](https://www.libsdl.org/downl
 + [automatically downloaded libraries](#local)
 + [manual](#manual)
 
-To choose one, set option `RTERM_LIBS=(conan|system|local|manual)` in your CMakeLists.txt.
+To choose one, set option `RTERM_EXTERNAL_LIBS=(conan|system|local|manual)` in your CMakeLists.txt.
 #### Conan
 The easiest way to obtain them is to use [conan](https://conan.io). Just install it:
 ```sh
 $ pip install conan
 ```
-And set `RTERM_LIBS`:
+And set `RTERM_EXTERNAL_LIBS`:
 ```cmake
-set(RTERM_LIBS conan)
+set(RTERM_EXTERNAL_LIBS conan)
 ```
 
 #### System
@@ -81,9 +81,9 @@ $ sudo pacman -S sdl2 sdl2-ttf
 # Ubuntu:
 $ sudo apt-get install libsdl2-dev libsdl2-ttf-dev
 ```
-+ Set `RTERM_LIBS` to `system`:
++ Set `RTERM_EXTERNAL_LIBS` to `system`:
 ```cmake
-set(RTERM_LIBS system)
+set(RTERM_EXTERNAL_LIBS system)
 ```
 ###### Windows
 + Download [SDL2](https://www.libsdl.org/download-2.0.php) and
@@ -93,7 +93,7 @@ set(RTERM_LIBS system)
 + Configure cmake:
 ```cmake
 set(RTERM_SDL2_PATH %SDL_LIBS%)
-set(RTERM_LIBS system)
+set(RTERM_EXTERNAL_LIBS system)
 ```
 Alternatively you can pass `%SDL_LIBS%` directly to cmake:
 ```batch
@@ -103,21 +103,23 @@ cmake ... -RTERM_SDL2_PATH=%SDL_LIBS%
 Really, use conan.
 
 #### Local
-In this mode librterm will try to download and build required libraries automatically. This increases build time while provides better debugging / profiling results. Set `RTERM_LIBS` to `local`:
+In this mode librterm will try to download and build required libraries automatically. This increases build time while provides better debugging / profiling results. Set `RTERM_EXTERNAL_LIBS` to `local`:
 ```cmake
-set(RTERM_LIBS local)
+set(RTERM_EXTERNAL_LIBS local)
 ```
 
 #### Manual
 If you are brave enough, you can try to setup cmake targets for SDL2, SDL2main and SDL2_ttf manually:
-+ Set `RTERM_SDL2_TARGETS` as a list of required targets, for example:
++ Set `RTERM_MANUAL_LIBS` as a list of required targets and optionally set `RTERM_MANUAL_HEADERS`. For example:
 ```cmake
-set(RTERM_SDL2_TARGETS)
-list(APPEND RTERM_SDL2_TARGETS SDL2-static)
-list(APPEND RTERM_SDL2_TARGETS SDL2_ttf)
+set(RTERM_MANUAL_LIBS)
+set(RTERM_MANUAL_HEADERS)
+list(APPEND RTERM_MANUAL_LIBS SDL2)
+list(APPEND RTERM_MANUAL_LIBS SDL2_ttf)
+list(APPEND RTERM_MANUAL_HEADERS ${SDL2_HEADERS})
 ```
-+ Set `RTERM_LIBS` to `manual`:
++ Set `RTERM_EXTERNAL_LIBS` to `manual`:
 ```cmake
-set(RTERM_LIBS manual)
+set(RTERM_EXTERNAL_LIBS manual)
 ```
 librterm tested with SDL2 2.0.9 and SDL2_ttf 2.0.15.

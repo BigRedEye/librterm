@@ -24,8 +24,8 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 set(RTERM_EXTERNAL_LIBS
     "system"
     CACHE STRING
-    "Where to get external libraries: from the system, conan or download and build manually")
-set_property(CACHE RTERM_EXTERNAL_LIBS PROPERTY STRINGS system conan local)
+    "Where to get external libraries: from the system, conan, build automatically or setup cmake targets manually")
+set_property(CACHE RTERM_EXTERNAL_LIBS PROPERTY STRINGS system conan local manual)
 
 set(RTERM_HAS_SDL ON)
 set(RTERM_HAS_OGL OFF)
@@ -221,9 +221,12 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL local)
 
     list(APPEND RTERM_PUBLIC_LIBS freetype SDL2main SDL2-static SDL2_ttf)
     list(APPEND RTERM_PUBLIC_HEADERS ${sdl2-ttf_SOURCE_DIR})
+elseif(RTERM_EXTERNAL_LIBS STREQUAL manual)
+    list(APPEND RTERM_PUBLIC_LIBS ${RTERM_MANUAL_LIBS})
+    list(APPEND RTERM_PUBLIC_HEADERS ${RTERM_MANUAL_HEADERS})
 else()
     message(FATAL_ERROR
-        "Invalid RTERM_EXTERNAL_LIBS value: ${RTERM_EXTERNAL_LIBS}, should be one 'system', 'conan' or 'local'")
+        "Invalid RTERM_EXTERNAL_LIBS value: ${RTERM_EXTERNAL_LIBS}, should be one 'system', 'conan', 'local' or 'manual'")
 endif()
 
 # STB_Image
