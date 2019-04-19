@@ -49,7 +49,7 @@ And include into your build tree:
 set(RTERM_EXTERNAL_LIBS ...)
 add_subdirectory(third_party/librterm)
 ...
-target_link_libraries(${YOUR_EXECUTABLE} PRIVATE rterm::librterm)
+target_link_libraries(${YOUR_EXECUTABLE} PRIVATE rterm::rterm)
 ```
 The `RTERM_EXTERNAL_LIBS` option is documented in the [dependencies](#dependencies) section.
 
