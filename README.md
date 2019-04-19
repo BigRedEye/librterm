@@ -35,7 +35,7 @@ int main(int argc, const char* argv[]) {
 ```
 
 ## Requirements
-+ Compiler with C++14 support (Clang 7, GCC 8, MSVC 19.16, and MinGW-w64 7.2 tested)
++ Compiler with C++17 support (Clang 7, GCC 8, MSVC 19.16, and MinGW-w64 7.2 tested)
 + [cmake](https://cmake.org/)
 
 ## Installation ##
