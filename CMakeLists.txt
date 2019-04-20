@@ -92,6 +92,7 @@ file(
     include/rterm/util/api.h
     include/rterm/util/char.h
     include/rterm/util/color.h
+    include/rterm/util/enum.h
     include/rterm/util/error.h
     include/rterm/util/framerate_counter.h
     include/rterm/util/logger.h
