@@ -46,6 +46,7 @@ file(
 
     src/renderer/software_texture.cpp
 
+    src/term/cell.cpp
     src/term/term.cpp
     src/term/virtualconsole.cpp
 
@@ -82,6 +83,7 @@ file(
     include/rterm/renderer/software_texture.h
     include/rterm/renderer/texture_view.h
 
+    include/rterm/term/cell.h
     include/rterm/term/term.h
     include/rterm/term/term.tpp
     include/rterm/term/term_format.h
@@ -172,7 +174,7 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL conan)
     conan_cmake_run(CONANFILE conanfile.py BASIC_SETUP CMAKE_TARGETS BUILD missing)
     set(CMAKE_BUILD_TYPE ${CACHED_BUILD_TYPE})
 
-    list(APPEND RTERM_PUBLIC_LIBS CONAN_PKG::sdl2 CONAN_PKG::sdl2_ttf)
+    list(APPEND RTERM_PUBLIC_LIBS CONAN_PKG::sdl2 CONAN_PKG::sdl2_ttf CONAN_PKG::icu)
 elseif (RTERM_EXTERNAL_LIBS STREQUAL local)
     # We need to find git to patch SDL2 & SDL2_ttf
     find_package(Git REQUIRED)
@@ -219,6 +221,7 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL local)
     endif()
     add_library(SDL2::SDL2 ALIAS SDL2-static)
 
+
     list(APPEND RTERM_PUBLIC_LIBS freetype SDL2main SDL2-static SDL2_ttf)
     list(APPEND RTERM_PUBLIC_HEADERS ${sdl2-ttf_SOURCE_DIR})
 elseif(RTERM_EXTERNAL_LIBS STREQUAL manual)
@@ -229,15 +232,19 @@ else()
         "Invalid RTERM_EXTERNAL_LIBS value: ${RTERM_EXTERNAL_LIBS}, should be one 'system', 'conan', 'local' or 'manual'")
 endif()
 
+# ICU
+if (NOT RTERM_EXTERNAL_LIBS STREQUAL conan)
+    set(SYSTEM_ICU OFF)
+    set(BUILD_ICU ON)
+    set(ICU_BUILD_VERSION 64.1)
+    add_subdirectory(third_party/icu-cmake)
+
+    list(APPEND RTERM_PUBLIC_LIBS icu)
+endif()
+
 # STB_Image
 add_subdirectory(third_party/stb)
 list(APPEND RTERM_PRIVATE_LIBS stb_image)
-
-# utfcpp
-set(UTF8_TESTS OFF CACHE BOOL "" FORCE)
-set(UTF8_SAMPLES OFF CACHE BOOL "" FORCE)
-add_subdirectory(third_party/utfcpp EXCLUDE_FROM_ALL)
-list(APPEND RTERM_PRIVATE_LIBS utf8::cpp)
 
 # OpenGL
 set(OpenGL_GL_PREFERENCE GLVND)

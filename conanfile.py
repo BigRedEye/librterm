@@ -3,7 +3,11 @@ from conans import ConanFile, CMake, tools
 class LibRtermConan(ConanFile):
     name = "librterm"
     settings = "os", "compiler", "build_type", "arch"
-    requires = "sdl2/2.0.9@bincrafters/stable", "sdl2_ttf/2.0.15@bincrafters/stable"
+    requires = (
+        "sdl2/2.0.9@bincrafters/stable",
+        "sdl2_ttf/2.0.15@bincrafters/stable",
+        "icu/63.1@bincrafters/stable",
+    )
     generators = "cmake"
     default_options = {"sdl2:shared": False}
 
