@@ -1,10 +1,6 @@
 [submodule "third_party/stb/stb"]
 	path = third_party/stb/stb
 	url = https://github.com/nothings/stb.git
-[submodule "third_party/sdl2-cmake-scripts"]
-	path = third_party/sdl2-cmake-scripts
-	url = https://github.com/tcbrindle/sdl2-cmake-scripts.git
-	branch = master
 [submodule "third_party/cmake-conan"]
 	path = third_party/cmake-conan
 	url = https://github.com/conan-io/cmake-conan.git
