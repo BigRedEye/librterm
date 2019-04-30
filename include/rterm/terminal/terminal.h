@@ -4,7 +4,6 @@
 #include <rterm/util/defs.h>
 
 #include <type_traits>
-#include <type_traits>
 
 namespace rterm::terminal {
 
@@ -21,7 +20,7 @@ public:
     ~Terminal();
 
 private:
-    static constexpr size_t ImplSize{64}; ///< static_assert'ed in the implementation 
+    static constexpr size_t ImplSize{64}; ///< static_assert'ed in the implementation
 
     std::aligned_storage<ImplSize, alignof(std::max_align_t)> impl_;
 };

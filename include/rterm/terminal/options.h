@@ -5,22 +5,19 @@
 
 namespace rterm::terminal {
 
-namespace detail {
-
-} // namespace detail 
+namespace detail {} // namespace detail
 
 class Options {
 public:
-    template<typename ...Args>
-    Options(Args&& ...args) {
+    template<typename... Args>
+    Options(Args&&... args) {
         (fillOptions(std::forward<Args>(args)) + ... + 0);
     }
 
 private:
     int fillOptions()
 
-private:
-    u32 width_;
+        private : u32 width_;
     u32 height_;
     bool fullscreen_;
     bool resizeable_;

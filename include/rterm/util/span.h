@@ -40,17 +40,17 @@ constexpr const E* data(std::initializer_list<E> il) noexcept {
     return il.begin();
 }
 
-template <class C>
+template<class C>
 constexpr auto size(const C& c) -> decltype(c.size()) {
     return c.size();
 }
 
-template <class T, std::size_t N>
+template<class T, std::size_t N>
 constexpr std::size_t size(const T (&)[N]) noexcept {
     return N;
 }
 #endif
-}
+} // namespace detail
 
 /* based on http://eel.is/c++draft/views.span */
 template<typename T>
@@ -70,47 +70,47 @@ public:
     /* ctors */
     constexpr span() noexcept
         : begin_(nullptr)
-        , end_(nullptr)
-    {}
+        , end_(nullptr) {
+    }
 
     constexpr span(pointer ptr, index_type count) noexcept
-        : span(ptr, ptr + count)
-    {}
+        : span(ptr, ptr + count) {
+    }
 
     constexpr span(pointer first, pointer last) noexcept
         : begin_(first)
-        , end_(last)
-    {}
+        , end_(last) {
+    }
 
     template<std::size_t N>
     constexpr span(element_type (&arr)[N]) noexcept
-        : span(arr, N)
-    {}
+        : span(arr, N) {
+    }
 
     template<std::size_t N>
     constexpr span(std::array<value_type, N>& arr) noexcept
-        : span(arr.data(), N)
-    {}
+        : span(arr.data(), N) {
+    }
 
     template<std::size_t N>
     constexpr span(const std::array<value_type, N>& arr) noexcept
-        : span(arr.data(), N)
-    {}
+        : span(arr.data(), N) {
+    }
 
     template<typename Containter>
     constexpr span(Containter& cont)
-        : span(detail::data(cont), detail::size(cont))
-    {}
+        : span(detail::data(cont), detail::size(cont)) {
+    }
 
     template<typename Containter>
     constexpr span(const Containter& cont)
-        : span(detail::data(cont), detail::size(cont))
-    {}
+        : span(detail::data(cont), detail::size(cont)) {
+    }
 
     template<class U>
     constexpr span(span<U> other) noexcept
-        : span(other.data(), other.size())
-    {}
+        : span(other.data(), other.size()) {
+    }
 
     constexpr span(const span<T>& other) = default;
 
@@ -208,10 +208,7 @@ public:
         return span(end_ - count, count);
     }
 
-    constexpr span<element_type> subspan(
-        index_type offset,
-        index_type count
-    ) const {
+    constexpr span<element_type> subspan(index_type offset, index_type count) const {
         return span(begin_ + offset, count);
     }
 
