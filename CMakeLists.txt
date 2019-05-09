@@ -33,11 +33,29 @@ include(Sanitizers)
 
 file(
     GLOB SOURCES
+    src/util/exception.cpp
+
     src/terminal/terminal.cpp
+    src/terminal/options.cpp
 )
 
 file(
     GLOB HEADERS
+    include/rterm/rterm.h
+
+    include/rterm/util/api.h
+    include/rterm/util/defs.h
+    include/rterm/util/enum.h
+    include/rterm/util/exception.h
+    include/rterm/util/murmur.h
+    include/rterm/util/murmur_test.h
+    include/rterm/util/named_args.h
+    include/rterm/util/span.h
+    include/rterm/util/string.h
+    include/rterm/util/vector.h
+
+    include/rterm/terminal/options.h
+    include/rterm/terminal/terminal.h
 )
 
 # Main library
@@ -138,7 +156,12 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC ${RTERM_PUBLIC_LIBS}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${HEADERS}")
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    PUBLIC_HEADER "${HEADERS}"
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+)
 
 # RTERM_ENABLE_XXX = !RTERM_DISABLE_XXX && RTERM_HAS_XXX
 target_compile_definitions(

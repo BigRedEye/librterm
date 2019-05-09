@@ -24,8 +24,8 @@ inline constexpr bool generate_enum_bitops_v = BitOps::none;
 namespace detail {
 
 template<typename Enum, BitOps ops = BitOps::none>
-using sfinae =
-    std::enable_if_t<is_scoped_enum_v<Enum> && ((::rterm::bitops::generate_enum_bitops_v<Enum> & ops) == ops)>;
+using sfinae = std::enable_if_t<
+    ::rterm::bitops::is_scoped_enum_v<Enum> && ((::rterm::bitops::generate_enum_bitops_v<Enum> & ops) == ops)>;
 
 template<template<typename U> typename Func, typename T, typename... Args>
 inline constexpr T apply(T arg, Args... args) {
@@ -73,7 +73,7 @@ inline constexpr Enum& operator^=(Enum& lhs, Enum rhs) {
     return lhs = (lhs ^ rhs);
 }
 
-#define GENERATE_ENUM_BITWISE_OPERATORS(Enum)                                            \
-    static_assert(is_scoped_enum_v<Enum>, "Scoped enum required for bitwise operators"); \
-    template<>                                                                           \
-    inline constexpr bool ::rterm::bitops::generate_enum_bitops_v<Enum> = ::rterm::bitops::BitOps::all;
+#define RTERM_GENERATE_ENUM_BITWISE_OPERATORS(Enum)                                                       \
+    static_assert(::rterm::bitops::is_scoped_enum_v<Enum>, "Scoped enum required for bitwise operators"); \
+    template<>                                                                                            \
+    inline constexpr auto ::rterm::bitops::generate_enum_bitops_v<Enum> = ::rterm::bitops::BitOps::all;

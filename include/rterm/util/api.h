@@ -8,9 +8,8 @@ namespace rterm {
 enum class Api : u8 {
     OpenGL = 1,
     Vulkan = 2,
+    best = OpenGL | Vulkan,
 };
-GENERATE_ENUM_BITWISE_OPERATORS(Api);
-
-static_assert((Api::OpenGL ^ Api::OpenGL | Api::Vulkan) == Api::Vulkan);
+RTERM_GENERATE_ENUM_BITWISE_OPERATORS(Api);
 
 } // namespace rterm
