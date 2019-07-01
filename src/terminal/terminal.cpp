@@ -2,22 +2,39 @@
 
 #include <rterm/window/window.h>
 
+#include <iostream>
+
 namespace rterm::terminal {
 
-class Terminal::Impl {
+namespace {
+
+class Impl {
 public:
     Impl(const Options& opts) {
+        std::cout << "size: " << opts.size()[0] << ' ' << opts.size()[1] << std::endl;
     }
 
 private:
     window::Window window_;
 };
 
-Terminal::Terminal(const Options& opts) {
-    static_assert(sizeof(Impl) <= Terminal::ImplSize);
-    static_assert(alignof(Impl) <= Terminal::ImplAlign);
+} // namespace
 
-    new (&storage_) Impl(opts);
+Terminal::Terminal(const Options& opts)
+    : StaticPimpl<Terminal>(opts) {
+}
+
+void Terminal::assertImplSize() {
+    static_assert(sizeof(Impl) <= StaticPimpl::Size);
+    static_assert(alignof(Impl) <= StaticPimpl::Size);
+}
+
+void Terminal::init(const Options& opts) {
+    new (storage()) Impl(opts);
+}
+
+void Terminal::destroy() {
+    impl<Impl>().~Impl();
 }
 
 } // namespace rterm::terminal

@@ -14,5 +14,6 @@ file(GLOB SOURCES
 )
 
 add_library(${PROJECT_NAME} STATIC ${HEADERS} ${SOURCES})
+add_library(stb::image ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/stb/)

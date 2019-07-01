@@ -140,8 +140,8 @@ inline constexpr std::pair<u64, u64> murmurhash(span<const Byte> data, const u32
 
 template<typename Byte>
 constexpr inline size_t hash_impl(span<const Byte> data) {
-    auto [lo, hi] = detail::murmurhash<Byte>(data, 0x728a4795);
-    return lo ^ hi;
+    auto res = detail::murmurhash<Byte>(data, 0x728a4795);
+    return res.first ^ res.second;
 }
 
 template<typename T, std::enable_if_t<std::has_unique_object_representations_v<T>>* = nullptr>

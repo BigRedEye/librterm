@@ -23,7 +23,12 @@ public:
         ((fillOptions(std::forward<Args>(args)), 0) + ... + 0);
     }
 
-    friend class Terminal;
+    uSize size() const;
+    f32 opacity() const;
+    bool fullscreen() const;
+    bool resizeable() const;
+    Api api() const;
+    std::string title() const;
 
 private:
     void fillOptions(widthTag tag);

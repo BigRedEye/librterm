@@ -4,8 +4,7 @@ class LibRtermConan(ConanFile):
     name = "librterm"
     settings = "os", "compiler", "build_type", "arch"
     requires = (
-        "icu/63.1@bincrafters/stable",
-        "freetype/2.9.0@bincrafters/stable",      
+        "freetype/2.9.0@bincrafters/stable",
         "harfbuzz/2.3.0@bincrafters/stable",
     )
     generators = "cmake"

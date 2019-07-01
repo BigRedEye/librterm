@@ -8,7 +8,7 @@ namespace rterm::named_args {
 template<typename T, size_t TagId, size_t Hash>
 struct Tag {
     using value_type = T;
-    static constexpr size_t id = TagId;
+    static constexpr size_t id = TagId ^ Hash;
 
     operator const T&() const {
         return data;

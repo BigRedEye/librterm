@@ -9,3 +9,11 @@
 	path = third_party/glfw
 	url = https://github.com/glfw/glfw.git
 	branch = master
+[submodule "third_party/utf8proc"]
+	path = third_party/utf8proc
+	url = https://github.com/JuliaStrings/utf8proc
+	branch = master
+[submodule "third_party/glad"]
+	path = third_party/glad
+	url = https://github.com/Dav1dde/glad/
+	branch = glad2

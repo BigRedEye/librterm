@@ -10,12 +10,9 @@ list(APPEND CMAKE_MODULE_PATH
 
 # Configuration
 option(RTERM_BUILD_TESTS "Build tests" OFF)
-option(RTERM_DISABLE_VULKAN "Disable Vulkan" OFF)
-option(RTERM_DISABLE_OPENGL "Disable OpenGL" OFF)
+option(RTERM_CONFIG_VULKAN "Enable Vulkan" ON)
+option(RTERM_CONFIG_OPENGL "Enable OpenGL" ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-
-set(RTERM_HAS_OPENGL OFF)
-set(RTERM_HAS_VULKAN OFF)
 
 set(RTERM_EXTERNAL_LIBS
     system
@@ -77,7 +74,6 @@ elseif (${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC")
         COMPILE_FLAGS
         "${CMAKE_CXX_FLAGS} /W4"
     )
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 endif()
 
 ## Dependencies ##
@@ -96,10 +92,9 @@ if (MINGW)
 endif()
 
 if (RTERM_EXTERNAL_LIBS STREQUAL system)
-    find_package(ICU COMPONENTS data uc REQUIRED)
     find_package(Freetype REQUIRED)
     find_package(Harfbuzz REQUIRED)
-    list(APPEND RTERM_PRIVATE_LIBS ICU::data ICU::uc Freetype::Freetype harfbuzz)
+    list(APPEND RTERM_PRIVATE_LIBS Freetype::Freetype harfbuzz)
 elseif (RTERM_EXTERNAL_LIBS STREQUAL conan)
     set(CACHED_BUILD_TYPE ${CMAKE_BUILD_TYPE})
     if (CMAKE_BUILD_TYPE STREQUAL Sanitizers)
@@ -113,7 +108,7 @@ elseif (RTERM_EXTERNAL_LIBS STREQUAL conan)
     conan_cmake_run(CONANFILE conanfile.py BASIC_SETUP CMAKE_TARGETS BUILD missing)
     set(CMAKE_BUILD_TYPE ${CACHED_BUILD_TYPE})
 
-    list(APPEND RTERM_PUBLIC_LIBS CONAN_PKG::icu CONAN_PKG::freetype CONAN_PKG::harfbuzz)
+    list(APPEND RTERM_PUBLIC_LIBS CONAN_PKG::freetype CONAN_PKG::harfbuzz)
 elseif(RTERM_EXTERNAL_LIBS STREQUAL manual)
     list(APPEND RTERM_PUBLIC_LIBS ${RTERM_MANUAL_LIBS})
     list(APPEND RTERM_PUBLIC_HEADERS ${RTERM_MANUAL_HEADERS})
@@ -130,21 +125,28 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 add_subdirectory(third_party/glfw EXCLUDE_FROM_ALL)
 list(APPEND RTERM_PRIVATE_LIBS glfw)
 
+# utf8proc
+set(UTF8PROC_INSTALL OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/utf8proc EXCLUDE_FROM_ALL)
+
 # STB_Image
-add_subdirectory(third_party/stb)
+add_subdirectory(third_party/stb EXCLUDE_FROM_ALL)
 list(APPEND RTERM_PRIVATE_LIBS stb_image)
 
-# OpenGL
-set(OpenGL_GL_PREFERENCE GLVND)
-find_package(OpenGL)
-if (OPENGL_FOUND)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/glad)
+# glad2
+add_subdirectory(third_party/glad/cmake)
 
-    set(RTERM_HAS_OPENGL ON)
-    list(APPEND RTERM_PRIVATE_LIBS glad)
-    list(APPEND RTERM_PUBLIC_LIBS OpenGL::GL)
-    list(APPEND RTERM_PRIVATE_HEADERS OPENGL_INCLUDE_DIRS)
-endif(OPENGL_FOUND)
+# OpenGL
+if (RTERM_CONFIG_OPENGL)
+    glad_add_library(glad_gl_33 STATIC EXCLUDE_FROM_ALL MX MXGLOBAL API gl:core=3.3 LANGUAGE c)
+    list(APPEND RTERM_PRIVATE_LIBS glad_gl_33)
+endif(RTERM_CONFIG_OPENGL)
+
+# Vulkan
+if (RTERM_CONFIG_VULKAN)
+    glad_add_library(glad_vulkan_11 STATIC EXCLUDE_FROM_ALL MX MXGLOBAL API vulkan=1.1 LANGUAGE c)
+    list(APPEND RTERM_PRIVATE_LIBS glad_vulkan_11)
+endif(RTERM_CONFIG_VULKAN)
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE ${RTERM_PRIVATE_HEADERS}
@@ -163,11 +165,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_EXTENSIONS OFF
 )
 
-# RTERM_ENABLE_XXX = !RTERM_DISABLE_XXX && RTERM_HAS_XXX
 target_compile_definitions(
     ${PROJECT_NAME} PUBLIC
-    RTERM_ENABLE_OPENGL=$<AND:$<NOT:$<BOOL:${RTERM_DISABLE_OPENGL}>>,$<BOOL:${RTERM_HAS_OPENGL}$>>
-    RTERM_ENABLE_VULKAN=$<AND:$<NOT:$<BOOL:${RTERM_DISABLE_VULKAN}>>,$<BOOL:${RTERM_HAS_VULKAN}$>>
+    RTERM_CONFIG_OPENGL=$<BOOL:${RTERM_CONFIG_OPENGL}$>
+    RTERM_CONFIG_VULKAN=$<BOOL:${RTERM_CONFIG_VULKAN}$>
 )
 
 if (RTERM_BUILD_TESTS)
