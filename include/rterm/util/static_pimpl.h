@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <memory>
 #include <utility>
+#include <new>
 
 namespace rterm {
 
@@ -34,7 +35,7 @@ protected:
 
     template<typename Impl>
     const Impl& impl() const {
-        return *std::launder<Impl*>(&storage_);
+        return *std::launder(reinterpret_cast<const Impl*>(&storage_));
     }
 
     const auto* storage() const {

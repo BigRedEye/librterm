@@ -1,18 +1,22 @@
 #pragma once
 
+#include <rterm/font/font.h>
+#include <rterm/font/handle.h>
+#include <rterm/util/defs.h>
 #include <rterm/util/static_pimpl.h>
 
 namespace rterm::font {
 
-class Font;
-struct FT_Face;
-
 class Face : StaticPimpl<Face> {
 public:
-    Face(const Font& font);
+    Face(const Handle& handle);
 
-    const FT_Face& raw() const;
+    bool monospace() const;
 
+private:
+    void init(const Handle& handle);
+    void destroy();
+    void assertImplSize();
 };
 
 } // namespace rterm

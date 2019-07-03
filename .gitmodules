@@ -17,3 +17,9 @@
 	path = third_party/glad
 	url = https://github.com/Dav1dde/glad/
 	branch = glad2
+[submodule "third_party/expected"]
+	path = third_party/expected
+	url = https://github.com/TartanLlama/expected
+[submodule "third_party/optional"]
+	path = third_party/optional
+	url = https://github.com/TartanLlama/optional

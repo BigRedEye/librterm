@@ -29,6 +29,13 @@ struct Setter {
 
 } // namespace rterm::named_args
 
+namespace rterm {
+
+template<typename T = void>
+struct DependentFalse : std::false_type {};
+
+} // namespace rterm
+
 #define RTERM_CAT(a, b) a##b
 #define RTERM_DECLARE_NAMED_ARGUMENT(TYPE, NAME)                                   \
     inline constexpr ::rterm::named_args::Setter<                                  \

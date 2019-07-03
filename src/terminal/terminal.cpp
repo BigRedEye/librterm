@@ -21,7 +21,7 @@ private:
 } // namespace
 
 Terminal::Terminal(const Options& opts)
-    : StaticPimpl<Terminal>(opts) {
+    : StaticPimpl<Terminal>{opts} {
 }
 
 void Terminal::assertImplSize() {

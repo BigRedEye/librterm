@@ -9,8 +9,9 @@ namespace rterm::terminal {
 
 using BufferId = u64;
 
-class Terminal : public StaticPimpl<Terminal> {
+class Terminal : public StaticPimpl<Terminal, 64> {
 public:
+    using Base = StaticPimpl<Terminal, 64>;
     explicit Terminal(const Options& opts);
 
     BufferId attach();
